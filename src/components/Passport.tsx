@@ -153,7 +153,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
         </div>
         : null
       }
-      {(passport.authData?.id != userData?.id || !passport.authData?.roles?.includes(1)) && loaded ?
+      {(passport.authData?.id != userData?.id && !passport.authData?.roles?.includes(1)) && loaded ?
         <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
           <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
             <div className='text-3xl font-bold flex items-center gap-2'>Общедоступные данные</div>
