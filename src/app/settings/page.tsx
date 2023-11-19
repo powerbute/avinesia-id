@@ -28,7 +28,7 @@ const Header = dynamic(() => import('@/components/Header'), { ssr: false })
 
 
 export default function HomePage() {
-  const [authData, setAuthData] = useLocalStorage("authdata", {});
+  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const [loaded, setLoaded] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>("");

@@ -23,7 +23,7 @@ const Header = dynamic(() => import('@/components/Header'), { ssr: false })
 
 export default function HomePage({ params }: { params: { id: string } }) {
   const userID = params.id;
-  const [authData, setAuthData] = useLocalStorage("authdata", {});
+  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const [givePassport, setGivePassport] = React.useState(false);
   const [gpUsers, setGPUsers] = React.useState<any>([]);
   const [session, setSession] = useLocalStorage<any>("session", "");
