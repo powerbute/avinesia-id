@@ -179,7 +179,9 @@ export default function HomePage({ params }: { params: { id: string } }) {
               location.replace("/");
             }}><MdLogout color='white' size={28} /></div> : null}
             {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => setAvatarMenu(!avatarMenu)}>
-              <img src={'https://visage.surgeplay.com/face/512/' + (authData?.nickname)} className='rounded-2xl' />
+              <NextImage onError={(e) => {
+                e.currentTarget.srcset = "Steve.webp";
+              }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (authData?.nickname)} />
             </div> : null}
           </div>
         </header>
@@ -220,7 +222,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
               <div className='flex flex-col gap-2'>
                 <div className='flex gap-2 md:gap-0 md:flex-col'>
                   <NextImage onError={(e) => {
-                    e.currentTarget.srcset = "http://localhost:3000/_next/image?url=https%3A%2F%2Fvisage.surgeplay.com%2Fface%2F512%2FSteve&w=128&q=75";
+                    e.currentTarget.srcset = "Steve.webp";
                   }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (userData?.nickname)} />
                   <div className='flex flex-col'>
                     <div className='font-bold text-3xl'>{userData?.surname}</div>
