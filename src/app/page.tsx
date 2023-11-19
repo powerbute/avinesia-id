@@ -52,15 +52,15 @@ export default function HomePage() {
           <div className='text-xl mt-8'>Это удобный и функциональный портал для всех граждан Авинесии</div>
           <div className='flex w-full gap-4 mt-12'>
             <div className='flex flex-col gap-4 w-1/3'>
-              <div className='bg-zinc-700 rounded-2xl px-8 py-4'>
+              <div className='bg-dark2 rounded-2xl px-8 py-4'>
                 <div className='text-3xl font-bold'>Простота</div>
                 <div className='text-lg'>Наш портал очень прост в использование и интуитивно понятен, благодаря минималистичному и простому дизайну</div>
               </div>
-              <div className='bg-zinc-700 rounded-2xl px-8 py-4'>
+              <div className='bg-dark2 rounded-2xl px-8 py-4'>
                 <div className='text-3xl font-bold'>Удобство</div>
                 <div className='text-lg'>Вы с лёгкостью сможете получить доступ к любому документы</div>
               </div>
-              <div className='bg-zinc-700 rounded-2xl px-8 py-4'>
+              <div className='bg-dark2 rounded-2xl px-8 py-4'>
                 <div className='text-3xl font-bold'>Функционал</div>
                 <div className='text-lg'>Паспорт, социальный рейтинг и документы на жилье вы сможете найти здесь</div>
               </div>
