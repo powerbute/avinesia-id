@@ -13,67 +13,24 @@ import { AiOutlineHistory } from "react-icons/ai";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NextImage from '@/components/NextImage';
 import useLocalStorage from "use-local-storage";
+import dynamic from 'next/dynamic'
+
+const Passport = dynamic(() => import('@/components/Passport'), { ssr: false })
+const IDCard = dynamic(() => import('@/components/IDCard'), { ssr: false })
+const Rating = dynamic(() => import('@/components/Rating'), { ssr: false })
+const Header = dynamic(() => import('@/components/Header'), { ssr: false })
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
   const userID = params.id;
-  const [userData, setUserData] = React.useState<any>({
-    nickname: "Steve"
-  });
-  const [rolesData, setRolesData] = React.useState<any>([]);
-  const [passid, setPassid] = React.useState<any>();
-  const [authData, setAuthData] = React.useState<any>({});
-  const [loaded, setLoaded] = React.useState(false);
+  const [authData, setAuthData] = useLocalStorage("authdata", {});
   const [givePassport, setGivePassport] = React.useState(false);
-  const [searchOpen, setSearchOpen] = React.useState(false);
   const [gpUsers, setGPUsers] = React.useState<any>([]);
-  const [session, setSession] = useLocalStorage("session", "");
+  const [session, setSession] = useLocalStorage<any>("session", "");
+  const [loaded, setLoaded] = React.useState(false);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
-
-  async function getUserData() {
-    let { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq("id", userID)
-      .single();
-    if (users == null) {
-      location.replace("/error");
-      return;
-    }
-    setUserData(users);
-    getRolesData();
-    getPassID(session);
-    setLoaded(true);
-    console.log(users)
-  }
-
-  async function getRolesData() {
-    let { data: users, error } = await supabase
-      .from('roles')
-      .select('*');
-    setRolesData(users);
-    console.log(users)
-  }
-
-  async function getGPUsers() {
-    let { data: users, error } = await supabase
-      .from('users')
-      .select('nickname, roles')
-      .contains("roles", ['1']);
-    setGPUsers(users);
-  }
-
-  async function getPassID(session: any) {
-    let { data: users, error } = await supabase
-      .from('sessions')
-      .select('*')
-      .eq("session", session)
-      .single();
-    setPassid(users?.passid);
-    getUserByPassID(users?.passid);
-  }
 
   async function getUserByPassID(passid: any) {
     let { data: users, error } = await supabase
@@ -105,7 +62,8 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   React.useEffect(() => {
     if (!loaded) {
-      getUserData();
+      setLoaded(true);
+      getUserByPassID(authData?.passid);
     }
   })
 
@@ -125,45 +83,6 @@ export default function HomePage({ params }: { params: { id: string } }) {
       counter += 1;
     }
     return result;
-  }
-
-  async function unPausePassport() {
-    const { error } = await supabase
-      .from('users')
-      .update({ preStatus: null })
-      .eq('id', userID)
-    getUserData();
-    if (userData?.status == 1) {
-      alert("Ваша заявка на приостановление гражданства закрыта")
-    } else {
-      alert("Ваша заявка на возобновление гражданства отправлена")
-    }
-  }
-
-  async function pausePassport() {
-    const { error } = await supabase
-      .from('users')
-      .update({ preStatus: 1 })
-      .eq('id', userID)
-    getUserData();
-    if (userData?.status == 1) {
-      alert("Ваша заявка на приостановление гражданства отправлена")
-    }
-    if (userData?.status == 2) {
-      alert("Ваша заявка на возобновление гражданства закрыта")
-    }
-  }
-
-  async function applyRating(rating1: any) {
-    if (rating1 > 1000 || rating1 < -1000) {
-      alert("Минимальный и максимальный рейтинг: -1000 и 1000!!")
-      return;
-    }
-    let { error: a1 } = await supabase
-      .from('users')
-      .update({ rating: rating1 })
-      .eq('id', userData?.id);
-    getUserData();
   }
 
   return (
@@ -192,36 +111,8 @@ export default function HomePage({ params }: { params: { id: string } }) {
           </div>
         </div>
         : null}
-      {loaded ? <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px]'>
-        {searchOpen ? <div className='flex sm:hidden mb-2 mx-4 items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
-          <IoMdSearch size={20} className='text-gray-600' />
-          <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
-        </div> : null}
-        <header className='px-4 flex h-[56px] items-center justify-between'>
-          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
-          <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
-            <IoMdSearch size={20} className='text-gray-600' />
-            <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
-          </div>
-          <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
-            {authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => location.replace("/admin")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
-            <div className='block sm:hidden bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => setSearchOpen(!searchOpen)}><IoMdSearch color='black' size={28} /></div>
-            <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => location.replace("/settings")}><IoSettingsOutline color='black' size={28} /></div>
-            <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoMdNotificationsOutline color='black' size={28} /></div>
-            <div className='bg-red-500 hover:bg-red-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
-              setSession("");
-              alert("Выход успешно выполнен!")
-              location.replace("/");
-            }}><MdLogout color='white' size={28} /></div>
-            {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => {
-              getUser(authData?.nickname)
-            }}>
-              <NextImage onError={(e) => {
-                e.currentTarget.srcset = "/Steve.webp";
-              }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (authData?.nickname)} />
-            </div> : null}
-          </div>
-        </header>
+      <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px]'>
+        <Header passport={{ userID: userID, authData: authData }} />
         <section className='bg-transparent text-transparent select-none rounded-2xl px-4 py-4 mx-4 mt-4 hidden sm:block'>
           <div className='text-lg'><span className='uppercase font-black'>Внимание!</span> Для безопасности и быстрого входа, привяжите свой Telegram, <span className='cursor-pointer'>инструкция</span></div>
         </section>
@@ -256,157 +147,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
             </div>
           </div>
           <div className='flex gap-4 mt-4 flex-col md:flex-row'>
-            <div className='bg-dark2 rounded-2xl md:w-1/3 px-4 py-6'>
-              <div className='flex flex-col gap-2'>
-                <div className='flex gap-2 md:gap-0 md:flex-col'>
-                  <NextImage onError={(e) => {
-                    e.currentTarget.srcset = "/Steve.webp";
-                  }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (userData?.nickname)} />
-                  <div className='flex flex-col'>
-                    <div className='font-bold text-3xl'>{userData?.surname}</div>
-                    <div className='font-medium text-zinc-400 text-xl'>{userData?.nickname}</div>
-                    <div className='text-zinc-500'>@user{userID}</div>
-                  </div>
-                </div>
-                <div className='flex flex-wrap gap-1 select-none'>
-                  {userData?.roles?.map((e: any) =>
-                    <div key={makeid(5)} className={'rounded-md px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
-                  )}
-                </div>
-              </div>
-            </div>
-            {authData?.id == userID || authData?.roles?.includes(1) ?
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
-                <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
-                  <div className='text-3xl font-bold flex items-center gap-2'>Паспортные данные {userData?.status == 1 && userData?.preStatus == null ? <span className='rounded-md bg-green-500 text-base px-1 h-fit'>Активно</span> : null}{userData?.status == 1 && userData?.preStatus == 1 ? <span className='rounded-md bg-green-500 text-base px-1 h-fit bg-opacity-50 text-opacity-50'>Активно</span> : null}{userData?.status == 0 || (userData?.status == 2 && userData?.preStatus == null) ? <span className='rounded-md bg-yellow-500 text-base px-1 h-fit'>На рассмотрении</span> : null}{userData?.status == 2 && userData?.preStatus != null ? <span className='rounded-md bg-purple-500 text-base px-1 h-fit'>Приостановлено</span> : null}{userData?.status == 3 ? <span className='rounded-md bg-red-500 text-base px-1 h-fit'>Изъято</span> : null}</div>
-                  <div className='flex gap-2 w-full md:w-fit justify-end md:justify-start hidden'>
-                    <div className='text-sm text-zinc-500 hover:text-zinc-400 cursor-pointer w-8 h-8 bg-zinc-600 rounded-2xl flex justify-center items-center hidden'><AiOutlineHistory size={24} /></div>
-                    <div className='text-sm text-zinc-500 hover:text-zinc-400 cursor-pointer w-8 h-8 bg-zinc-600 rounded-2xl flex justify-center items-center' onClick={() => {
-                      // getGPUsers();
-                      // setGivePassport(true);
-                    }}><MdOutlinePolicy size={24} /></div>
-                    {userData?.preStatus != null && userData?.preStatus == 1 ? <div className='text-sm text-zinc-500 hover:text-zinc-400 cursor-pointer w-8 h-8 bg-zinc-600 rounded-2xl flex justify-center items-center'><MdOutlinePlayCircle size={24} onClick={() => {
-                      //unPausePassport()
-                    }} /></div>
-                      :
-                      <div className='text-sm text-zinc-500 hover:text-zinc-400 cursor-pointer w-8 h-8 bg-zinc-600 rounded-2xl flex justify-center items-center'><MdOutlinePauseCircle size={24} /></div>}
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Никнейм</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.nickname}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Псевдоним</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.surname}</div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Дата рождения</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.birthdate}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Telegram</div>
-                    <div className='text-xl md:text-2xl font-bold hover:text-blue-500 cursor-pointer' onClick={() => {
-                      location.replace("https://t.me/" + userData?.tg)
-                    }}>@{userData?.tg}</div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>ID</div>
-                    <div className='text-xl md:text-2xl font-bold uppercase'>{userData?.passid}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Выдан кем</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.issuedby}</div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Дата выдачи</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.dateofissue}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Действителен до</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.validuntil}</div>
-                  </div>
-                </div>
-              </div>
-              :
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
-                <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
-                  <div className='text-3xl font-bold flex items-center gap-2'>Общедоступные данные</div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Никнейм</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.nickname}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Псевдоним</div>
-                    <div className='text-xl md:text-2xl font-bold'>{userData?.surname}</div>
-                  </div>
-                </div>
-              </div>
-            }
+            <IDCard passport={{ authData: authData, userID: userID }} />
+            <Passport passport={{ authData: authData, userID: userID }} />
           </div>
           <div className='flex gap-4 mt-4 flex-col md:flex-row'>
-            <div className='bg-dark2 rounded-2xl md:w-1/3 px-4 py-6 select-none'>
-              <div className='text-3xl font-bold'>Соц. рейтинг</div>
-              <div className={'mt-2 text-lg text-start font-bold' + (userData?.rating > 0 ? " text-green-500" : " text-red-500")}>{userData?.rating}</div>
-              <div className='flex w-full bg-zinc-400 rounded-2xl bg-opacity-20'>
-                <div className='flex w-full justify-start'><div className={'h-2 rounded-l-2xl w-[' + (Math.abs(userData?.rating) / 10) + "%] " + (userData?.rating > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
-              </div>
-              {authData?.roles?.includes(1) ?
-                <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 1)
-                  }}>+1</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 5)
-                  }}>+5</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 10)
-                  }}>+10</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 20)
-                  }}>+20</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 50)
-                  }}>+50</div>
-                  <div className='bg-green-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 100)
-                  }}>+100</div>
-                </div>
-                : null}
-              {authData?.roles?.includes(1) ?
-                <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 1)
-                  }}>-1</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 5)
-                  }}>-5</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 10)
-                  }}>-10</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 20)
-                  }}>-20</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 50)
-                  }}>-50</div>
-                  <div className='bg-red-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 100)
-                  }}>-100</div>
-                </div>
-                : null}
-            </div>
+            <Rating passport={{ authData: authData, userID: userID }} />
             <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-transparent rounded-2xl'>
-              <div className='text-3xl font-bold flex items-center gap-2 text-transparent'>Трудовая книжка</div>
+              <div className='text-3xl font-bold flex items-center gap-2 text-transparent'>Ты пидор</div>
             </div>
           </div>
           <div className='flex gap-4 mt-4 flex-col md:flex-row hidden'>
@@ -418,14 +165,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </section>
-      </section> :
-        <section className='bg-dark w-screen h-screen flex justify-center items-center'>
-          <div className='flex flex-col gap-2'>
-            <img src='/logo.png' className='animate-pulse' width={256} />
-            <div className='text-3xl font-bold text-center text-white'>Загрузка...</div>
-          </div>
-        </section>
-      }
+      </section>
     </main>
   );
 }

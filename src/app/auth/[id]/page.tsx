@@ -9,6 +9,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 export default function HomePage({ params }: { params: { id: string } }) {
   const authID = params.id;
   const [session, setSession] = useLocalStorage("session", "");
+  const [authData, setAuthData] = useLocalStorage("authdata", {});
   const supabase = createClientComponentClient();
   const [a, setA] = React.useState(false);
 
@@ -36,9 +37,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
   async function getProfile(passID: any) {
     const { data, error } = await supabase
       .from('users')
-      .select('passid, id')
+      .select('*')
       .eq('passid', passID)
       .single()
+    setAuthData(data)
     location.replace("/user/" + data?.id);
   }
 
