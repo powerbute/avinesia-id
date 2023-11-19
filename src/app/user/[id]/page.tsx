@@ -155,7 +155,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function applyRating(rating1: any) {
-    if (rating1 > 1000 || rating1 < 1000) {
+    if (rating1 > 1000 || rating1 < -1000) {
       alert("Минимальный и максимальный рейтинг: -1000 и 1000!!")
       return;
     }
