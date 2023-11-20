@@ -13,7 +13,7 @@ export default function Passport({ passport }: { passport: { authData: any, setU
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
 
   async function getUser(nickname: any) {
-    let { data: users, error } = await supabase
+    const { data: users, error } = await supabase
       .from('users')
       .select('*')
       .eq("nickname", nickname)

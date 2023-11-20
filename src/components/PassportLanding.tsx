@@ -29,7 +29,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
   return (
     <>
       {!loaded ?
-        <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl min-h-[395px] justify-center items-center'>
+        <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 shadow-inner shadow-dark3 bg-dark2 rounded-2xl min-h-[395px] justify-center items-center'>
           <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
             <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
               <div className='text-3xl font-bold flex items-center gap-2 text-transparent'><span className="bg-dark4 animate-pulse rounded-2xl">Паспортные данные</span> <span className='rounded-md bg-dark4 animate-pulse text-base px-1 h-fit'>Активно</span></div>
@@ -94,7 +94,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       {(passport.authData?.id == userData?.id || passport.authData?.roles?.includes(1)) && loaded ?
         <div className="w-full wrapper">
           <div className={"rounded-2xl " + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? " border-passport2021" : "")} ></div>
-          <div className={'w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? " main-element" : "")}>
+          <div className={'w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 shadow-inner shadow-dark3 bg-dark2 rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? " main-element" : "")}>
             <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
               <div className='text-3xl font-bold flex items-center gap-2'>Паспортные данные {userData?.status == 1 && userData?.preStatus == null ? <span className='rounded-md bg-green-500 text-base px-1 h-fit'>Активно</span> : null}{userData?.status == 1 && userData?.preStatus == 1 ? <span className='rounded-md bg-green-500 text-base px-1 h-fit bg-opacity-50 text-opacity-50'>Активно</span> : null}{userData?.status == 0 || (userData?.status == 2 && userData?.preStatus == null) ? <span className='rounded-md bg-yellow-500 text-base px-1 h-fit'>На рассмотрении</span> : null}{userData?.status == 2 && userData?.preStatus != null ? <span className='rounded-md bg-purple-500 text-base px-1 h-fit'>Приостановлено</span> : null}{userData?.status == 3 ? <span className='rounded-md bg-red-500 text-base px-1 h-fit'>Изъято</span> : null}</div>
               <div className='flex gap-2 w-full md:w-fit justify-end md:justify-start hidden'>

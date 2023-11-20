@@ -16,13 +16,13 @@ export default function Passport({ passport }: { passport: { authData: any, menu
   const [loaded, setLoaded] = React.useState(false);
 
   async function getUserByPassID() {
-    let { data: users1 } = await supabase
+    const { data: users1 } = await supabase
       .from('users')
       .select('*')
       .order('nickname', { ascending: true })
 
     setUsers(users1);
-    let { data: users2 } = await supabase
+    const { data: users2 } = await supabase
       .from('users')
       .select('*')
       .lt('status', 2)
@@ -39,7 +39,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
   }, [])
 
   async function setUserByPassID(passid: any) {
-    let { data: users, error } = await supabase
+    const { data: users, error } = await supabase
       .from('users')
       .select('*')
       .eq("passid", passid)

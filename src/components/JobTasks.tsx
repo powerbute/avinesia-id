@@ -23,7 +23,7 @@ export default function JobTasks({ job }: { job: { jobID: any, passID: any } }) 
 
 
   async function getMyJobs() {
-    let { data: jobs, error } = await supabase
+    const { data: jobs, error } = await supabase
       .from('jobtasks')
       .select('*')
       .eq("jobid", job.jobID)
@@ -32,7 +32,7 @@ export default function JobTasks({ job }: { job: { jobID: any, passID: any } }) 
   }
 
   async function getWorker() {
-    let { data: worker, error } = await supabase
+    const { data: worker, error } = await supabase
       .from('jobworkers')
       .select('*')
       .eq("jobid", job.jobID)
@@ -43,7 +43,7 @@ export default function JobTasks({ job }: { job: { jobID: any, passID: any } }) 
   }
 
   async function getAllJobs() {
-    let { data: jobs, error } = await supabase
+    const { data: jobs, error } = await supabase
       .from('jobtasks')
       .select('*')
       .eq("jobid", job.jobID)

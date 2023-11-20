@@ -57,7 +57,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
   return (
     <>
       {!loaded ?
-        <div className='bg-dark2 rounded-2xl md:w-1/3 px-4 py-6'>
+        <div className='bg-dark2 shadow-inner shadow-dark3 rounded-2xl md:w-1/3 px-4 py-6'>
           <div className='flex flex-col gap-2'>
             <div className="flex justify-between">
               <div className='flex gap-2 md:gap-0 md:flex-col'>
@@ -83,7 +83,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
           </div>
         </div>
         :
-        <div className={'bg-dark2 rounded-2xl md:w-1/3 px-4 py-6' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
+        <div className={'bg-dark2 shadow-inner shadow-dark3 rounded-2xl md:w-1/3 px-4 py-6' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
           <div className={'flex flex-col gap-2' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
             <div className="flex justify-between flex-col md:flex-row">
               <div className='flex gap-2 md:gap-0 md:flex-col'>
@@ -97,7 +97,10 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 </div>
               </div>
               <div className="mt-1.5 md:mt-0">
-                <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
+                <div className={"flex justify-center bg-white hover:bg-gray-200 cursor-pointer relative items-center pt-[1px] h-10 px-2 rounded-2xl "}>
+                  <CiHeart size={32} className="relative text-dark3" />
+                  <div></div>
+                </div>
               </div>
             </div>
             <div className='flex flex-wrap gap-1 select-none'>

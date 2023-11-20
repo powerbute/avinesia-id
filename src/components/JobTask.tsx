@@ -6,7 +6,7 @@ export default function JobTask({ task }: { task: { taskID: any, name: any } }) 
   const supabase = createClientComponentClient();
 
   async function completeF() {
-    let { data: jobs, error } = await supabase
+    const { data: jobs, error } = await supabase
       .from('jobtasks')
       .update({ complete: (!complete) as any })
       .eq("id", task.taskID)
