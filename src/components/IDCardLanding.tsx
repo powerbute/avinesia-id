@@ -87,9 +87,14 @@ export default function Passport({ passport }: { passport: { authData: any, user
           <div className={'flex flex-col gap-2' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
             <div className="flex justify-between flex-col md:flex-row">
               <div className='flex gap-2 md:gap-0 md:flex-col'>
-                <NextImage onError={(e) => {
-                  e.currentTarget.srcset = "/Steve.webp";
-                }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (userData?.nickname)} />
+                <div className="relative w-fit">
+                  <NextImage onError={(e) => {
+                    e.currentTarget.srcset = "/Steve.webp";
+                  }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (userData?.nickname)} />
+                  <span className="absolute bottom-0 right-0 flex justify-center items-center rounded-full h-6 w-6 bg-dark2">
+                    <span className="inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+                  </span>
+                </div>
                 <div className='flex flex-col mt-2'>
                   <div className='font-bold text-3xl'>{userData?.surname}</div>
                   <div className='font-medium text-zinc-400 text-xl'>{userData?.nickname}</div>

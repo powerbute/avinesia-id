@@ -19,6 +19,7 @@ const Passport = dynamic(() => import('@/components/Passport'), { ssr: false })
 const IDCard = dynamic(() => import('@/components/IDCard'), { ssr: false })
 const Rating = dynamic(() => import('@/components/Rating'), { ssr: false })
 const Header = dynamic(() => import('@/components/Header'), { ssr: false })
+import RealtimeStatus from '@/components/RealtimeStatus';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
@@ -28,9 +29,41 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [gpUsers, setGPUsers] = React.useState<any>([]);
   const [session, setSession] = useLocalStorage<any>("session", "");
   const [loaded, setLoaded] = React.useState(false);
+  const [sub, setSub] = React.useState(false);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
+
+  /*const roomOne = supabase.channel('room_01')
+
+  const userStatus = {
+    user: authData?.passid,
+    online_at: new Date().toISOString(),
+  }
+
+  roomOne
+    .on('presence', { event: 'sync' }, () => {
+      const newState = roomOne.presenceState()
+      console.log('sync', newState)
+    })
+    .on('presence', { event: 'join' }, async ({ key, newPresences }) => {
+      console.log('join', key, newPresences)
+      //console.log(newPresences);
+      const { error } = await supabase
+        .from('status')
+        .insert({ passid: newPresences[0]?.user, status: 1 })
+    })
+    .on('presence', { event: 'leave' }, async ({ key, leftPresences }) => {
+      console.log('leave', key, leftPresences)
+      const { error } = await supabase
+        .from('status')
+        .insert({ passid: leftPresences[0]?.user, status: 0 })
+    })
+    .subscribe(async (status) => {
+      if (status !== 'SUBSCRIBED') { return }
+
+      const presenceTrackStatus = await roomOne.track(userStatus)
+    })*/
 
   async function getUserByPassID(passid: any) {
     let { data: users, error } = await supabase
@@ -64,6 +97,11 @@ export default function HomePage({ params }: { params: { id: string } }) {
   React.useEffect(() => {
     if (!loaded) {
       setLoaded(true);
+      /*roomOne.subscribe(async (status) => {
+        if (status !== 'SUBSCRIBED') { return }
+
+        const presenceTrackStatus = await roomOne.track(userStatus)
+      })*/
       getUserByPassID(authData?.passid);
     }
   })
@@ -82,6 +120,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   return (
     <main className='bg-dark'>
+      <RealtimeStatus />
       <Head>
         <title>Hi</title>
       </Head>

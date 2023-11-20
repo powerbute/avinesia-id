@@ -7,6 +7,8 @@ import '@/styles/firework.scss';
 import '@/styles/colors.css';
 
 import { siteConfig } from '@/constant/config';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import useLocalStorage from 'use-local-storage';
 
 // !STARTERCONF Change these default meta
 // !STARTERCONF Look at @/constant/config to change them

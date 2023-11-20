@@ -22,6 +22,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NextImage from '@/components/NextImage';
 import useLocalStorage from "use-local-storage";
 import dynamic from 'next/dynamic'
+import RealtimeStatus from '@/components/RealtimeStatus';
 
 const IDCard = dynamic(() => import('@/components/IDCard'), { ssr: false })
 const Header = dynamic(() => import('@/components/Header'), { ssr: false })
@@ -95,6 +96,7 @@ export default function HomePage() {
 
   return (
     <main className='bg-dark'>
+      <RealtimeStatus />
       <Head>
         <title>Hi</title>
       </Head>

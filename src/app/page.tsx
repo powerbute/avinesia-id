@@ -9,12 +9,14 @@ import useLocalStorage from 'use-local-storage';
 const Passport = dynamic(() => import('@/components/PassportLanding'), { ssr: false })
 const IDCard = dynamic(() => import('@/components/IDCardLanding'), { ssr: false })
 const Rating = dynamic(() => import('@/components/RatingLanding'), { ssr: false })
+import RealtimeStatus from '../components/RealtimeStatus';
 
 export default function HomePage() {
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const [session, setSession] = useLocalStorage<any>("session", "");
   return (
     <main className='bg-dark'>
+      <RealtimeStatus />
       <Head>
         <title>Hi</title>
       </Head>
@@ -40,7 +42,7 @@ export default function HomePage() {
                 <div className='text-lg'>Паспорт, социальный рейтинг и документы на жилье вы сможете найти здесь</div>
               </div>
             </div>
-            <div className='w-[100%] overflow-hidden flex bg-dark2 relative rounded-2xl'>
+            <div className='w-[100%] overflow-hidden flex bg-dark2 relative rounded-2xl select-none'>
               <div className='absolute w-[200%] top-[-2rem] right-[-60rem] origin-top-left rotate-12 rounded-2xl'>
                 <div className='rounded-2xl flex gap-4 flex-col md:flex-row'>
                   <IDCard passport={{ authData: {}, userID: 4 }} />
