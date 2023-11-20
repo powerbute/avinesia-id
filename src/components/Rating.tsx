@@ -11,7 +11,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
   const [userData, setUserData] = React.useState<any>({});
 
   async function getUser(id: any) {
-    let { data: user, error } = await supabase
+    const { data: user, error } = await supabase
       .from('users')
       .select('*')
       .eq("id", id)
@@ -44,7 +44,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       alert("Минимальный и максимальный рейтинг: -1000 и 1000!!")
       return;
     }
-    let { error: a1 } = await supabase
+    const { error: a1 } = await supabase
       .from('users')
       .update({ rating: rating1 })
       .eq('id', userData?.id);
