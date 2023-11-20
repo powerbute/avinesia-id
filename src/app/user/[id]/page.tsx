@@ -40,7 +40,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .single();
     if (users?.id == null) {
       alert("Пользователь не найден!")
-      location.replace("/error")
+      window.open("/error", "_self")
     } else {
       setAuthData(users);
     }
@@ -55,8 +55,9 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .single();
     if (users?.id == null) {
       alert("Пользователь не найден!")
+      return;
     }
-    location.replace("/user/" + users.id)
+    window.open("/user/" + users?.id, "_self")
 
   }
 
@@ -66,12 +67,6 @@ export default function HomePage({ params }: { params: { id: string } }) {
       getUserByPassID(authData?.passid);
     }
   })
-
-  async function handleSearch(event: any) {
-    if (event.key === 'Enter') {
-      getUser(event.target.value)
-    }
-  }
 
   function makeid(length: any) {
     let result = '';
@@ -117,7 +112,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='text-lg'><span className='uppercase font-black'>Внимание!</span> Для безопасности и быстрого входа, привяжите свой Telegram, <span className='cursor-pointer'>инструкция</span></div>
         </section>
         <section className='px-4 mt-4'>
-          <div className='z-1 hidden xl:flex gap-4 h-48 select-none'>
+          <div className='z-1 hidden gap-4 h-48 select-none'>
             <div className='bg-dark2 rounded-2xl py-4 px-2 relative w-72 overflow-hidden cursor-pointer'>
               <div className='text-3xl font-bold'>Профиль</div>
               <CiPassport1 className='absolute bottom-[-0.8rem] right-[-2rem]' size={150} />
@@ -135,7 +130,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
               <MdOutlineWorkOutline className='absolute bottom-[-1.2rem] right-[-1rem] text-dark4 hover:text-white' size={150} />
             </div>
           </div>
-          <div className='flex flex-col xl:hidden gap-2 select-none'>
+          <div className='flex-col hidden gap-2 select-none'>
             <div className='grid grid-cols-2 w-full gap-2'>
               <div className='bg-dark2 rounded-2xl h-fit p-2 flex items-center gap-2 font-bold text-lg'><CiPassport1 size={28} /> Профиль</div>
               <div className='bg-dark2 rounded-2xl h-fit p-2 flex items-center gap-2 font-bold text-lg hidden'><CiMedicalCross size={28} /> Здоровье</div>

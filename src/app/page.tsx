@@ -2,49 +2,20 @@
 
 import Head from 'next/head';
 import * as React from 'react';
-
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
-
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-import Logo from '~/svg/Logo.svg';
-
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
-import { IoMdSearch, IoMdNotificationsOutline } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
-import { CiPassport1, CiMedicalCross } from "react-icons/ci";
-import { FaCity } from "react-icons/fa";
-import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle } from "react-icons/md";
-import { AiOutlineHistory } from "react-icons/ai";
+import dynamic from 'next/dynamic';
+const LandingHeader = dynamic(() => import('@/components/LandingHeader'), { ssr: false })
+import useLocalStorage from 'use-local-storage';
 
 export default function HomePage() {
+  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
+  const [session, setSession] = useLocalStorage<any>("session", "");
   return (
     <main className='bg-dark'>
       <Head>
         <title>Hi</title>
       </Head>
       <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px]'>
-        <header className='px-4 flex h-[56px] items-center justify-between'>
-          <a className='hidden lg:block translation-transform hover:scale-105 text-lg' href='/'><img src='/logo.png' className='w-14' /></a>
-          <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
-            <div className='bg-white hover:bg-gray-200 rounded-2xl p-2 text-black flex justify-center items-center cursor-pointer' onClick={() => {
-              location.replace("/auth")
-            }}>Авторизация</div>
-            <div className='bg-white hover:bg-gray-200 rounded-2xl p-2 text-black flex justify-center items-center cursor-pointer' onClick={() => {
-              location.replace("/user")
-            }}>Личный кабинет</div>
-          </div>
-        </header>
+        <LandingHeader passport={{ authData }} />
         <section className='px-4 mt-4'>
           <div className='text-9xl font-black'>Мои</div>
           <div className='text-9xl font-black'>Документы</div>

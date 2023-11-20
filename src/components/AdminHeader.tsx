@@ -6,7 +6,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdLogout, MdOutlineAdminPanelSettings } from "react-icons/md";
 import useLocalStorage from "use-local-storage";
 
-export default function Passport({ passport }: { passport: { authData: any, userID: any } }) {
+export default function Passport({ passport }: { passport: { authData: any, setUser: any } }) {
   const supabase = createClientComponentClient();
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
@@ -26,24 +26,17 @@ export default function Passport({ passport }: { passport: { authData: any, user
 
   }
 
-
-  async function handleSearch(event: any) {
-    if (event.key === 'Enter') {
-      getUser(event.target.value)
-    }
-  }
-
   return (
     <>
       {searchOpen ? <div className='flex sm:hidden mb-2 mx-4 items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
         <IoMdSearch size={20} className='text-gray-600' />
-        <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
+        <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={passport.setUser} />
       </div> : null}
       <header className='px-4 flex h-[56px] items-center justify-between'>
         <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
         <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
           <IoMdSearch size={20} className='text-gray-600' />
-          <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
+          <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={passport.setUser} />
         </div>
         <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
           {passport.authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}

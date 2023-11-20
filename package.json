@@ -27,6 +27,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
     "reactjs-localstorage": "^1.0.1",
+    "sass": "^1.69.5",
     "tailwind-merge": "^1.14.0",
     "use-local-storage": "^3.0.0"
   },
