@@ -160,7 +160,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className='flex flex-col'>
-                  <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедних: {invited})</div>
+                  <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
                   <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
                   <div className='flex flex-col gap-2 mt-4'>
                     {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
