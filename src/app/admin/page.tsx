@@ -517,10 +517,11 @@ export default function HomePage({ params }: { params: { id: string } }) {
               </div>
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
                 <div className='text-3xl font-bold flex items-center gap-2'>Лайки</div>
-                <div className=''>{userData?.likes}</div>
+                <div className=''>{userData?.likes?.map((e: any) => e + " ")}</div>
               </div>
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
                 <div className='text-3xl font-bold flex items-center gap-2'>Управление</div>
+                <div>Приглашен: {userData?.invitedby != null ? userData?.invitedby : "-"}</div>
                 <div className='mt-4 text-lg text-blue-500 hover:text-blue-600 cursor-pointer' onClick={() => {
                   genUrl();
                 }}>Сгенерировать и скопировать ссылку для входа</div>

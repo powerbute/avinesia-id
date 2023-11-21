@@ -54,7 +54,9 @@ export default function LikeCompoennt({ passport }: { passport: { authData: any,
     if (liked) {
       removeA(newLikes, passport.authData?.passid);
     } else {
-      newLikes.push(passport.authData?.passid);
+      if (!newLikes.includes(passport.authData?.passid)) {
+        newLikes.push(passport.authData?.passid);
+      }
     }
     const { error } = await supabase
       .from('users')
@@ -68,7 +70,7 @@ export default function LikeCompoennt({ passport }: { passport: { authData: any,
   }
 
   return (
-    <div className={"flex w-fit justify-center relative items-center cursor-pointer pt-[1px] h-10 px-2 rounded-2xl " + (!liked ? "bg-white hover:bg-gray-200 text-black" : "bg-red-500 hover:bg-red-400 text-white")} onClick={(e) => handleLike(e)}>
+    <div className={"flex select-none w-fit justify-center relative items-center cursor-pointer pt-[1px] h-10 px-2 rounded-2xl " + (!liked ? "bg-white hover:bg-gray-200 text-black" : "bg-red-500 hover:bg-red-400 text-white")} onClick={(e) => handleLike(e)}>
       <CiHeart color={!liked ? "black" : "white"} size={32} className="relative cursor-pointer" />
       <div>{passport.userData?.likes?.length > 0 ? passport.userData?.likes?.length : null}</div>
     </div>

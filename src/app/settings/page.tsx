@@ -33,6 +33,8 @@ export default function HomePage() {
   const [loaded, setLoaded] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>("");
+  const [invites, setInvites] = React.useState<any>([]);
+  const [invited, setInvited] = React.useState<any>(0);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -59,6 +61,40 @@ export default function HomePage() {
       .eq("session", session)
       .single();
     getUserByPassID(users?.passid);
+    getInvites(users?.passid);
+  }
+
+  async function getInvites(passid: any) {
+    let { data: invites, error } = await supabase
+      .from('invites')
+      .select('*')
+      .eq("passid", passid)
+    setInvites(invites);
+    getInvited(passid);
+  }
+
+  async function getInvited(passid: any) {
+    let { data: invites, error } = await supabase
+      .from('users')
+      .select('invitedby')
+      .eq("invitedby", passid)
+    setInvited(invites?.length);
+  }
+
+  async function genInvite() {
+    let generatedCode = makeid(6);
+    let { error } = await supabase
+      .from('invites')
+      .insert({ 'passid': authData?.passid, 'code': generatedCode, 'opens': 0 })
+    getInvites(authData?.passid);
+  }
+
+  async function delInvite(id: any) {
+    let { error } = await supabase
+      .from('invites')
+      .delete()
+      .eq('id', id);
+    getInvites(authData?.passid);
   }
 
   async function getUserByPassID(passid: any) {
@@ -121,6 +157,27 @@ export default function HomePage() {
                     <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
                       applyInput1();
                     }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                  </div>
+                </div>
+                <div className='flex flex-col'>
+                  <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедних: {invited})</div>
+                  <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
+                  <div className='flex flex-col gap-2 mt-4'>
+                    {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
+                    {invites?.map((e: any) =>
+                      <div className='bg-dark4 p-2 rounded-2xl gap-2 flex flex-col w-full'>
+                        <div className='text-2xl font-bold'>{e?.code}</div>
+                        <div className='flex justify-end gap-2'>
+                          <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                            navigator.clipboard.writeText("https://id.gooseland.cc/invite/" + e?.code)
+                            alert("Скопировано!")
+                          }}>Копировать ссылку</div>
+                          <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                            delInvite(e?.id);
+                          }}>Удалить</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
