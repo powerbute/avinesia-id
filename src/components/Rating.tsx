@@ -62,8 +62,8 @@ export default function Passport({ passport }: { passport: { authData: any, user
       {!loaded ?
         <div className='bg-dark2 rounded-2xl md:w-1/3 px-4 py-6 select-none'>
           <div className='text-3xl font-bold text-transparent bg-dark4 animate-pulse rounded-2xl'>Соц. рейтинг</div>
-          <div className={'mt-2 text-lg text-start font-bold text-transparent bg-dark4 animate-pulse rounded-2xl'}>1000</div>
-          <div className='flex w-full bg-dark4 animate-pulse rounded-2xl bg-opacity-20 h-2'>
+          <div className={'mt-2 text-lg mb-1 text-start font-bold text-transparent bg-dark4 animate-pulse rounded-2xl'}>1000</div>
+          <div className='flex w-full bg-dark4 animate-pulse rounded-2xl h-2'>
           </div>
         </div>
         :

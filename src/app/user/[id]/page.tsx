@@ -15,11 +15,11 @@ import NextImage from '@/components/NextImage';
 import useLocalStorage from "use-local-storage";
 import dynamic from 'next/dynamic'
 
-const Passport = dynamic(() => import('@/components/Passport'), { ssr: false })
-const IDCard = dynamic(() => import('@/components/IDCard'), { ssr: false })
-const Rating = dynamic(() => import('@/components/Rating'), { ssr: false })
-const Header = dynamic(() => import('@/components/Header'), { ssr: false })
 import RealtimeStatus from '@/components/RealtimeStatus';
+import Passport from '@/components/Passport';
+import IDCard from '@/components/IDCard';
+import Rating from '@/components/Rating';
+import Header from '@/components/Header';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {

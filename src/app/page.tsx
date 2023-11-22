@@ -3,13 +3,12 @@
 import Head from 'next/head';
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-const LandingHeader = dynamic(() => import('@/components/LandingHeader'), { ssr: false })
 import useLocalStorage from 'use-local-storage';
-
-const Passport = dynamic(() => import('@/components/PassportLanding'), { ssr: false })
-const IDCard = dynamic(() => import('@/components/IDCardLanding'), { ssr: false })
-const Rating = dynamic(() => import('@/components/RatingLanding'), { ssr: false })
 import RealtimeStatus from '../components/RealtimeStatus';
+import IDCardLanding from '@/components/IDCardLanding';
+import PassportLanding from '@/components/PassportLanding';
+import RatingLanding from '@/components/RatingLanding';
+import LandingHeader from '@/components/LandingHeader';
 
 export default function HomePage() {
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
@@ -45,11 +44,11 @@ export default function HomePage() {
             <div className='w-[100%] overflow-hidden flex bg-dark2 relative rounded-2xl select-none'>
               <div className='absolute w-[200%] top-[-2rem] right-[-60rem] origin-top-left rotate-12 rounded-2xl'>
                 <div className='rounded-2xl flex gap-4 flex-col md:flex-row'>
-                  <IDCard passport={{ authData: {}, userID: 4 }} />
-                  <Passport passport={{ authData: { roles: [1] }, userID: 4 }} />
+                  <IDCardLanding />
+                  <PassportLanding />
                 </div>
                 <div className='rounded-2xl mt-4 flex gap-4 flex-col md:flex-row'>
-                  <Rating passport={{ authData: {}, userID: 19 }} />
+                  <RatingLanding />
                   <div className='w-full'></div>
                 </div>
               </div>

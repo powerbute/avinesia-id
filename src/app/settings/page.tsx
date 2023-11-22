@@ -23,9 +23,8 @@ import NextImage from '@/components/NextImage';
 import useLocalStorage from "use-local-storage";
 import dynamic from 'next/dynamic'
 import RealtimeStatus from '@/components/RealtimeStatus';
-
-const IDCard = dynamic(() => import('@/components/IDCard'), { ssr: false })
-const Header = dynamic(() => import('@/components/Header'), { ssr: false })
+import Header from '@/components/Header';
+import IDCard from '@/components/IDCard';
 
 
 export default function HomePage() {

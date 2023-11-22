@@ -10,48 +10,51 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
   const supabase = createClientComponentClient();
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
   const [session, setSession] = useLocalStorage("session", "");
+  const [loaded, setLoaded] = useState(false);
 
-  async function getUser(nickname: any) {
-    const { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq("nickname", nickname)
-      .single();
-    if (users?.id == null) {
-      alert("Пользователь не найден!")
+  useEffect(() => {
+    if (!loaded) {
+      setLoaded(true);
     }
-    location.replace("/user/" + users.id)
-
-  }
+  })
 
   return (
     <>
-      <header className='px-4 flex h-[56px] items-center justify-between'>
-        <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
-        <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
-          {session != "" ?
-            <>
-              {passport.authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
-              <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/settings", "_self")}><IoSettingsOutline color='black' size={28} /></div>
-              <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoMdNotificationsOutline color='black' size={28} /></div>
-              <div className='bg-red-500 hover:bg-red-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
-                setSession("");
-                setAuthData({});
-                alert("Выход успешно выполнен!")
-                window.open("/", "_self")
-              }}><MdLogout color='white' size={28} /></div></>
-            : <div className='bg-green-500 hover:bg-green-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
-              window.open("/auth", "_self")
-            }}><MdLogin color='white' size={28} /></div>}
-          {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => {
-            getUser(passport.authData?.nickname)
-          }}>
-            <NextImage onError={(e) => {
-              e.currentTarget.srcset = "/Steve.webp";
-            }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (passport.authData?.nickname)} />
-          </div> : null}
-        </div>
-      </header>
+      {!loaded ?
+        <header className='px-4 flex h-[56px] items-center justify-between'>
+          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><div className='w-14 h-14 bg-dark4 animate-pulse rounded-2xl' /> <span className='font-bold bg-dark4 animate-pulse rounded-2xl text-transparent rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
+          <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
+            <div className='bg-dark4 animate-pulse rounded-2xl w-10 h-10 flex justify-center items-center'></div>
+          </div>
+        </header>
+        :
+        <header className='px-4 flex h-[56px] items-center justify-between'>
+          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
+          <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
+            {session != "" ?
+              <>
+                {passport.authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
+                <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/settings", "_self")}><IoSettingsOutline color='black' size={28} /></div>
+                <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoMdNotificationsOutline color='black' size={28} /></div>
+                <div className='bg-red-500 hover:bg-red-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
+                  setSession("");
+                  setAuthData({});
+                  alert("Выход успешно выполнен!")
+                  window.open("/", "_self")
+                }}><MdLogout color='white' size={28} /></div></>
+              : <div className='bg-green-500 hover:bg-green-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
+                window.open("/auth", "_self")
+              }}><MdLogin color='white' size={28} /></div>}
+            {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => {
+              window.open("/user/" + authData?.id, "_self")
+            }}>
+              <NextImage onError={(e) => {
+                e.currentTarget.srcset = "/Steve.webp";
+              }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (passport.authData?.nickname)} />
+            </div> : null}
+          </div>
+        </header>
+      }
     </>
   )
 }
