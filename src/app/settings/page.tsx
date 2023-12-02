@@ -35,6 +35,8 @@ export default function HomePage() {
   const [input2, setInput2] = React.useState<any>("");
   const [invites, setInvites] = React.useState<any>([]);
   const [invited, setInvited] = React.useState<any>(0);
+  let subsData = null;
+  function getPosts() { }
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -154,7 +156,7 @@ export default function HomePage() {
         </section>
         <section className='px-4 mt-4'>
           <div className='flex gap-4 mt-4 flex-col md:flex-row'>
-            <IDCard passport={{ userID: authData?.id, authData: authData }} />
+            <IDCard passport={{ userID: authData?.id, authData: authData, subsData: subsData, updatePage: getPosts }} />
             <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
               <div className='text-3xl font-bold flex items-center gap-2'>Настройки</div>
               <div className='flex flex-col gap-2 mt-4'>
