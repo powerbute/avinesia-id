@@ -112,7 +112,7 @@ export default function Post({ post }: { post: { authdata: any, passid: any, tex
                 }}>Подписаться</div>}
             </>
             : null}
-          {post.authdata?.id == post.userID ? <div className="h-fit p-2 hover:text-red-500 cursor-pointer hover:bg-dark3 rounded-2xl" onClick={() => deletePost(post.postData?.id)}>
+          {post.authdata?.id != post.userID || (post.authdata?.roles?.includes(1) || post.authdata?.roles?.includes(2)) ? <div className="h-fit p-2 hover:text-red-500 cursor-pointer hover:bg-dark3 rounded-2xl" onClick={() => deletePost(post.postData?.id)}>
             <MdDelete size={20} />
           </div> : null}
         </div>
