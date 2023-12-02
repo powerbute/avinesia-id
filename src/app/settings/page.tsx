@@ -32,6 +32,7 @@ export default function HomePage() {
   const [loaded, setLoaded] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>("");
+  const [input2, setInput2] = React.useState<any>("");
   const [invites, setInvites] = React.useState<any>([]);
   const [invited, setInvited] = React.useState<any>(0);
 
@@ -51,6 +52,16 @@ export default function HomePage() {
     getUserData()
     setInput1("");
     alert("Псевдоним успешно изменен!")
+  }
+
+  async function applyInput2() {
+    let { error } = await supabase
+      .from('users')
+      .update({ about: input2 })
+      .eq('id', authData?.id);
+    getUserData()
+    setInput2("");
+    alert("'О себе' успешно изменен!")
   }
 
   async function getPassID(session: any) {
@@ -155,6 +166,17 @@ export default function HomePage() {
                     }} />
                     <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
                       applyInput1();
+                    }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                  </div>
+                </div>
+                <div className='flex flex-col'>
+                  <div className='text-lg mb-[1px]'>О себе</div>
+                  <div className='flex gap-2'>
+                    <input placeholder={authData?.about} className='bg-dark2 border-dark3 border rounded-2xl' value={input2} onChange={(e) => {
+                      setInput2(e.target.value)
+                    }} />
+                    <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                      applyInput2();
                     }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
                   </div>
                 </div>

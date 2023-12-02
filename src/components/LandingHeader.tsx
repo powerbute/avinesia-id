@@ -22,14 +22,14 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
     <>
       {!loaded ?
         <header className='px-4 flex h-[56px] items-center justify-between'>
-          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><div className='w-14 h-14 bg-dark4 animate-pulse rounded-2xl' /> <span className='font-bold bg-dark4 animate-pulse rounded-2xl text-transparent rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
+          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><div className='w-14 h-14 bg-dark4 animate-pulse rounded-2xl' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA</span></a>
           <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
             <div className='bg-dark4 animate-pulse rounded-2xl w-10 h-10 flex justify-center items-center'></div>
           </div>
         </header>
         :
         <header className='px-4 flex h-[56px] items-center justify-between'>
-          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
+          <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA</span></a>
           <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
             {session != "" ?
               <>
@@ -46,7 +46,7 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
                 window.open("/auth", "_self")
               }}><MdLogin color='white' size={28} /></div>}
             {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => {
-              window.open("/user/" + authData?.id, "_self")
+              window.open("/home", "_self")
             }}>
               <NextImage onError={(e) => {
                 e.currentTarget.srcset = "/Steve.webp";

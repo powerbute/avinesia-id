@@ -33,7 +33,7 @@ export default function Passport({ passport }: { passport: { authData: any, setU
         <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={passport.setUser} />
       </div> : null}
       <header className='px-4 flex h-[56px] items-center justify-between'>
-        <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-red-500 rounded-md px-[5px] py-[1px]'>ALPHA</span></a>
+        <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA</span></a>
         <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
           <IoMdSearch size={20} className='text-gray-600' />
           <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={passport.setUser} />

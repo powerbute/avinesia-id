@@ -55,9 +55,31 @@ export default function HomePage({ params }: { params: { id: string } }) {
     const passIDt = "LGS-" + makeid2(6);
     const Data = new Date();
     let issdata = Data.getDate() + "." + Data.getMonth() + "." + Data.getFullYear();
+    if (input4 == "" || input3 == "" || input2 == "" || input1 == "") {
+      alert("Все поля должны быть заполнены!")
+      return;
+    }
+    const { data: data1 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('nickname', input1)
+      .single()
+    if (data1 != null) {
+      alert("Никнейм занят!")
+      return;
+    }
+    const { data: data2 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('tg', input4)
+      .single()
+    if (data2 != null) {
+      alert("На один ТГ не может быть привязано больше 1 аккаунта")
+      return;
+    }
     let { error: a1 } = await supabase
       .from('users')
-      .insert({ tg: input4, passid: passIDt, nickname: input1, rating: 0, surname: input2, issuedby: "Правительство Авинесии", dateofissue: issdata, validuntil: "10.06.2025", status: 0, birthdate: input3 })
+      .insert({ tg: input4, passid: passIDt, invitedby: inviterData?.nickname, nickname: input1, rating: 0, surname: input2, issuedby: "Правительство Авинесии", dateofissue: issdata, validuntil: "10.06.2025", status: 0, birthdate: input3 })
     setInput1("");
     setInput2("");
     setInput3("");
@@ -68,6 +90,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     //getUserData();
     setGID(passIDt)
     genSession(passIDt);
+    alert("Успех!");
   }
 
   React.useEffect(() => {
@@ -183,7 +206,6 @@ export default function HomePage({ params }: { params: { id: string } }) {
             <div className='flex justify-end'>
               <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
                 createAccount();
-                alert("Успех!")
               }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
             </div>
           </div>
