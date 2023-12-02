@@ -115,7 +115,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       {!loaded ?
         <>
           <header className='px-4 flex h-[56px] items-center justify-between'>
-            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1</span></a>
+            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1H1</span></a>
             <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
               <IoMdSearch size={20} className='text-gray-600' />
               <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
@@ -136,7 +136,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
             <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
           </div> : null}
           <header className='px-4 flex h-[56px] items-center justify-between'>
-            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1</span></a>
+            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1H1</span></a>
             <div className="relative h-[38px] w-[384px]">
               <div className="absolute top-0 left-0 flex flex-col justify-center">
                 <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>

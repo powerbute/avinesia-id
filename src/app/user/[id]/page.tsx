@@ -161,7 +161,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
             </div>
             <div className='flex gap-4 flex-col w-full'>
               <div className='w-full'>
-                {userData?.about != null ?
+                {userData?.about != null || userData?.heromedal != false || userData?.jobmedal != false || userData?.culturemedal != false || userData?.peacemedal != false || userData?.policemedal != false || userData?.activemedal != false || userData?.warmedal != false ?
                   <div className='mb-4 bg-dark2 rounded-2xl px-4 py-6'>
                     <div className="flex gap-2 rounded-2xl mb-2">
                       {userData?.heromedal ? <div className="cursor-pointer" onClick={() => {
