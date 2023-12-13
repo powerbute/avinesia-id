@@ -54,7 +54,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   async function createAccount() {
     const passIDt = "LGS-" + makeid2(6);
     const Data = new Date();
-    let issdata = Data.getDate() + "." + Data.getMonth() + "." + Data.getFullYear();
+    let issdata = Data.getDate() + "." + (Data.getMonth() + 1) + "." + Data.getFullYear();
     if (input4 == "" || input3 == "" || input2 == "" || input1 == "") {
       alert("Все поля должны быть заполнены!")
       return;

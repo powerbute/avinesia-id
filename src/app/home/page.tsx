@@ -8,7 +8,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck, CiUser } from "react-icons/ci";
 import { FaCity } from "react-icons/fa";
 import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout } from "react-icons/md";
-import { AiOutlineHistory } from "react-icons/ai";
+import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NextImage from '@/components/NextImage';
@@ -23,7 +23,8 @@ import Rating from '@/components/Rating';
 import Header from '@/components/Header';
 import LikeCompoennt from '@/components/LikeComponent';
 import Post from '@/components/Post';
-
+import { GiGrowth } from 'react-icons/gi';
+import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
 
 export default function HomePage() {
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
@@ -33,8 +34,10 @@ export default function HomePage() {
   const [subsData, setSubsData] = React.useState<any>([]);
   const [session, setSession] = useLocalStorage<any>("session", "");
   const [loaded, setLoaded] = React.useState(false);
+  const [postLoaded, setPostLoaded] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [miniapp, setMiniApp] = React.useState<any>();
+  const [ad, setAd] = React.useState<any>(0);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -82,6 +85,8 @@ export default function HomePage() {
       }
     }
     setPosts(postArray);
+    setAd(Math.floor(Math.random() * 10));
+    setPostLoaded(true);
     const { data: user } = await supabase
       .from('users')
       .select('*')
@@ -181,14 +186,29 @@ export default function HomePage() {
             </div>
             <div className='flex gap-4 flex-col w-full'>
               <div className='w-full'>
-                <div className='flex gap-2 mb-4 select-none'>
-                  <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                    window.open("/user/" + authData?.id, "_self")
-                  }}>
-                    <CiUser size={24} />
-                    <div>Профиль</div>
-                  </div>
-                  {(authData?.id == userData?.id || (authData?.roles?.includes(1) || authData?.roles?.includes(2))) && loaded ?
+                {ad == 5 && loaded ? <div className='flex flex-col gap-4 px-8 py-6 rounded-2xl bg-gradient-to-br from-emerald-900 to-green-700 mb-4'>
+                  <h2>Вступай в армию по контракту</h2>
+                  <p>Присоединяйтесь к сильнейшим! Будь частью ЧВК "Авинесия" - места, где рождаются настоящие герои! 💪<br /><br />
+
+                    🎖 У нас вы найдете отличные возможности для развития военной карьеры, получите уникальный профессиональный опыт и примените свои навыки в деле защиты мира. <br /><br />
+
+                    🔫 Мы ищем тех, кто готов стать частью нашей дружной команды, делиться опытом и стремиться к лучшим результатам в совместном благе и процветании.<br /><br />
+
+                    🌍 ЧВК "Авинесия" - место, где ваше служение превратится в историю, ваша отвага будет засвидетельствована и ваша преданность оценена.<br /><br />
+
+                    ⚔️ Присоединяйтесь к нам и станьте частью нашей семьи, где каждый член ценен и важен. Давайте вместе делать мир безопаснее и стабильнее!<br /><br />
+
+                    👨‍✈️ Набор открыт для тех, кто готов к вызову, кто в поисках приключений и новых возможностей. Присоединяйтесь к ЧВК "Авинесия" и станьте частью легендарного пути военной службы! 🌟</p>
+                  <a href='https://t.me/powerbute' className='bg-blue-500 hover:bg-blue-600 cursor-pointer w-fit rounded-2xl p-2'>Присоединится!</a>
+                </div> : null}
+                {loaded ?
+                  <div className='flex gap-2 mb-4 select-none'>
+                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
+                      window.open("/user/" + authData?.id, "_self")
+                    }}>
+                      <CiUser size={24} />
+                      <div>Профиль</div>
+                    </div>
                     <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
                       setOpen(true)
                       window.scrollTo(0, 0);
@@ -197,26 +217,49 @@ export default function HomePage() {
                       <CiPassport1 size={24} />
                       <div>Паспорт</div>
                     </div>
-                    : null}
-                  <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3 hidden'>
-                    <CiDeliveryTruck size={24} />
-                    <div>Пошта</div>
+                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
+                      setOpen(true)
+                      window.scrollTo(0, 0);
+                      setMiniApp(<PyatiletkaApp passport={{ authData: authData, userID: authData?.id, open: open, setOpen: setOpen }} />)
+                    }} >
+                      <GiGrowth size={24} />
+                      <div>Пятилетка</div>
+                    </div>
                   </div>
-                </div>
-                <div className='w-full rounded-2xl bg-dark4 border border-dark3 flex'>
-                  <textarea value={postInput} onChange={(e: any) => setPostInput(e.target.value)} className='w-full bg-dark4 rounded-l-2xl border border-none' placeholder='Что нового?' />
-                  <div className='p-2 flex justify-center items-center cursor-pointer hover:bg-dark3 rounded-r-2xl' onClick={() => createPost()}>
-                    <IoMdSend size={32} />
-                  </div>
-                </div>
+                  :
+                  <div className='flex gap-2 mb-4 select-none'>
+                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
+                      <CiUser size={24} />
+                      <div>Профиль</div>
+                    </div>
+                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
+                      <CiPassport1 size={24} />
+                      <div>Паспорт</div>
+                    </div>
+                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
+                      <GiGrowth size={24} />
+                      <div>Пятилетка</div>
+                    </div>
+                  </div>}
+                {loaded ?
+                  <div className='w-full rounded-2xl bg-dark4 border border-dark3 flex'>
+                    <textarea value={postInput} onChange={(e: any) => setPostInput(e.target.value)} className='w-full bg-dark4 rounded-l-2xl border border-none' placeholder='Что нового?' />
+                    <div className='p-2 flex justify-center items-center cursor-pointer hover:bg-dark3 rounded-r-2xl' onClick={() => createPost()}>
+                      <IoMdSend size={32} />
+                    </div>
+                  </div> : null
+                }
                 <div className='flex flex-col gap-4 mt-4'>
-                  {posts.length > 0 && loaded ?
+                  {postLoaded ?
                     <>
-                      {posts?.map((e: any) =>
-                        <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: true }} />
-                      )}
-                    </> :
-                    <div className='text-lg font-bold text-center'>Постов нет, подпишитесь на кого-то и их посты будут появлятся в ленте</div>}
+                      {posts.length > 0 ?
+                        <>
+                          {posts?.map((e: any) =>
+                            <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: true }} />
+                          )}
+                        </> :
+                        <div className='text-lg font-bold text-center'>Постов нет, подпишитесь на кого-то и их посты будут появлятся в ленте</div>}
+                    </> : <div className='flex justify-center mt-8'><AiOutlineLoading size={32} className='animate-spin' /></div>}
                 </div>
               </div>
             </div>

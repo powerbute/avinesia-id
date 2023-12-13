@@ -25,6 +25,8 @@ import dynamic from 'next/dynamic'
 import RealtimeStatus from '@/components/RealtimeStatus';
 import Header from '@/components/Header';
 import IDCard from '@/components/IDCard';
+import moment from 'moment';
+import 'moment/locale/ru'
 
 
 export default function HomePage() {
@@ -37,6 +39,8 @@ export default function HomePage() {
   const [invited, setInvited] = React.useState<any>(0);
   let subsData = null;
   function getPosts() { }
+
+  moment.locale('ru')
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -182,7 +186,17 @@ export default function HomePage() {
                     }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
                   </div>
                 </div>
-                <div className='flex flex-col'>
+                <div className='flex flex-col mt-8'>
+                  <div className="snowContainer mb-4">
+                    <div className='w-full h-full absolute bg-gradient-to-br from-sky-500 to-cyan-500 bgSnow rounded-2xl bg-opacity-20'></div>
+                    <div id='snow' className='flex flex-col gap-4 px-8 py-6 rounded-2xl'>
+                      <h1>До "Зимней вербовки" осталось всего<br className='hidden xl:block' /> {moment("20231224", "YYYYMMDD").fromNow().slice(6)}</h1>
+                      <h3>В период этого ивента награды за приглашенных будут x2</h3>
+                    </div>
+                  </div>
+                  <div className='flex'>
+                    <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
+                  </div>
                   <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
                   <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
                   <div className='flex flex-col gap-2 mt-4'>

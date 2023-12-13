@@ -8,7 +8,7 @@ import { IoMedalSharp, IoSettingsOutline, IoStar } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck } from "react-icons/ci";
 import { FaBook, FaCity, FaPeace } from "react-icons/fa";
 import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout, MdWork, MdLocalPolice } from "react-icons/md";
-import { AiOutlineHistory } from "react-icons/ai";
+import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NextImage from '@/components/NextImage';
@@ -23,7 +23,8 @@ import Rating from '@/components/Rating';
 import Header from '@/components/Header';
 import LikeCompoennt from '@/components/LikeComponent';
 import Post from '@/components/Post';
-import { GiTank } from "react-icons/gi";
+import { GiGrowth, GiTank } from "react-icons/gi";
+import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
@@ -34,6 +35,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [userData, setUserData] = React.useState<any>({});
   const [session, setSession] = useLocalStorage<any>("session", "");
   const [loaded, setLoaded] = React.useState(false);
+  const [postLoaded, setPostLoaded] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [miniapp, setMiniApp] = React.useState<any>();
   const [subsData, setSubsData] = React.useState<any>([]);
@@ -53,6 +55,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .eq("passid", user?.passid)
       .order('created_at', { ascending: false })
     setPosts(posts);
+    setPostLoaded(true);
     const { data: subs } = await supabase
       .from('subs')
       .select('*')
@@ -153,15 +156,20 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='flex gap-4 flex-col md:flex-row'>
             <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
-              <div className='hidden md:block rounded-2xl bg-dark2 pb-4'>
-                <div className='rounded-t-2xl bg-sky-950 h-4'></div>
-                <div className='text-2xl font-bold px-4 pt-2'>Лигорщина</div>
-              </div>
+              {loaded ?
+                <div className='hidden md:block rounded-2xl bg-dark2 pb-4'>
+                  <div className='rounded-t-2xl bg-emerald-700 h-4'></div>
+                  <div className='text-2xl font-bold px-4 pt-2'>Лигорщина</div>
+                </div> :
+                <div className='hidden md:block rounded-2xl bg-dark2 animate-pulse text-transparent pb-4'>
+                  <div className='rounded-t-2xl bg-dark4 animate-pulse h-4'></div>
+                  <div className='text-2xl font-bold px-4 pt-2'>Лигорщина</div>
+                </div>}
               <Rating passport={{ authData: authData, userID: userID }} />
             </div>
             <div className='flex gap-4 flex-col w-full'>
               <div className='w-full'>
-                {userData?.about != null || userData?.heromedal != false || userData?.jobmedal != false || userData?.culturemedal != false || userData?.peacemedal != false || userData?.policemedal != false || userData?.activemedal != false || userData?.warmedal != false ?
+                {(userData?.about != null || userData?.heromedal != false || userData?.jobmedal != false || userData?.culturemedal != false || userData?.peacemedal != false || userData?.policemedal != false || userData?.activemedal != false || userData?.warmedal != false) && loaded ?
                   <div className='mb-4 bg-dark2 rounded-2xl px-4 py-6'>
                     <div className="flex gap-2 rounded-2xl mb-2">
                       {userData?.heromedal ? <div className="cursor-pointer" onClick={() => {
@@ -188,22 +196,40 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     </div>
                     {userData?.about}</div>
                   : null}
-                <div className='flex gap-2 mb-4 select-none'>
-                  {(authData?.id == userData?.id || (authData?.roles?.includes(1) || authData?.roles?.includes(2))) && loaded ?
-                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                      setOpen(true)
-                      window.scrollTo(0, 0);
-                      setMiniApp(<PassportApp passport={{ authData: authData, userID: userID, open: open, setOpen: setOpen }} />)
-                    }} >
+                {loaded ?
+                  <div className='flex gap-2 mb-4 select-none'>
+                    {(authData?.id == userData?.id || (authData?.roles?.includes(1) || authData?.roles?.includes(2))) && loaded ?
+                      <>
+                        <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
+                          setOpen(true)
+                          window.scrollTo(0, 0);
+                          setMiniApp(<PassportApp passport={{ authData: authData, userID: userID, open: open, setOpen: setOpen }} />)
+                        }} >
+                          <CiPassport1 size={24} />
+                          <div>Паспорт</div>
+                        </div>
+                        <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
+                          setOpen(true)
+                          window.scrollTo(0, 0);
+                          setMiniApp(<PyatiletkaApp passport={{ authData: authData, userID: authData?.id, open: open, setOpen: setOpen }} />)
+                        }} >
+                          <GiGrowth size={24} />
+                          <div>Пятилетка</div>
+                        </div>
+                      </>
+                      : null}
+                  </div>
+                  :
+                  <div className='flex gap-2 mb-4 select-none'>
+                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
                       <CiPassport1 size={24} />
                       <div>Паспорт</div>
                     </div>
-                    : null}
-                  <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3 hidden'>
-                    <CiDeliveryTruck size={24} />
-                    <div>Пошта</div>
-                  </div>
-                </div>
+                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
+                      <GiGrowth size={24} />
+                      <div>Пятилетка</div>
+                    </div>
+                  </div>}
                 {loaded ?
                   <>
                     {userData?.id == authData?.id ?
@@ -215,13 +241,16 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                       : null}</> : null}
                 <div className='flex flex-col gap-4 mt-4'>
-                  {posts.length > 0 ?
+                  {postLoaded ?
                     <>
-                      {posts?.map((e: any) =>
-                        <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: false }} />
-                      )}
-                    </> :
-                    <div className='text-lg font-bold text-center'>Постов нет, этот пользователь еще ничего не публиковал</div>}
+                      {posts.length > 0 ?
+                        <>
+                          {posts?.map((e: any) =>
+                            <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: false }} />
+                          )}
+                        </> :
+                        <div className='text-lg font-bold text-center'>Постов нет, подпишитесь на кого-то и их посты будут появлятся в ленте</div>}
+                    </> : <div className='flex justify-center mt-8'><AiOutlineLoading size={32} className='animate-spin' /></div>}
                 </div>
               </div>
             </div>

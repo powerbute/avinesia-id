@@ -115,7 +115,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       {!loaded ?
         <>
           <header className='px-4 flex h-[56px] items-center justify-between'>
-            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1H3</span></a>
+            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA</span></a>
             <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
               <IoMdSearch size={20} className='text-gray-600' />
               <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
@@ -133,10 +133,12 @@ export default function Passport({ passport }: { passport: { authData: any, user
         <>
           {searchOpen ? <div className='flex sm:hidden mb-2 mx-4 items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
             <IoMdSearch size={20} className='text-gray-600' />
-            <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onKeyDown={handleSearch} />
+            <input placeholder='Поиск по Авинесии' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onChange={handleSearch3} onFocus={() => {
+              setSearchOpen2(true);
+            }} />
           </div> : null}
           <header className='px-4 flex h-[56px] items-center justify-between'>
-            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 1H3</span></a>
+            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px] hidden'>BETA 2</span><span className='font-bold bg-gradient-to-br from-rose-600 to-emerald-600 rounded-md px-[5px] py-[1px]'>С днем Авинесии!</span></a>
             <div className="relative h-[38px] w-[384px]">
               <div className="absolute top-0 left-0 flex flex-col justify-center">
                 <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
@@ -146,7 +148,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   }} />
                 </div>
                 {searchOpen2 && searchData1.length > 0 ?
-                  <div className="flex-col relative p-2 bg-dark2 rounded-b-2xl z-[90] max-h-[80vh] overflow-y-scroll">
+                  <div className="flex-col relative p-2 bg-dark2 rounded-b-2xl z-[90] max-h-[80vh] overflow-y-scroll w-[90vw] md:w-full">
                     {searchData1?.map((e: any) =>
                       <div key={makeid(50)} className="hover:bg-dark3 cursor-pointer flex justify-between items-center p-2 rounded-2xl" onClick={() => {
                         window.open("/user/" + e?.id, "_self")

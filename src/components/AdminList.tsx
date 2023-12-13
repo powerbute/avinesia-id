@@ -6,7 +6,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdLogout, MdOutlineAdminPanelSettings } from "react-icons/md";
 import useLocalStorage from "use-local-storage";
 
-export default function Passport({ passport }: { passport: { authData: any, menu: any, setMenu: any, setUserData: any, setCurrentID: any } }) {
+export default function Passport({ passport }: { passport: { authData: any, menu: any, setMenu: any, setUserData: any, setCurrentID: any, setUserByPassID: any } }) {
   const supabase = createClientComponentClient();
   const [session, setSession] = useLocalStorage("session", "");
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
@@ -37,20 +37,6 @@ export default function Passport({ passport }: { passport: { authData: any, menu
       setLoaded(true);
     }
   }, [])
-
-  async function setUserByPassID(passid: any) {
-    const { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq("passid", passid)
-      .single();
-    if (users?.id == null) {
-      alert("Пользователь не найден!")
-    } else {
-      passport.setUserData(users);
-    }
-
-  }
 
   function makeid(length: any) {
     let result = '';
@@ -94,7 +80,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                 {users?.map((e: any) =>
                   <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
                     passport.setCurrentID(e?.id)
-                    setUserByPassID(e?.passid)
+                    passport.setUserByPassID(e?.passid)
                     passport.setMenu(false);
                   }}>
                     <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
@@ -108,14 +94,9 @@ export default function Passport({ passport }: { passport: { authData: any, menu
             : null}
           <div className='hidden md:block md:w-1/3 select-none'>
             <div className='bg-dark2 rounded-2xl rounded-b-none w-full px-4 pt-6 pb-2'>
-              <div className='flex flex-col gap-1'>
-                <div className='text-3xl font-bold'>Статистика</div>
-                <div className='text-xl'>Всего: {users.length}</div>
-                <div className='text-xl'>Активных: {activeUsers.length}</div>
-                <div className='flex gap-2 items-center'>
-                  <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyActive ? " bg-green-500" : " bg-white")} onClick={() => setOnlyActive(!onlyActive)}></div>
-                  <div className='w-[70%]'>Не показывать людей с приостановленным гражданством</div>
-                </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyActive ? " bg-green-500" : " bg-white")} onClick={() => setOnlyActive(!onlyActive)}></div>
+                <div className='w-[70%]'>Не показывать людей с приостановленным гражданством</div>
               </div>
             </div>
             <div className='bg-dark2 rounded-2xl rounded-t-none w-full px-4 pb-6'>
@@ -131,7 +112,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                   {activeUsers?.map((e: any) =>
                     <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
                       passport.setCurrentID(e?.id)
-                      setUserByPassID(e?.passid)
+                      passport.setUserByPassID(e?.passid)
                     }}>
                       <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
                         e.currentTarget.srcset = "/Steve.webp";
@@ -151,7 +132,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                   {users?.map((e: any) =>
                     <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
                       passport.setCurrentID(e?.id)
-                      setUserByPassID(e?.passid)
+                      passport.setUserByPassID(e?.passid)
                     }}>
                       <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
                         e.currentTarget.srcset = "/Steve.webp";
