@@ -58,7 +58,7 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <body className='bg-dark'>{children}</body>
     </html>
   );
 }

@@ -33,7 +33,7 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
           <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
             {session != "" ?
               <>
-                {passport.authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
+                {(passport.authData?.roles?.includes(1) || passport.authData?.roles?.includes(2) || passport.authData?.roles?.includes(6)) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
                 <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/settings", "_self")}><IoSettingsOutline color='black' size={28} /></div>
                 <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoMdNotificationsOutline color='black' size={28} /></div>
                 <div className='bg-red-500 hover:bg-red-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {

@@ -5,7 +5,7 @@ import { useState } from "react"
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { IoHeartOutline } from "react-icons/io5";
-import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle, MdWork } from "react-icons/md";
+import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle, MdWork, MdOutlineContentCopy } from "react-icons/md";
 import { CiHeart } from "react-icons/ci";
 import dynamic from 'next/dynamic'
 
@@ -120,7 +120,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
           <div className={'flex flex-col gap-2'}>
             <div className="flex justify-between flex-col md:flex-row">
               <div className='flex gap-2 md:gap-0 md:flex-col'>
-                <div className={"relative w-fit rounded-2xl " + getColor()}>
+                <div className={"relative w-fit rounded-2xl bg-dark4"}>
                   <div className="bg-dark2 animate-pulse w-[128px] h-[128px]"></div>
                 </div>
                 <div className='flex flex-col mt-2 gap-1'>
@@ -130,12 +130,12 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 </div>
               </div>
               <div className="mt-1.5 md:mt-0 flex w-full gap-2 flex-col">
-                <div className="flex justify-end">
+                <div className="flex justify-end w-full gap-2">
                   <div className={"flex select-none w-fit justify-center relative items-center pt-[1px] h-10 px-2 rounded-2xl bg-dark4 animate-pulse text-transparent"}>
                     <CiHeart size={32} className="relative text-dark3 cursor-pointer" />
                     <div>1</div>
                   </div>
-                  <div className="flex md:hidden bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Подписан</div>
+                  <div className="flex md:hidden select-none bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold w-full">Подписаться</div>
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               <div className={'rounded-md px-2 py-0.5 bg-dark3 animate-pulse text-transparent'}>Example role</div>
               <div className={'rounded-md px-2 py-0.5 bg-dark3 animate-pulse text-transparent'}>Example role</div>
             </div>
-            <div className="hidden md:flex bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Подписан</div>
+            <div className="hidden md:flex select-none bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Подписан</div>
           </div>
         </div>
         :
@@ -161,24 +161,27 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 <div className='flex flex-col mt-2'>
                   <div className='font-bold text-3xl'>{userData?.surname}</div>
                   <div className='font-medium text-zinc-400 text-xl'>{userData?.nickname}</div>
-                  <div className='text-zinc-500'>@user{passport.userID}</div>
+                  <div className='text-zinc-500 flex gap-2 items-center'>@user{passport.userID} <span className="cursor-pointer" onClick={() => {
+                    navigator.clipboard.writeText("https://id.gooseland.cc/user/" + passport.userID);
+                    alert("Ссылка скопирована!")
+                  }}><MdOutlineContentCopy /></span></div>
                 </div>
               </div>
               <div className="mt-1.5 md:mt-0 flex w-full gap-2 flex-col">
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
                   <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
                   {passport.authData?.id != passport.userID && !(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
                     <>
-                      {checkSub() == true ? <div className="flex md:hidden w-full bg-blue-500 hover:bg-blue-600 cursor-pointer p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
+                      {checkSub() == true ? <div className="flex md:hidden select-none w-full bg-blue-500 hover:bg-blue-600 cursor-pointer p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
                         sub();
                       }}>Вы подписаны</div> :
-                        <div className="flex md:hidden w-full bg-dark4 hover:bg-dark3 cursor-pointer p-1 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
+                        <div className="flex md:hidden select-none w-full bg-dark4 hover:bg-dark3 cursor-pointer p-1 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
                           sub();
                         }}>Подписаться</div>}
                     </>
                     : null}
                   {(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-                    <div className="flex md:hidden w-full bg-blue-500 hover:bg-blue-600 cursor-pointer p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Подписан</div>
+                    <div className="flex md:hidden select-none w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 cursor-not-allowed p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Вы подписаны</div>
                     : null}
                 </div>
               </div>
@@ -190,16 +193,16 @@ export default function Passport({ passport }: { passport: { authData: any, user
             </div>
             {passport.authData?.id != passport.userID && !(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
               <>
-                {checkSub() == true ? <div className="hidden md:flex bg-blue-500 hover:bg-blue-600 cursor-pointer p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
+                {checkSub() == true ? <div className="hidden md:flex select-none bg-blue-500 hover:bg-blue-600 cursor-pointer p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
                   sub();
                 }}>Вы подписаны</div> :
-                  <div className="hidden md:flex bg-dark4 hover:bg-dark3 cursor-pointer p-2 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
+                  <div className="hidden md:flex select-none bg-dark4 hover:bg-dark3 cursor-pointer p-2 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
                     sub();
                   }}>Подписаться</div>}
               </>
               : null}
             {(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-              <div className="hidden md:flex w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 cursor-not-allowed p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Вы подписаны</div>
+              <div className="hidden md:flex select-none w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 cursor-not-allowed p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Вы подписаны</div>
               : null}
           </div>
         </div>

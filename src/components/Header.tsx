@@ -138,7 +138,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
             }} />
           </div> : null}
           <header className='px-4 flex h-[56px] items-center justify-between'>
-            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px] hidden'>BETA 2</span><span className='font-bold bg-gradient-to-br from-rose-600 to-emerald-600 rounded-md px-[5px] py-[1px]'>С днем Авинесии!</span></a>
+            <a className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2' href='/'><img src='/logo.png' className='w-14' /> <span className='font-bold bg-yellow-500 rounded-md px-[5px] py-[1px]'>BETA 2H1</span><span className='font-bold bg-gradient-to-br from-rose-600 to-emerald-600 rounded-md px-[5px] py-[1px] hidden'>С днем Авинесии!</span></a>
             <div className="relative h-[38px] w-[384px]">
               <div className="absolute top-0 left-0 flex flex-col justify-center">
                 <div className='hidden sm:flex items-center border border-dark3 rounded-md select-none px-2 sm:w-96'>
@@ -167,7 +167,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div>
             </div>
             <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
-              {passport.authData?.roles?.includes(1) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
+              {(passport.authData?.roles?.includes(1) || passport.authData?.roles?.includes(2) || passport.authData?.roles?.includes(6)) ? <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/admin", "_self")}><MdOutlineAdminPanelSettings color='black' size={28} /></div> : null}
               <div className='block sm:hidden bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => setSearchOpen(!searchOpen)}><IoMdSearch color='black' size={28} /></div>
               <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => window.open("/settings", "_self")}><IoSettingsOutline color='black' size={28} /></div>
               <div className='bg-white hover:bg-gray-200 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoMdNotificationsOutline color='black' size={28} /></div>

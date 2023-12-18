@@ -12,7 +12,9 @@ export default function Passport({ passport }: { passport: { authData: any, menu
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
   const [users, setUsers] = React.useState<any>([]);
   const [activeUsers, setActiveUsers] = React.useState<any>([]);
+  const [requestUsers, setRequestUsers] = React.useState<any>([]);
   const [onlyActive, setOnlyActive] = React.useState(true);
+  const [onlyRequest, setOnlyRequest] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
 
   async function getUserByPassID() {
@@ -29,6 +31,14 @@ export default function Passport({ passport }: { passport: { authData: any, menu
       .order('nickname', { ascending: true })
 
     setActiveUsers(users2);
+
+    const { data: users3 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('status', 0)
+      .order('nickname', { ascending: true })
+
+    setRequestUsers(users3);
   }
 
   useEffect(() => {
@@ -95,32 +105,66 @@ export default function Passport({ passport }: { passport: { authData: any, menu
           <div className='hidden md:block md:w-1/3 select-none'>
             <div className='bg-dark2 rounded-2xl rounded-b-none w-full px-4 pt-6 pb-2'>
               <div className='flex gap-2 items-center'>
-                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyActive ? " bg-green-500" : " bg-white")} onClick={() => setOnlyActive(!onlyActive)}></div>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyActive ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyRequest(false);
+                  setOnlyActive(!onlyActive)
+                }}></div>
                 <div className='w-[70%]'>Не показывать людей с приостановленным гражданством</div>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyRequest ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyActive(false);
+                  setOnlyRequest(!onlyRequest);
+                }}></div>
+                <div className='w-[70%]'>Показывать только заявки</div>
               </div>
             </div>
             <div className='bg-dark2 rounded-2xl rounded-t-none w-full px-4 pb-6'>
-              {onlyActive ?
-                <div className='flex flex-col gap-2'>
-                  <div className='text-3xl font-bold'>Граждане</div>
-                  <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                    passport.setUserData({})
-                  }}>
-                    <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
-                    <div className='text-xl font-bold'>Добавить</div>
-                  </div>
-                  {activeUsers?.map((e: any) =>
-                    <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                      passport.setCurrentID(e?.id)
-                      passport.setUserByPassID(e?.passid)
-                    }}>
-                      <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
-                        e.currentTarget.srcset = "/Steve.webp";
-                      }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
-                      <div className='text-xl font-bold'>{e?.nickname}</div>
-                    </div>
-                  )}
-                </div> :
+              {onlyActive || onlyRequest ?
+                <>
+                  {onlyActive ?
+                    <div className='flex flex-col gap-2'>
+                      <div className='text-3xl font-bold'>Граждане</div>
+                      <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                        passport.setUserData({})
+                      }}>
+                        <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
+                        <div className='text-xl font-bold'>Добавить</div>
+                      </div>
+                      {activeUsers?.map((e: any) =>
+                        <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                          passport.setCurrentID(e?.id)
+                          passport.setUserByPassID(e?.passid)
+                        }}>
+                          <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                            e.currentTarget.srcset = "/Steve.webp";
+                          }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
+                          <div className='text-xl font-bold'>{e?.nickname}</div>
+                        </div>
+                      )}
+                    </div> : null}
+                  {onlyRequest ?
+                    <div className='flex flex-col gap-2'>
+                      <div className='text-3xl font-bold'>Граждане</div>
+                      <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                        passport.setUserData({})
+                      }}>
+                        <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
+                        <div className='text-xl font-bold'>Добавить</div>
+                      </div>
+                      {requestUsers?.map((e: any) =>
+                        <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                          passport.setCurrentID(e?.id)
+                          passport.setUserByPassID(e?.passid)
+                        }}>
+                          <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                            e.currentTarget.srcset = "/Steve.webp";
+                          }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
+                          <div className='text-xl font-bold'>{e?.nickname}</div>
+                        </div>
+                      )}
+                    </div> : null}
+                </> :
                 <div className='flex flex-col gap-2'>
                   <div className='text-3xl font-bold'>Граждане</div>
                   <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {

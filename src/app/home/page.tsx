@@ -38,6 +38,8 @@ export default function HomePage() {
   const [open, setOpen] = React.useState(false);
   const [miniapp, setMiniApp] = React.useState<any>();
   const [ad, setAd] = React.useState<any>(0);
+  const [randomUsers, setRandomUsers] = React.useState<any>([]);
+  const [usersInWanted, setWantedUsers] = React.useState<any>([]);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -49,6 +51,20 @@ export default function HomePage() {
       .select('*')
       .eq("passid", "LGS-P7nX10")
       .order('created_at', { ascending: false });
+    const { data: randomUsers1 } = await supabase
+      .from('random_users')
+      .select('*')
+      .lt('status', 2)
+      .limit(3);
+    setRandomUsers(randomUsers1);
+    const { data: wantedUsers } = await supabase
+      .from('users')
+      .select('*')
+      .eq('wanted', 'TRUE')
+      .gt('wantedcost', 1)
+      .order('wantedcost', { ascending: true })
+      .limit(3);
+    setWantedUsers(wantedUsers);
     const { data: postUser3 } = await supabase
       .from('posts')
       .select('*')
@@ -185,6 +201,46 @@ export default function HomePage() {
               <IDCard passport={{ authData: authData, userID: authData?.id, subsData: subsData, updatePage: getPosts }} />
             </div>
             <div className='flex gap-4 flex-col w-full'>
+              {usersInWanted?.length > 0 && loaded && !authData?.wanted ?
+                <div className='w-full hidden h-[300px] md:flex flex-col gap-2 rounded-2xl'>
+                  <div className='md:grid grid-cols-3 gap-4'>
+                    {usersInWanted?.map((e: any) =>
+                      <div className='relative'>
+                        <div className='absolute z-[90] w-[250px] h-[532px] wantedbg'>
+                          <div onClick={() => {
+                            window.open("/user/" + e?.id, "_self")
+                          }} className={'flex flex-col items-center mt-[4.5rem] gap-1 select-none cursor-pointer rounded-2xl p-2'}>
+                            <NextImage onError={(e) => {
+                              e.currentTarget.srcset = "/Steve.webp";
+                            }} width={128} height={128} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + e?.nickname} />
+                            <div className='flex flex-col items-center w-full'>
+                              <div className='text-xl text-black text-center font-bold flex items-center gap-2 cursor-pointer'>{e?.nickname}</div>
+                              <div className='text-red-500 text-2xl font-bold text-center'>Награда: {e?.wantedcost}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                : null}
+              <div className='w-full hidden md:grid grid-cols-3 gap-4'>
+                {randomUsers?.map((e: any) =>
+                  <div>
+                    <div onClick={() => {
+                      window.open("/user/" + e?.id, "_self")
+                    }} className={'flex gap-2 select-none bg-dark2 hover:bg-dark4 cursor-pointer rounded-2xl p-2' + (e?.dateofissue?.substring(e?.dateofissue?.length - 4) == "2021" ? " shadow shadow-yellow-500" : "")}>
+                      <NextImage onError={(e) => {
+                        e.currentTarget.srcset = "/Steve.webp";
+                      }} width={48} height={48} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + e?.nickname} />
+                      <div className='flex flex-col'>
+                        <div className='text-xl font-bold flex items-center gap-2 cursor-pointer'>{e?.nickname}</div>
+                        <div className='text-zinc-700'>Случайный игрок</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className='w-full'>
                 {ad == 5 && loaded ? <div className='flex flex-col gap-4 px-8 py-6 rounded-2xl bg-gradient-to-br from-emerald-900 to-green-700 mb-4'>
                   <h2>Вступай в армию по контракту</h2>

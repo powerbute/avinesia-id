@@ -260,3 +260,11 @@ textarea {
     background-position: 500px 1000px, 400px 400px, 300px 300px;
   }
 }
+
+.wantedbg {
+  background-image: url('/wanted.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.colornickname {}

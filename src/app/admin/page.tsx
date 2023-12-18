@@ -26,7 +26,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [users, setUsers] = React.useState<any>([]);
   const [activeUsers, setActiveUsers] = React.useState<any>([]);
   const [passid, setPassid] = React.useState<any>();
-  const [authData, setAuthData] = useLocalStorage("authdata", {});
+  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>();
   const [input2, setInput2] = React.useState<any>();
@@ -35,18 +35,26 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [input5, setInput5] = React.useState<any>();
   const [input6, setInput6] = React.useState<any>();
   const [input7, setInput7] = React.useState<any>();
+  const [input8, setInput8] = React.useState<any>();
+  const [input9, setInput9] = React.useState<any>();
   const [currentID, setCurrentID] = React.useState<any>();
   const [menu1, setMenu1] = React.useState(true);
   const [loaded, setLoaded] = React.useState(false);
 
-  const [week1, setWeek1] = React.useState<any>([]);
-  const [week2, setWeek2] = React.useState<any>([]);
-  const [week3, setWeek3] = React.useState<any>([]);
-  const [week4, setWeek4] = React.useState<any>([]);
-  const [week5, setWeek5] = React.useState<any>([]);
-  const [week6, setWeek6] = React.useState<any>([]);
+  const [inoagent, setInoagent] = React.useState<any>(false);
+  const [hero, setHero] = React.useState<any>(false);
+  const [work, setWork] = React.useState<any>(false);
+  const [culture, setCulture] = React.useState<any>(false);
+  const [peace, setPeace] = React.useState<any>(false);
+  const [donos, setDonos] = React.useState<any>(false);
+  const [activer, setActiver] = React.useState<any>(false);
+  const [warrior, setWarrior] = React.useState<any>(false);
+  const [wanted, setWanted] = React.useState<any>(false);
+  const [job, setJob] = React.useState<any>("");
 
   const [iUsers, setIUsers] = React.useState<any>([]);
+
+  const [jUsers, setJUsers] = React.useState<any>([]);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -65,6 +73,16 @@ export default function HomePage({ params }: { params: { id: string } }) {
         .from('users')
         .select('nickname, invitedby')
         .eq("invitedby", user?.passid);
+      setInoagent(user?.inoagent);
+      setWork(user?.jobmedal);
+      setCulture(user?.culturemedal);
+      setPeace(user?.peacemedal);
+      setDonos(user?.policemedal);
+      setActiver(user?.activemedal);
+      setWarrior(user?.warmedal);
+      setHero(user?.heromedal);
+      setWanted(user?.wanted);
+      setJob(user?.job);
       setIUsers(users);
     }
 
@@ -77,6 +95,16 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .eq("nickname", nickname)
       .single();
     setUserData(user);
+    setInoagent(user?.inoagent);
+    setWork(user?.jobmedal);
+    setCulture(user?.culturemedal);
+    setPeace(user?.peacemedal);
+    setDonos(user?.policemedal);
+    setActiver(user?.activemedal);
+    setWarrior(user?.warmedal);
+    setHero(user?.heromedal);
+    setWanted(user?.wanted);
+    setJob(user?.job);
 
     let { data: users, error: a1 } = await supabase
       .from('users')
@@ -111,6 +139,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .lt('status', 2);
     setActiveUsers(users);
 
+    let { data: users1, error: a1 } = await supabase
+      .from('users')
+      .select('*')
+      .neq("job", null);
+    setJUsers(users1);
+
     const date = new Date();
     const sDay = date.getDate() - date.getDay() + 1;
     let { data: sUsers, error: a } = await supabase
@@ -121,6 +155,9 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   React.useEffect(() => {
+    if (!(authData?.roles?.includes(1) || authData?.roles?.includes(2) || authData?.roles?.includes(6))) {
+      window.open("/home", "_self")
+    }
     if (!loaded) {
       getStats();
       setLoaded(true);
@@ -251,6 +288,26 @@ export default function HomePage({ params }: { params: { id: string } }) {
     setInput7("");
   }
 
+  async function applyInput8() {
+    let { error } = await supabase
+      .from('users')
+      .update({ wantedcost: input8 })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+    setInput8("");
+  }
+
+  async function applyInput9() {
+    let { error } = await supabase
+      .from('users')
+      .update({ job: input9 })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+    setInput9("");
+  }
+
   async function applyStatus(status1: any) {
     let { error: a1 } = await supabase
       .from('users')
@@ -279,6 +336,96 @@ export default function HomePage({ params }: { params: { id: string } }) {
     let { error: a1 } = await supabase
       .from('users')
       .update({ rating: rating1 })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyInoagent(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ inoagent: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyHero(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ heromedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyWork(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ jobmedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyCulture(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ culturemedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyPeace(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ peacemedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyDonos(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ policemedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyActiver(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ activemedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyWarrior(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ warmedal: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyWanted(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ wanted: value })
+      .eq('id', userData?.id);
+    setUserByPassID(userData?.passid);
+    //getUserData();
+  }
+
+  async function applyJob(value: any) {
+    let { error: a1 } = await supabase
+      .from('users')
+      .update({ job: value })
       .eq('id', userData?.id);
     setUserByPassID(userData?.passid);
     //getUserData();
@@ -340,25 +487,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
             <div className='text-3xl font-bold'>Статистика</div>
             <div className='flex gap-2 mt-2 justify-center'>
               <div className='flex flex-col bg-dark4 rounded-2xl p-2'>
-                <p>Прирост граждан (по дням)</p>
+                <p>Безработица</p>
                 <div className='flex h-[200px] items-end gap-2'>
-                  <div className='h-[32%] px-4 rounded-2xl flex items-end bg-green-500'>32</div>
-                  <div className='h-[47%] px-4 rounded-2xl flex items-end bg-green-500'>47</div>
-                  <div className='h-[34%] px-4 rounded-2xl flex items-end bg-red-500'>34</div>
-                  <div className='h-[54%] px-4 rounded-2xl flex items-end bg-green-500'>54</div>
-                  <div className='h-[27%] px-4 rounded-2xl flex items-end bg-red-500'>27</div>
-                  <div className='h-[98%] px-4 rounded-2xl flex items-end bg-green-500'>98</div>
-                </div>
-              </div>
-              <div className='flex flex-col bg-dark4 rounded-2xl p-2'>
-                <p>Прирост граждан (по неделям)</p>
-                <div className='flex h-[200px] items-end gap-2'>
-                  <div className='h-[33%] px-4 rounded-2xl flex items-end bg-green-500'>232</div>
-                  <div className='h-[49%] px-4 rounded-2xl flex items-end bg-green-500'>344</div>
-                  <div className='h-[17%] px-4 rounded-2xl flex items-end bg-red-500'>121</div>
-                  <div className='h-[42%] px-4 rounded-2xl flex items-end bg-green-500'>298</div>
-                  <div className='h-[61%] px-4 rounded-2xl flex items-end bg-green-500'>432</div>
-                  <div className='h-[43%] px-4 rounded-2xl flex items-end bg-red-500'>302</div>
+                  <div className={'px-4 rounded-2xl flex items-end bg-green-500 h-[' + Math.round(((activeUsers?.length - jUsers?.length) / activeUsers?.length) * 100) + "%]"}>{(((activeUsers?.length - jUsers?.length) / activeUsers?.length) * 100).toFixed(2)}%</div>
+                  <div className='h-[6%] px-4 rounded-2xl flex items-end bg-yellow-500 cursor-pointer'>6%</div>
                 </div>
               </div>
               <div className='flex flex-col bg-dark4 rounded-2xl p-2'>
@@ -378,7 +510,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
         <section className='px-4 mt-4'>
           <div className='flex gap-4 mt-4 flex-col md:flex-row'>
             <AdminList passport={{ authData: authData, menu: menu1, setMenu: setMenu1, setUserData: setUserData, setCurrentID: setCurrentID, setUserByPassID: setUserByPassID }} />
-            {userData?.id == null ? <div className='w-full hidden md:flex gap-4 flex-col'>
+            {userData?.id == null && !(authData?.roles?.includes(6)) && loaded ? <div className='w-full hidden md:flex gap-4 flex-col'>
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
                 <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
                   <div className='text-3xl font-bold flex items-center gap-2'>Паспортные данные {userData?.status == 1 && userData?.preStatus == null ? <span className='rounded-md bg-green-500 text-base px-1 h-fit'>Активно</span> : null}{userData?.status == 1 && userData?.preStatus == 1 ? <span className='rounded-md bg-green-500 text-base px-1 h-fit bg-opacity-50 text-opacity-50'>Активно</span> : null}{userData?.status == 0 || (userData?.status == 2 && userData?.preStatus == null) ? <span className='rounded-md bg-yellow-500 text-base px-1 h-fit'>На рассмотрении</span> : null}{userData?.status == 2 && userData?.preStatus != null ? <span className='rounded-md bg-purple-500 text-base px-1 h-fit'>Приостановлено</span> : null}{userData?.status == 3 ? <span className='rounded-md bg-red-500 text-base px-1 h-fit'>Изъято</span> : null}</div>
@@ -462,192 +594,294 @@ export default function HomePage({ params }: { params: { id: string } }) {
               </div>
             </div> : null}
             {userData?.id != null ? <div className='w-full hidden md:flex gap-4 flex-col'>
+              {!(authData?.roles?.includes(6)) ?
+                <>
+                  <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                    <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
+                      <div className='text-3xl font-bold flex items-center gap-2'>Паспортные данные {userData?.status == 1 && userData?.preStatus == null ? <span className='rounded-md bg-green-500 text-base px-1 h-fit'>Активно</span> : null}{userData?.status == 1 && userData?.preStatus == 1 ? <span className='rounded-md bg-green-500 text-base px-1 h-fit bg-opacity-50 text-opacity-50'>Активно</span> : null}{userData?.status == 0 || (userData?.status == 2 && userData?.preStatus == null) ? <span className='rounded-md bg-yellow-500 text-base px-1 h-fit'>На рассмотрении</span> : null}{userData?.status == 2 && userData?.preStatus != null ? <span className='rounded-md bg-purple-500 text-base px-1 h-fit'>Приостановлено</span> : null}{userData?.status == 3 ? <span className='rounded-md bg-red-500 text-base px-1 h-fit'>Изъято</span> : null}</div>
+                    </div>
+                    <div className='flex justify-center w-full'>
+                      <div className='mb-4 flex justify-center gap-2 bg-dark4 rounded-2xl w-fit p-2 items-center'>
+                        <div className={'bg-green-500 hover:bg-green-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 1 ? " py-1" : null)} onClick={() => {
+                          applyStatus(1);
+                        }}>Активно</div>
+                        <div className={'bg-purple-500 hover:bg-purple-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 2 ? " py-1" : null)} onClick={() => {
+                          applyStatus(2);
+                        }}>Приостановлено</div>
+                        <div className={'bg-red-500 hover:bg-red-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 3 ? " py-1" : null)} onClick={() => {
+                          applyStatus(3);
+                        }}>Изъято</div>
+                        <div className={'bg-yellow-500 hover:bg-yellow-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 0 ? " py-1" : null)} onClick={() => {
+                          applyStatus(0);
+                        }}>На рассмотрении</div>
+                      </div>
+                    </div>
+                    <div className='grid grid-cols-2 mb-4'>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Никнейм</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.nickname} className='bg-dark2 border-dark3 border rounded-2xl' value={input1} onChange={(e) => {
+                            setInput1(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput1();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Псевдоним</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.surname} className='bg-dark2 border-dark3 border rounded-2xl' value={input2} onChange={(e) => {
+                            setInput2(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput2();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='grid grid-cols-2 mb-4'>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Дата рождения</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.birthdate} className='bg-dark2 border-dark3 border rounded-2xl' value={input3} onChange={(e) => {
+                            setInput3(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput3();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Telegram</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.tg} className='bg-dark2 border-dark3 border rounded-2xl' value={input4} onChange={(e) => {
+                            setInput4(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput4();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='grid grid-cols-2 mb-4'>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>ID</div>
+                        <div className='text-xl md:text-2xl font-bold uppercase'>{userData?.passid}</div>
+                      </div>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Выдан кем</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.issuedby} className='bg-dark2 border-dark3 border rounded-2xl' value={input5} onChange={(e) => {
+                            setInput5(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput5();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='grid grid-cols-2'>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Дата выдачи</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.dateofissue} className='bg-dark2 border-dark3 border rounded-2xl' value={input6} onChange={(e) => {
+                            setInput6(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput6();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Действителен до</div>
+                        <div className='flex gap-2'>
+                          <input placeholder={userData?.validuntil} className='bg-dark2 border-dark3 border rounded-2xl' value={input7} onChange={(e) => {
+                            setInput7(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput7();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                    <div className='text-3xl font-bold flex items-center gap-2'>Социальный рейтинг</div>
+                    <div className={'mt-2 text-lg text-start font-bold' + (userData?.rating > 0 ? " text-green-500" : " text-red-500")}>{userData?.rating}</div>
+                    <div className='flex w-full bg-zinc-400 rounded-2xl bg-opacity-20'>
+                      <div className='flex w-full justify-start'><div className={'h-2 rounded-l-2xl w-[' + (Math.abs(userData?.rating) / 10) + "%] " + (userData?.rating > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
+                    </div>
+                    <div className='grid grid-cols-6 w-full gap-2 mt-2'>
+                      <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 1)
+                      }}>+1</div>
+                      <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 5)
+                      }}>+5</div>
+                      <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 10)
+                      }}>+10</div>
+                      <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 20)
+                      }}>+20</div>
+                      <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 50)
+                      }}>+50</div>
+                      <div className='bg-green-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating + 100)
+                      }}>+100</div>
+                    </div>
+                    <div className='grid grid-cols-6 w-full gap-2 mt-2'>
+                      <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 1)
+                      }}>-1</div>
+                      <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 5)
+                      }}>-5</div>
+                      <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 10)
+                      }}>-10</div>
+                      <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 20)
+                      }}>-20</div>
+                      <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 50)
+                      }}>-50</div>
+                      <div className='bg-red-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
+                        applyRating(userData?.rating - 100)
+                      }}>-100</div>
+                    </div>
+                  </div>
+                  <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                    <div className='text-3xl font-bold flex items-center gap-2'>Лайки</div>
+                    <div className=''>{userData?.likes?.map((e: any) => e + " ")}</div>
+                  </div>
+                  <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                    <div className='text-3xl font-bold flex items-center gap-2 mb-4'>Приглашения</div>
+                    <div className='flex flex-col gap-2'>
+                      {iUsers?.map((e: any) =>
+                        <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                          setCurrentID(e?.id)
+                          setUserByPassID(e?.passid)
+                        }}>
+                          <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                            e.currentTarget.srcset = "/Steve.webp";
+                          }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
+                          <div className='text-xl font-bold'>{e?.nickname}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                    <div className='text-3xl font-bold flex items-center gap-2 mb-4'>Розыск</div>
+                    <div className='flex flex-col gap-2'>
+                      <div className='flex justify-between'>
+                        <div className='text-lg'>В розыске</div>
+                        <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (wanted ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                          applyWanted(!wanted);
+                        }}></div>
+                      </div>
+                      <div className='flex flex-col gap-0.5'>
+                        <div className='text-lg text-zinc-400'>Цена головы))</div>
+                        <div className='flex gap-2'>
+                          <input className='bg-dark2 border-dark3 border rounded-2xl' value={input8} onChange={(e) => {
+                            setInput8(e.target.value)
+                          }} />
+                          <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                            applyInput8();
+                          }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </> : null}
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
-                <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
-                  <div className='text-3xl font-bold flex items-center gap-2'>Паспортные данные {userData?.status == 1 && userData?.preStatus == null ? <span className='rounded-md bg-green-500 text-base px-1 h-fit'>Активно</span> : null}{userData?.status == 1 && userData?.preStatus == 1 ? <span className='rounded-md bg-green-500 text-base px-1 h-fit bg-opacity-50 text-opacity-50'>Активно</span> : null}{userData?.status == 0 || (userData?.status == 2 && userData?.preStatus == null) ? <span className='rounded-md bg-yellow-500 text-base px-1 h-fit'>На рассмотрении</span> : null}{userData?.status == 2 && userData?.preStatus != null ? <span className='rounded-md bg-purple-500 text-base px-1 h-fit'>Приостановлено</span> : null}{userData?.status == 3 ? <span className='rounded-md bg-red-500 text-base px-1 h-fit'>Изъято</span> : null}</div>
-                </div>
-                <div className='flex justify-center w-full'>
-                  <div className='mb-4 flex justify-center gap-2 bg-dark4 rounded-2xl w-fit p-2 items-center'>
-                    <div className={'bg-green-500 hover:bg-green-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 1 ? " py-1" : null)} onClick={() => {
-                      applyStatus(1);
-                    }}>Активно</div>
-                    <div className={'bg-purple-500 hover:bg-purple-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 2 ? " py-1" : null)} onClick={() => {
-                      applyStatus(2);
-                    }}>Приостановлено</div>
-                    <div className={'bg-red-500 hover:bg-red-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 3 ? " py-1" : null)} onClick={() => {
-                      applyStatus(3);
-                    }}>Изъято</div>
-                    <div className={'bg-yellow-500 hover:bg-yellow-600 cursor-pointer rounded-md h-fit px-1 hover:py-1' + (userData?.status == 0 ? " py-1" : null)} onClick={() => {
-                      applyStatus(0);
-                    }}>На рассмотрении</div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Никнейм</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.nickname} className='bg-dark2 border-dark3 border rounded-2xl' value={input1} onChange={(e) => {
-                        setInput1(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput1();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Псевдоним</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.surname} className='bg-dark2 border-dark3 border rounded-2xl' value={input2} onChange={(e) => {
-                        setInput2(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput2();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Дата рождения</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.birthdate} className='bg-dark2 border-dark3 border rounded-2xl' value={input3} onChange={(e) => {
-                        setInput3(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput3();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Telegram</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.tg} className='bg-dark2 border-dark3 border rounded-2xl' value={input4} onChange={(e) => {
-                        setInput4(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput4();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2 mb-4'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>ID</div>
-                    <div className='text-xl md:text-2xl font-bold uppercase'>{userData?.passid}</div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Выдан кем</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.issuedby} className='bg-dark2 border-dark3 border rounded-2xl' value={input5} onChange={(e) => {
-                        setInput5(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput5();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                </div>
-                <div className='grid grid-cols-2'>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Дата выдачи</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.dateofissue} className='bg-dark2 border-dark3 border rounded-2xl' value={input6} onChange={(e) => {
-                        setInput6(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput6();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                    <div className='text-lg text-zinc-400'>Действителен до</div>
-                    <div className='flex gap-2'>
-                      <input placeholder={userData?.validuntil} className='bg-dark2 border-dark3 border rounded-2xl' value={input7} onChange={(e) => {
-                        setInput7(e.target.value)
-                      }} />
-                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                        applyInput7();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
-                <div className='text-3xl font-bold flex items-center gap-2'>Социальный рейтинг</div>
-                <div className={'mt-2 text-lg text-start font-bold' + (userData?.rating > 0 ? " text-green-500" : " text-red-500")}>{userData?.rating}</div>
-                <div className='flex w-full bg-zinc-400 rounded-2xl bg-opacity-20'>
-                  <div className='flex w-full justify-start'><div className={'h-2 rounded-l-2xl w-[' + (Math.abs(userData?.rating) / 10) + "%] " + (userData?.rating > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
-                </div>
-                <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 1)
-                  }}>+1</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 5)
-                  }}>+5</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 10)
-                  }}>+10</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 20)
-                  }}>+20</div>
-                  <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 50)
-                  }}>+50</div>
-                  <div className='bg-green-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating + 100)
-                  }}>+100</div>
-                </div>
-                <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 1)
-                  }}>-1</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 5)
-                  }}>-5</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 10)
-                  }}>-10</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 20)
-                  }}>-20</div>
-                  <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 50)
-                  }}>-50</div>
-                  <div className='bg-red-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                    applyRating(userData?.rating - 100)
-                  }}>-100</div>
-                </div>
-              </div>
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
-                <div className='text-3xl font-bold flex items-center gap-2'>Лайки</div>
-                <div className=''>{userData?.likes?.map((e: any) => e + " ")}</div>
-              </div>
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
-                <div className='text-3xl font-bold flex items-center gap-2 mb-4'>Приглашения</div>
+                <div className='text-3xl font-bold flex items-center gap-2 mb-4'>Труд</div>
                 <div className='flex flex-col gap-2'>
-                  {iUsers?.map((e: any) =>
-                    <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                      setCurrentID(e?.id)
-                      setUserByPassID(e?.passid)
-                    }}>
-                      <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
-                        e.currentTarget.srcset = "/Steve.webp";
-                      }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
-                      <div className='text-xl font-bold'>{e?.nickname}</div>
+                  <div className='flex justify-between'>
+                    <div className='text-lg'>Статус разнорабочего</div>
+                    <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (job == "Разнорабочий" ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                      applyJob(job == "Разнорабочий" ? null : "Разнорабочий");
+                    }}></div>
+                  </div>
+                  <div className='text-lg p-2 bg-blue-500 hover:bg-blue-600 cursor-pointer rounded-2xl w-fit select-none'>Подтвердить</div>
+                  <div className='flex flex-col gap-0.5'>
+                    <div className='text-lg text-zinc-400'>Профессия</div>
+                    <div className='flex gap-2'>
+                      <input className='bg-dark2 border-dark3 border rounded-2xl' value={input9} onChange={(e) => {
+                        setInput9(e.target.value)
+                      }} />
+                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                        applyInput9();
+                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                      <div className='ml-8 flex items-center'>Профессия: {userData?.job}</div>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
-              <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
-                <div className='text-3xl font-bold flex items-center gap-2'>Управление</div>
-                <div>Приглашен: {userData?.invitedby != null ? userData?.invitedby : "-"}</div>
-                <div className='mt-4 text-lg text-blue-500 hover:text-blue-600 cursor-pointer' onClick={() => {
-                  genUrl();
-                }}>Сгенерировать и скопировать ссылку для входа</div>
-              </div>
+              {!(authData?.roles?.includes(6)) ?
+                <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
+                  <div className='text-3xl font-bold flex items-center gap-2'>Управление</div>
+                  <div className='flex flex-col gap-2 px-8 py-6 bg-dark rounded-2xl mt-2'>
+                    <div className='text-xl font-bold mb-2'>Управление наградами</div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Иноагент</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (inoagent ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyInoagent(!inoagent);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Герой Авинесии</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (hero ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyHero(!hero);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Герой труда</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (work ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyWork(!work);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Культура и образование</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (culture ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyCulture(!culture);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Мир</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (peace ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyPeace(!peace);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Агент в народе</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (donos ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyDonos(!donos);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Активный челик</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (activer ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyActiver(!activer);
+                      }}></div>
+                    </div>
+                    <div className='flex justify-between'>
+                      <div className='text-lg'>Военная награда</div>
+                      <div className={'w-4 h-4 cursor-pointer rounded-2xl' + (warrior ? " bg-green-500" : " bg-dark4")} onClick={() => {
+                        applyWarrior(!warrior);
+                      }}></div>
+                    </div>
+                  </div>
+                  <div>Приглашен: {userData?.invitedby != null ? userData?.invitedby : "-"}</div>
+                  <div className='mt-4 text-lg text-blue-500 hover:text-blue-600 cursor-pointer' onClick={() => {
+                    genUrl();
+                  }}>Сгенерировать и скопировать ссылку для входа</div>
+                </div>
+                : null}
             </div> : null}
-            {userData?.id == null && !menu1 ? <div className='w-full flex md:hidden gap-4 flex-col'>
+            {userData?.id == null && !menu1 && !(authData?.roles?.includes(6)) && loaded ? <div className='w-full flex md:hidden gap-4 flex-col'>
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
                 <div className='flex items-center justify-between gap-2 mb-4 select-none'>
                   <div className='flex'>
@@ -734,7 +968,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             </div> : null}
-            {userData?.id != null && !menu1 ? <div className='w-full flex md:hidden gap-4 flex-col'>
+            {userData?.id != null && !menu1 && !(authData?.roles?.includes(6)) && loaded ? <div className='w-full flex md:hidden gap-4 flex-col'>
               <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit'>
                 <div className='flex items-center justify-between gap-2 mb-4 select-none'>
                   <div className='flex'>

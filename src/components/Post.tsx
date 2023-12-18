@@ -6,6 +6,7 @@ import { useState } from "react"
 import moment from "moment";
 import 'moment/locale/ru'
 import { MdDelete, MdVerified } from "react-icons/md";
+import { IoWarning } from "react-icons/io5";
 
 export default function Post({ post }: { post: { authdata: any, passid: any, text: any, date: any, postData: any, updatePosts: any, userID: any, subsData: any, subEn: any } }) {
   const supabase = createClientComponentClient();
@@ -90,24 +91,30 @@ export default function Post({ post }: { post: { authdata: any, passid: any, tex
   return (
     <div key={makeid(10)} className='flex gap-4 flex-col bg-dark2 p-4 rounded-2xl relative'>
       <div className="flex justify-between items-start">
-        <div className='flex gap-2'>
+        <div className='flex gap-2 select-none'>
           <NextImage onError={(e) => {
             e.currentTarget.srcset = "/Steve.webp";
-          }} width={48} height={48} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + user?.nickname} />
+          }} onClick={() => {
+            window.open("/user/" + post.userID, "_self")
+          }} width={48} height={48} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + user?.nickname} />
           <div className='flex flex-col'>
-            <div className='text-xl font-bold flex items-center gap-2'>{user?.nickname} {
-              user?.roles?.includes(2) ? <span className="text-sm font-normal md:bg-dark4 md:px-2 rounded-2xl flex gap-2 items-center select-none"><MdVerified /> <span className="hidden md:block">Правительство</span></span> : null
-            }</div>
+            <div className='text-xl font-bold flex items-center gap-2 cursor-pointer' onClick={() => {
+              window.open("/user/" + post.userID, "_self")
+            }}>{user?.nickname} {
+                user?.roles?.includes(2) ? <span className="text-sm font-normal md:bg-dark4 md:px-2 rounded-2xl flex gap-2 items-center select-none"><MdVerified /> <span className="hidden md:block">Правительство</span></span> : null
+              }
+              {user?.inoagent ? <span className="text-sm font-normal md:bg-gradient-to-br from-rose-400 to-red-600 md:px-2 rounded-2xl flex gap-2 items-center select-none"><IoWarning /> <span className="hidden md:block">Иноагент</span></span> : null}
+            </div>
             <div className='text-zinc-700'>{moment(post.date).fromNow()}</div>
           </div>
         </div>
         <div className="flex gap-2 items-center">
           {(post.authdata?.id != post.userID && !(post.passid == "LGS-P7nX10" || post.passid == "LGS-49fb3e")) && post.subEn ?
             <>
-              {checkSub() == true ? <div className="flex bg-blue-500 hover:bg-blue-600 cursor-pointer p-2 rounded-2xl flex justify-center" onClick={() => {
+              {checkSub() == true ? <div className="flex select-none bg-blue-500 hover:bg-blue-600 cursor-pointer p-2 rounded-2xl flex justify-center" onClick={() => {
                 sub();
               }}>Подписан</div> :
-                <div className="flex bg-dark4 hover:bg-dark3 cursor-pointer p-2 rounded-2xl flex justify-center" onClick={() => {
+                <div className="flex select-none bg-dark4 hover:bg-dark3 cursor-pointer p-2 rounded-2xl flex justify-center" onClick={() => {
                   sub();
                 }}>Подписаться</div>}
             </>
