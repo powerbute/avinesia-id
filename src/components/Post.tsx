@@ -96,7 +96,7 @@ export default function Post({ post }: { post: { authdata: any, passid: any, tex
             e.currentTarget.srcset = "/Steve.webp";
           }} onClick={() => {
             window.open("/user/" + post.userID, "_self")
-          }} width={48} height={48} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + user?.nickname} />
+          }} width={48} height={48} alt='profile avatar' className="cursor-pointer" src={'https://avatar.spworlds.ru/face/512/' + user?.nickname} />
           <div className='flex flex-col'>
             <div className='text-xl font-bold flex items-center gap-2 cursor-pointer' onClick={() => {
               window.open("/user/" + post.userID, "_self")

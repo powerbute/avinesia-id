@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 
 type NextImageProps = {
   useSkeleton?: boolean;
+  inAdmin?: boolean;
   classNames?: {
     image?: string;
     blur?: string;
@@ -23,6 +24,7 @@ type NextImageProps = {
  */
 export default function NextImage({
   useSkeleton = false,
+  inAdmin = false,
   src,
   width,
   height,
@@ -33,6 +35,9 @@ export default function NextImage({
 }: NextImageProps) {
   const [status, setStatus] = React.useState(
     useSkeleton ? 'loading' : 'complete'
+  );
+  const [inAdmin2, setInAdmin] = React.useState(
+    inAdmin ? 'loading' : 'complete'
   );
   const widthIsSet = className?.includes('w-') ?? false;
 
@@ -45,7 +50,7 @@ export default function NextImage({
         className={cn(
           classNames?.image,
           status === 'loading' && cn('animate-pulse', classNames?.blur),
-          "rounded-2xl",
+          inAdmin == true ? "rounded-md" : "rounded-2xl",
         )}
         src={src}
         width={width}

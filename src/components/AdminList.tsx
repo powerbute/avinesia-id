@@ -11,10 +11,18 @@ export default function Passport({ passport }: { passport: { authData: any, menu
   const [session, setSession] = useLocalStorage("session", "");
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
   const [users, setUsers] = React.useState<any>([]);
+  const [pauseUsers, setPauseUsers] = React.useState<any>([]);
+  const [kickUsers, setKickUsers] = React.useState<any>([]);
+  const [banUsers, setBanUsers] = React.useState<any>([]);
+  const [turUsers, setTurUsers] = React.useState<any>([]);
   const [activeUsers, setActiveUsers] = React.useState<any>([]);
   const [requestUsers, setRequestUsers] = React.useState<any>([]);
   const [onlyActive, setOnlyActive] = React.useState(true);
   const [onlyRequest, setOnlyRequest] = React.useState(false);
+  const [onlyBan, setOnlyBan] = React.useState(false);
+  const [onlyKick, setOnlyKick] = React.useState(false);
+  const [onlyTur, setOnlyTur] = React.useState(false);
+  const [onlyPause, setOnlyPause] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
 
   async function getUserByPassID() {
@@ -27,7 +35,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
     const { data: users2 } = await supabase
       .from('users')
       .select('*')
-      .lt('status', 2)
+      .eq('status', 1)
       .order('nickname', { ascending: true })
 
     setActiveUsers(users2);
@@ -39,6 +47,38 @@ export default function Passport({ passport }: { passport: { authData: any, menu
       .order('nickname', { ascending: true })
 
     setRequestUsers(users3);
+
+    const { data: users4 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('status', 5)
+      .order('nickname', { ascending: true })
+
+    setBanUsers(users4);
+
+    const { data: users5 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('status', 3)
+      .order('nickname', { ascending: true })
+
+    setKickUsers(users5);
+
+    const { data: users6 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('status', 4)
+      .order('nickname', { ascending: true })
+
+    setTurUsers(users6);
+
+    const { data: users7 } = await supabase
+      .from('users')
+      .select('*')
+      .eq('status', 2)
+      .order('nickname', { ascending: true })
+
+    setPauseUsers(users7);
   }
 
   useEffect(() => {
@@ -95,7 +135,7 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                   }}>
                     <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
                       e.currentTarget.srcset = "/Steve.webp";
-                    }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
+                    }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
                     <div className='text-xl font-bold'>{e?.nickname}</div>
                   </div>
                 )}
@@ -104,25 +144,48 @@ export default function Passport({ passport }: { passport: { authData: any, menu
             : null}
           <div className='hidden md:block md:w-1/3 select-none'>
             <div className='bg-dark2 rounded-2xl rounded-b-none w-full px-4 pt-6 pb-2'>
+              <div>Отображать только:</div>
               <div className='flex gap-2 items-center'>
                 <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyActive ? " bg-green-500" : " bg-white")} onClick={() => {
-                  setOnlyRequest(false);
                   setOnlyActive(!onlyActive)
                 }}></div>
-                <div className='w-[70%]'>Не показывать людей с приостановленным гражданством</div>
+                <div className='w-[70%]'>Активное гражданство</div>
               </div>
               <div className='flex gap-2 items-center'>
                 <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyRequest ? " bg-green-500" : " bg-white")} onClick={() => {
-                  setOnlyActive(false);
                   setOnlyRequest(!onlyRequest);
                 }}></div>
-                <div className='w-[70%]'>Показывать только заявки</div>
+                <div className='w-[70%]'>Заявка на гражданство</div>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyPause ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyPause(!onlyPause);
+                }}></div>
+                <div className='w-[70%]'>Приостановленное гражданство</div>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyKick ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyKick(!onlyKick);
+                }}></div>
+                <div className='w-[70%]'>Изъято гражданство</div>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyTur ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyTur(!onlyTur);
+                }}></div>
+                <div className='w-[70%]'>Турвиза</div>
+              </div>
+              <div className='flex gap-2 items-center'>
+                <div className={'w-4 h-4 min-h-4 min-w-4 rounded-2xl cursor-pointer ' + (onlyBan ? " bg-green-500" : " bg-white")} onClick={() => {
+                  setOnlyBan(!onlyBan);
+                }}></div>
+                <div className='w-[70%]'>Запрет на въезд</div>
               </div>
             </div>
             <div className='bg-dark2 rounded-2xl rounded-t-none w-full px-4 pb-6'>
-              {onlyActive || onlyRequest ?
+              {onlyActive || onlyRequest || onlyBan || onlyPause || onlyKick || onlyTur ?
                 <>
-                  {onlyActive ?
+                  {onlyActive || onlyRequest || onlyBan || onlyPause || onlyKick || onlyTur ?
                     <div className='flex flex-col gap-2'>
                       <div className='text-3xl font-bold'>Граждане</div>
                       <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
@@ -131,38 +194,84 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                         <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
                         <div className='text-xl font-bold'>Добавить</div>
                       </div>
-                      {activeUsers?.map((e: any) =>
-                        <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                          passport.setCurrentID(e?.id)
-                          passport.setUserByPassID(e?.passid)
-                        }}>
-                          <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
-                            e.currentTarget.srcset = "/Steve.webp";
-                          }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
-                          <div className='text-xl font-bold'>{e?.nickname}</div>
-                        </div>
-                      )}
-                    </div> : null}
-                  {onlyRequest ?
-                    <div className='flex flex-col gap-2'>
-                      <div className='text-3xl font-bold'>Граждане</div>
-                      <div className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                        passport.setUserData({})
-                      }}>
-                        <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
-                        <div className='text-xl font-bold'>Добавить</div>
-                      </div>
-                      {requestUsers?.map((e: any) =>
-                        <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                          passport.setCurrentID(e?.id)
-                          passport.setUserByPassID(e?.passid)
-                        }}>
-                          <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
-                            e.currentTarget.srcset = "/Steve.webp";
-                          }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
-                          <div className='text-xl font-bold'>{e?.nickname}</div>
-                        </div>
-                      )}
+                      {onlyActive ? <>
+                        {activeUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}
+                      </> : null}
+                      {onlyRequest ? <>
+                        <div className="border-b border-dark3"></div>
+                        {requestUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}</> : null}
+                      {onlyPause ? <>
+                        <div className="border-b border-dark3"></div>
+                        {pauseUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}</> : null}
+                      {onlyKick ? <>
+                        <div className="border-b border-dark3"></div>
+                        {kickUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}</> : null}
+                      {onlyBan ? <>
+                        <div className="border-b border-dark3"></div>
+                        {banUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}</> : null}
+                      {onlyTur ? <>
+                        <div className="border-b border-dark3"></div>
+                        {turUsers?.map((e: any) =>
+                          <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
+                            passport.setCurrentID(e?.id)
+                            passport.setUserByPassID(e?.passid)
+                          }}>
+                            <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className='text-xl font-bold'>{e?.nickname}</div>
+                          </div>
+                        )}</> : null}
                     </div> : null}
                 </> :
                 <div className='flex flex-col gap-2'>
@@ -173,17 +282,6 @@ export default function Passport({ passport }: { passport: { authData: any, menu
                     <div className='rounded-2xl w-12 h-12 bg-zinc-400'></div>
                     <div className='text-xl font-bold'>Добавить</div>
                   </div>
-                  {users?.map((e: any) =>
-                    <div key={makeid(10)} className='flex gap-2 items-center hover:bg-dark3 rounded-2xl cursor-pointer' onClick={() => {
-                      passport.setCurrentID(e?.id)
-                      passport.setUserByPassID(e?.passid)
-                    }}>
-                      <NextImage alt='profile avatar' width={48} height={48} onError={(e) => {
-                        e.currentTarget.srcset = "/Steve.webp";
-                      }} src={'https://visage.surgeplay.com/face/512/' + (e?.nickname)} />
-                      <div className='text-xl font-bold'>{e?.nickname}</div>
-                    </div>
-                  )}
                 </div>
               }
             </div>

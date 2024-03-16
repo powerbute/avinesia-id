@@ -2,7 +2,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import useLocalStorage from "use-local-storage";
 
 export default function RealtimeStatus({ }) {
-  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
+  /*const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const supabase = createClientComponentClient();
 
   const channel = supabase.channel('room1')
@@ -40,7 +40,7 @@ export default function RealtimeStatus({ }) {
       })
   }
 
-  start();
+  start();*/
 
   return (<></>)
 }

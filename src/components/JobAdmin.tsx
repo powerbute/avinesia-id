@@ -99,7 +99,7 @@ export default function JobAdmin({ job }: { job: { jobID: any, passID: any } }) 
           {workers.map((e: any) => {
             return (
               <div key={makeid(5)} className="flex">
-                <img src={'https://visage.surgeplay.com/face/512/'} className='rounded-2xl' />
+                <img src={'https://avatar.spworlds.ru/face/512/'} className='rounded-2xl' />
                 <div>{e}</div>
               </div>
             )

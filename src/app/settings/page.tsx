@@ -187,18 +187,6 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className='flex flex-col mt-8'>
-                  <div className="snowContainer mb-4">
-                    <div className='w-full h-full absolute bg-gradient-to-br from-sky-500 to-cyan-500 bgSnow rounded-2xl bg-opacity-20'></div>
-                    <div id='snow' className='flex flex-col gap-4 px-8 py-6 rounded-2xl'>
-                      <h1>Зимняя вербовка</h1>
-                      <ul>
-                        <li>Награды увеличены вдвое</li>
-                        <li>За 5 приглашенных людей за период ивента уникальный градиент для никнейма</li>
-                        <li>За 10 приглашенных людей за период ивента обводка профиля на сайте</li>
-                        <li>(награды будут выданы только после тщательной проверки, дабы убедится в отсутствии ботов)</li>
-                      </ul>
-                    </div>
-                  </div>
                   <div className='flex'>
                     <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
                   </div>

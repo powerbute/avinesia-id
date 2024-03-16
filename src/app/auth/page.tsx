@@ -71,13 +71,22 @@ export default function HomePage() {
         <title>Hi</title>
       </Head>
       <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px] flex flex-col justify-center items-center text-center'>
-        <div className='flex flex-col'>
+        <div className='flex flex-col gap-6 bg-dark2 rounded-2xl justify-around items-center p-8 w-1/2'>
+          <div className='text-2xl font-bold text-center'>Авторизация</div>
+          <div className='flex justify-center w-full'>
+            <input placeholder='Укажите код авторизации' type='text' className='inputg bg-dark border-none rounded-md p-2 text-sm w-full' onChange={(e) => handleAuth(e)} />
+          </div>
+          <div className='flex justify-center gap-2'>
+            <div><a className='text-blue-500 cursor-pointer hover:text-blue-600' href='https://t.me/avinesiabot'>Telegram-бот</a> или обратитесь к правительству</div>
+          </div>
+        </div>
+        <div className='hidden flex-col'>
           <div className='text-8xl font-bold text-center'>Авторизация</div>
           <div className='flex mt-4 justify-center w-full mb-2 items-center border border-dark3 rounded-md select-none px-2'>
             <input maxLength={6} type='number' placeholder='Код авторизации' className='bg-dark border-none focus:ring-transparent py-2 text-sm w-full' onChange={(e) => handleAuth(e)} />
           </div>
         </div>
-        <div className='text-4xl'>Для авторизации на сайте воспользуйтесь <span className='text-blue-500 hover:text-blue-600 cursor-pointer' onClick={() => {
+        <div className='hidden text-4xl'>Для авторизации на сайте воспользуйтесь <span className='text-blue-500 hover:text-blue-600 cursor-pointer' onClick={() => {
           window.open('https://t.me/avinesiabot', '_blank');
         }}>нашим Telegram ботом</span> или обратитесь к Правительству</div>
       </section>

@@ -3,12 +3,15 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { useEffect } from "react";
 import { useState } from "react"
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
+import { FaArrowRightToBracket } from "react-icons/fa6";
 import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle } from "react-icons/md";
 
-export default function Passport({ passport }: { passport: { authData: any, userID: any } }) {
+export default function Passport({ passport }: { passport: { authData: any, userID: any, setPage: any, ratingData: any } }) {
   const supabase = createClientComponentClient();
   const [loaded, setLoaded] = React.useState(false);
   const [userData, setUserData] = React.useState<any>({});
+  const [ratingData, setRatingData] = React.useState<any>({});
+  //let rating = (passport.ratingData.length == 0 ? 0 : passport.ratingData[passport.ratingData.length - 1]);
 
   async function getUser(id: any) {
     const { data: user, error } = await supabase
@@ -17,6 +20,16 @@ export default function Passport({ passport }: { passport: { authData: any, user
       .eq("id", id)
       .single();
     setUserData(user);
+    const { data: rating } = await supabase
+      .from('rating')
+      .select('*')
+      .eq("passid", user?.passid)
+      .order('created_at', { ascending: false })
+    if (rating != null) {
+      setRatingData(rating[0]);
+    } else {
+      setRatingData({ old: 0, new: 0, by: "Admin", realson: "Стартовый социальный рейтинг" })
+    }
   }
 
   useEffect(() => {
@@ -68,55 +81,13 @@ export default function Passport({ passport }: { passport: { authData: any, user
         </div>
         :
         <div className={'bg-dark2 rounded-2xl px-4 py-6 select-none' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
-          <div className='text-3xl font-bold'>Соц. рейтинг</div>
-          <div className={'mt-2 text-lg text-start font-bold' + (userData?.rating > 0 ? " text-green-500" : " text-red-500")}>{userData?.rating}</div>
+          <div className='flex justify-between items-center'><div className="text-xl font-bold ">Соц. рейтинг</div><div onClick={() => {
+            passport.setPage(2);
+          }} className="hover:bg-dark4 cursor-pointer p-2 rounded-md"><FaArrowRightToBracket size={18} /></div></div>
+          <div className={'mt-2 text-lg text-start font-bold' + (ratingData?.new > 0 ? " text-green-500" : " text-red-500")}>{ratingData?.new}</div>
           <div className='flex w-full bg-dark4 rounded-2xl h-2'>
-            <div className='flex w-full justify-start'><div className={'h-2 rounded-2xl w-[' + (renderRating(Math.abs(userData?.rating) / 10)) + "%] " + (userData?.rating > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
+            <div className='flex w-full justify-start'><div className={'h-2 rounded-2xl w-[' + (renderRating(Math.abs(ratingData?.new) / 10)) + "%] " + (ratingData?.new > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
           </div>
-          {passport.authData?.roles?.includes(1) ?
-            <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-              <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 1)
-              }}>+1</div>
-              <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 5)
-              }}>+5</div>
-              <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 10)
-              }}>+10</div>
-              <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 20)
-              }}>+20</div>
-              <div className='bg-green-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 50)
-              }}>+50</div>
-              <div className='bg-green-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating + 100)
-              }}>+100</div>
-            </div>
-            : null}
-          {passport.authData?.roles?.includes(1) ?
-            <div className='grid grid-cols-6 w-full gap-2 mt-2'>
-              <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 1)
-              }}>-1</div>
-              <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 5)
-              }}>-5</div>
-              <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 10)
-              }}>-10</div>
-              <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 20)
-              }}>-20</div>
-              <div className='bg-red-500 rounded-md p-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 50)
-              }}>-50</div>
-              <div className='bg-red-500 rounded-md py-1 cursor-pointer flex justify-center' onClick={() => {
-                applyRating(userData?.rating - 100)
-              }}>-100</div>
-            </div>
-            : null}
         </div>
       }
 

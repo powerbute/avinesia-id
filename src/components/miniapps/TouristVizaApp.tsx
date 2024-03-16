@@ -8,7 +8,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 
 export default function PassportApp({ passport }: { passport: { authData: any, userID: any, open: any, setOpen: any } }) {
   const supabase = createClientComponentClient();
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<any>(1);
   const maxPage = 3;
 
   return (
@@ -24,22 +24,22 @@ export default function PassportApp({ passport }: { passport: { authData: any, u
             }} /></div>
           </div>
           {page > 1 ?
-            <div className="absolute top-[-3.5rem] md:left-[-5rem] flex items-start md:items-center" onClick={() => {
+            <div className="absolute h-full top-[-3.5rem] md:left-[-5rem] flex items-start md:items-center" onClick={() => {
               setPage(page - 1);
             }}>
               <div className="bg-dark2 rounded-2xl cursor-pointer hover:bg-dark4"><FaAngleLeft size={48} /></div>
             </div> : null}
           {page < maxPage ?
-            <div className="absolute top-[-3.5rem] md:right-[-5rem] flex items-start justify-end w-full md:justify-start md:w-fit md:items-center" onClick={() => {
+            <div className="absolute h-full top-[-3.5rem] md:right-[-5rem] flex items-start justify-end w-full md:justify-start md:w-fit md:items-center" onClick={() => {
               setPage(page + 1);
             }}>
               <div className="bg-dark2 rounded-2xl cursor-pointer hover:bg-dark4"><FaAngleRight size={48} /></div>
             </div> : null}
           {page == 1 ?
-            <div className="w-full rounded-2xl px-8 py-8 h-full bg-red-800 flex flex-col justify-around items-center">
+            <div className="w-full rounded-2xl px-8 py-8 h-full bg-blue-500 flex flex-col justify-around items-center">
               <div className=""><img src="Emblem_of_Avinesia.png" className="w-[300px]" /></div>
               <div className="font-bold text-3xl">
-                Паспорт гражданина Авинесии
+                Туристическая виза Авинесии
               </div>
 
             </div>
@@ -81,7 +81,7 @@ export default function PassportApp({ passport }: { passport: { authData: any, u
             </div>
             : null}
           {page == 3 ?
-            <div className="w-full rounded-2xl px-8 py-8 h-full bg-red-800 flex flex-col items-center justify-end">
+            <div className="w-full rounded-2xl px-8 py-8 h-full bg-blue-500 flex flex-col items-center justify-end">
               <div>Авинесия</div>
 
             </div>

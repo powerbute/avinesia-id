@@ -4,7 +4,7 @@ import Head from 'next/head';
 import * as React from 'react';
 
 import { IoMdSearch, IoMdNotificationsOutline, IoMdSend, IoMdCloseCircle } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
+import { IoCopySharp, IoSettingsOutline } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck, CiUser } from "react-icons/ci";
 import { FaCity } from "react-icons/fa";
 import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout } from "react-icons/md";
@@ -25,6 +25,12 @@ import LikeCompoennt from '@/components/LikeComponent';
 import Post from '@/components/Post';
 import { GiGrowth } from 'react-icons/gi';
 import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
+import { PiTarget } from "react-icons/pi";
+import { MdLocalPolice, MdBusiness, MdOutlineWarning, MdWork } from "react-icons/md";
+import { TbSword, TbReceiptTax } from "react-icons/tb";
+import { CgUnavailable } from "react-icons/cg";
+import TouristVizaApp from '@/components/miniapps/TouristVizaApp';
+import moment from 'moment';
 
 export default function HomePage() {
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
@@ -41,17 +47,20 @@ export default function HomePage() {
   const [randomUsers, setRandomUsers] = React.useState<any>([]);
   const [usersInWanted, setWantedUsers] = React.useState<any>([]);
 
+  const [openLenta, setOpenLenta] = React.useState(false);
+
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
 
   async function getPosts() {
     const postArray = [];
     const { data: postUser2 } = await supabase
-      .from('posts')
+      .from('news')
       .select('*')
-      .eq("passid", "LGS-P7nX10")
-      .order('created_at', { ascending: false });
-    const { data: randomUsers1 } = await supabase
+      //.eq("passid", "LGS-P7nX10")
+      .order('time', { ascending: false });
+    setPosts(postUser2);
+    /*const { data: randomUsers1 } = await supabase
       .from('random_users')
       .select('*')
       .lt('status', 2)
@@ -114,8 +123,27 @@ export default function HomePage() {
         subsArray.push(subs[g3]?.passid2);
       }
       setSubsData(subsArray);
-    }
+    }*/
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq("id", authData?.id)
+      .single();
     setUserData(user);
+  }
+
+  async function applicationC() {
+    let { error } = await supabase
+      .from('users')
+      .update({ status: 0 })
+      .eq('id', userData?.id);
+    const { data: user } = await supabase
+      .from('users')
+      .select('*')
+      .eq("id", authData?.id)
+      .single();
+    setUserData(user);
+    setAuthData(user);
   }
 
   async function getUserByPassID(passid: any) {
@@ -183,6 +211,10 @@ export default function HomePage() {
       : (document.body.style.overflow = 'auto');
   }, [open]);
 
+  function onlineCalc(hour: any, max12h: any) {
+    return hour / (max12h / 100);
+  }
+
   return (
     <main className='bg-dark'>
       <RealtimeStatus />
@@ -199,123 +231,151 @@ export default function HomePage() {
           <div className='flex gap-4 flex-col md:flex-row'>
             <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: authData?.id, subsData: subsData, updatePage: getPosts }} />
+              <div className='hidden flex-col bg-yellow-700 rounded-2xl gap-1'>
+                <div className='p-2 flex justify-between items-center'>
+                  <div className='font-bold'>Сервер <span>(14/100)</span></div>
+                  <div className='p-1 rounded-md bg-yellow-500 hover:bg-yellow-600 cursor-pointer'><IoCopySharp size={16} /></div>
+                </div>
+                <div className='hidden grid-cols-12 rounded-b-2xl pt-2 bg-yellow-500 h-32 items-end'>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-l-2xl' style={{ height: onlineCalc(5, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-tl-2xl' style={{ height: onlineCalc(8, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-t-lg' style={{ height: onlineCalc(9, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-tr-2xl' style={{ height: onlineCalc(4, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500' style={{ height: onlineCalc(2, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-t-2xl' style={{ height: onlineCalc(8, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-tr-lg' style={{ height: onlineCalc(6, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-tr-2xl' style={{ height: onlineCalc(5, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500' style={{ height: onlineCalc(3, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-tl-2xl' style={{ height: onlineCalc(14, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-t-lg' style={{ height: onlineCalc(15, 15) + "%" }}></div>
+                  <div className='bg-yellow-600 hover:bg-amber-500 rounded-r-2xl' style={{ height: onlineCalc(12, 15) + "%" }}></div>
+                </div>
+              </div>
+              <div className='flex flex-col'>
+                <div className='text-lg font-medium flex justify-between mb-1'>
+                  <div className='flex gap-2 items-center'>
+                    <div className='bg-green-500 rounded-full w-4 h-4 bg-opacity-40 flex justify-center items-center'>
+                      <div className='bg-green-500 rounded-full w-2 h-2 animate-pulse'></div>
+                    </div>
+                    <div>События</div>
+                  </div>
+                  <div className='text-gray-500 text-sm flex items-center'></div>
+                </div>
+                <div className='flex flex-col gap-2'>
+                  {posts?.length == 0 ?
+                    <div>Здесь пусто :/</div> : null}
+                  {posts?.map((e: any) =>
+                    <div className='flex justify-between gap-2'>
+                      <div>{e?.text}</div>
+                      <div className='text-sm text-gray-500 flex items-center w-fit whitespace-nowrap'>{moment(e?.time).format("H:mm")}</div>
+                    </div>)}
+                </div>
+              </div>
             </div>
             <div className='flex gap-4 flex-col w-full'>
-              {usersInWanted?.length > 0 && loaded && !authData?.wanted ?
-                <div className='w-full hidden h-[300px] md:flex flex-col gap-2 rounded-2xl'>
-                  <div className='md:grid grid-cols-3 gap-4'>
-                    {usersInWanted?.map((e: any) =>
-                      <div className='relative'>
-                        <div className='absolute z-[90] w-[250px] h-[532px] wantedbg'>
+              <div className='w-full'>
+                <div className='flex flex-col gap-1'>
+                  <div className='text-lg font-medium flex justify-between items-center'>Документы
+                    {!openLenta ? <div className='text-gray-500 select-none hover:text-gray-400 cursor-pointer font-base' onClick={() => {
+                      setOpenLenta(true);
+                    }}>Открыть ленту</div> : null}</div>
+                  <div className='flex gap-2 pl-4 overflow-x-scroll'>
+                    {loaded ?
+                      <>
+                        {authData?.status == 4 || authData?.status == 0 ?
                           <div onClick={() => {
-                            window.open("/user/" + e?.id, "_self")
-                          }} className={'flex flex-col items-center mt-[4.5rem] gap-1 select-none cursor-pointer rounded-2xl p-2'}>
-                            <NextImage onError={(e) => {
-                              e.currentTarget.srcset = "/Steve.webp";
-                            }} width={128} height={128} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + e?.nickname} />
-                            <div className='flex flex-col items-center w-full'>
-                              <div className='text-xl text-black text-center font-bold flex items-center gap-2 cursor-pointer'>{e?.nickname}</div>
-                              <div className='text-red-500 text-2xl font-bold text-center'>Награда: {e?.wantedcost}</div>
-                            </div>
+                            setMiniApp(<TouristVizaApp passport={{
+                              authData: authData,
+                              userID: userData?.id,
+                              open: open,
+                              setOpen: setOpen
+                            }} />)
+                            setOpen(true);
+                          }} className='select-none h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-blue-500 hover:bg-blue-600 cursor-pointer flex flex-col justify-between'>
+                            <CiPassport1 size={32} />
+                            <div>Туристическая виза</div>
                           </div>
-                        </div>
-                      </div>
-                    )}
+                          : null}
+                        {authData?.status == 1 || authData?.status == 2 ?
+                          <div onClick={() => {
+                            setMiniApp(<PassportApp passport={{
+                              authData: authData,
+                              userID: userData?.id,
+                              open: open,
+                              setOpen: setOpen
+                            }} />)
+                            setOpen(true);
+                          }} className='select-none h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-800 hover:bg-red-900 cursor-pointer flex flex-col justify-between'>
+                            <CiPassport1 size={32} />
+                            <div>Паспорт</div>
+                          </div> : null}
+                      </> : null}
                   </div>
                 </div>
-                : null}
-              <div className='w-full hidden md:grid grid-cols-3 gap-4'>
-                {randomUsers?.map((e: any) =>
-                  <div>
-                    <div onClick={() => {
-                      window.open("/user/" + e?.id, "_self")
-                    }} className={'flex gap-2 select-none bg-dark2 hover:bg-dark4 cursor-pointer rounded-2xl p-2' + (e?.dateofissue?.substring(e?.dateofissue?.length - 4) == "2021" ? " shadow shadow-yellow-500" : "")}>
-                      <NextImage onError={(e) => {
-                        e.currentTarget.srcset = "/Steve.webp";
-                      }} width={48} height={48} alt='profile avatar' className="cursor-pointer" src={'https://visage.surgeplay.com/face/512/' + e?.nickname} />
-                      <div className='flex flex-col'>
-                        <div className='text-xl font-bold flex items-center gap-2 cursor-pointer'>{e?.nickname}</div>
-                        <div className='text-zinc-700'>Случайный игрок</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className='w-full'>
-                {ad == 5 && loaded ? <div className='flex flex-col gap-4 px-8 py-6 rounded-2xl bg-gradient-to-br from-emerald-900 to-green-700 mb-4'>
-                  <h2>Вступай в армию по контракту</h2>
-                  <p>Присоединяйтесь к сильнейшим! Будь частью ЧВК "Авинесия" - места, где рождаются настоящие герои! 💪<br /><br />
-
-                    🎖 У нас вы найдете отличные возможности для развития военной карьеры, получите уникальный профессиональный опыт и примените свои навыки в деле защиты мира. <br /><br />
-
-                    🔫 Мы ищем тех, кто готов стать частью нашей дружной команды, делиться опытом и стремиться к лучшим результатам в совместном благе и процветании.<br /><br />
-
-                    🌍 ЧВК "Авинесия" - место, где ваше служение превратится в историю, ваша отвага будет засвидетельствована и ваша преданность оценена.<br /><br />
-
-                    ⚔️ Присоединяйтесь к нам и станьте частью нашей семьи, где каждый член ценен и важен. Давайте вместе делать мир безопаснее и стабильнее!<br /><br />
-
-                    👨‍✈️ Набор открыт для тех, кто готов к вызову, кто в поисках приключений и новых возможностей. Присоединяйтесь к ЧВК "Авинесия" и станьте частью легендарного пути военной службы! 🌟</p>
-                  <a href='https://t.me/powerbute' className='bg-blue-500 hover:bg-blue-600 cursor-pointer w-fit rounded-2xl p-2'>Присоединится!</a>
-                </div> : null}
-                {loaded ?
-                  <div className='flex gap-2 mb-4 select-none'>
-                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                      window.open("/user/" + authData?.id, "_self")
+                <div className='flex flex-col gap-1'>
+                  <div className='text-lg font-medium'>Мы можем помочь вам с</div>
+                  {userData?.status != 4 ?
+                    <div className='h-32 flex flex-col justify-center items-center'>
+                      <CgUnavailable size={32} />
+                      <div className='font-bold'>Гос. услуги в данный момент недоступны, попробуйте позже</div>
+                    </div> : null}
+                  {userData?.status == 4 ?
+                    <div className='flex gap-2 pl-4 overflow-x-scroll' onClick={() => {
+                      applicationC();
+                      alert("Заявка отправлена.");
                     }}>
-                      <CiUser size={24} />
-                      <div>Профиль</div>
+                      <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-800 hover:bg-red-900 cursor-pointer flex flex-col justify-between'>
+                        <CiPassport1 size={32} />
+                        <div>Подать на гражданство</div>
+                      </div>
+                    </div> : null}
+                  <div className='hidden gap-2 pl-4 overflow-x-scroll'>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-500 hover:bg-red-600 cursor-pointer flex flex-col justify-between'>
+                      <MdLocalPolice size={32} />
+                      <div>Вызов полиции</div>
                     </div>
-                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                      setOpen(true)
-                      window.scrollTo(0, 0);
-                      setMiniApp(<PassportApp passport={{ authData: authData, userID: authData?.id, open: open, setOpen: setOpen }} />)
-                    }} >
-                      <CiPassport1 size={24} />
-                      <div>Паспорт</div>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-lime-500 hover:bg-lime-600 cursor-pointer flex flex-col justify-between'>
+                      <MdWork size={32} />
+                      <div>Найти работу</div>
                     </div>
-                    <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                      setOpen(true)
-                      window.scrollTo(0, 0);
-                      setMiniApp(<PyatiletkaApp passport={{ authData: authData, userID: authData?.id, open: open, setOpen: setOpen }} />)
-                    }} >
-                      <GiGrowth size={24} />
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-yellow-500 hover:bg-yellow-600 cursor-pointer flex flex-col justify-between'>
+                      <MdOutlineWarning size={32} />
+                      <div>Заплатить штрафы</div>
+                    </div>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-purple-500 hover:bg-purple-600 cursor-pointer flex flex-col justify-between'>
+                      <MdBusiness size={32} />
+                      <div>Оформить бизнес</div>
+                    </div>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-orange-500 hover:bg-orange-600 cursor-pointer flex flex-col justify-between'>
+                      <TbSword size={32} />
+                      <div>Получение лицензии на оружие</div>
+                    </div>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-rose-500 hover:bg-rose-600 cursor-pointer flex flex-col justify-between'>
+                      <TbReceiptTax size={32} />
+                      <div>Заплатить налоги</div>
+                    </div>
+                  </div>
+                </div>
+                <div className='hidden flex-col gap-1'>
+                  <div className='text-lg font-medium'>Приложения</div>
+                  <div className='flex gap-2 pl-4 overflow-x-scroll'>
+                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-green-500 hover:bg-green-600 cursor-pointer flex flex-col justify-between'>
+                      <GiGrowth size={32} />
                       <div>Пятилетка</div>
                     </div>
                   </div>
-                  :
-                  <div className='flex gap-2 mb-4 select-none'>
-                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
-                      <CiUser size={24} />
-                      <div>Профиль</div>
-                    </div>
-                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
-                      <CiPassport1 size={24} />
-                      <div>Паспорт</div>
-                    </div>
-                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
-                      <GiGrowth size={24} />
-                      <div>Пятилетка</div>
-                    </div>
-                  </div>}
-                {loaded ?
-                  <div className='w-full rounded-2xl bg-dark4 border border-dark3 flex'>
-                    <textarea value={postInput} onChange={(e: any) => setPostInput(e.target.value)} className='w-full bg-dark4 rounded-l-2xl border border-none' placeholder='Что нового?' />
-                    <div className='p-2 flex justify-center items-center cursor-pointer hover:bg-dark3 rounded-r-2xl' onClick={() => createPost()}>
-                      <IoMdSend size={32} />
-                    </div>
-                  </div> : null
-                }
-                <div className='flex flex-col gap-4 mt-4'>
-                  {postLoaded ?
-                    <>
-                      {posts.length > 0 ?
-                        <>
-                          {posts?.map((e: any) =>
-                            <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: true }} />
-                          )}
-                        </> :
-                        <div className='text-lg font-bold text-center'>Постов нет, подпишитесь на кого-то и их посты будут появлятся в ленте</div>}
-                    </> : <div className='flex justify-center mt-8'><AiOutlineLoading size={32} className='animate-spin' /></div>}
+                </div>
+
+              </div>
+            </div>
+            <div className={'gap-4 items-end rounded-2xl select-none flex-col md:w-[60%] ' + (openLenta ? "flex" : "hidden")}>
+              {openLenta ? <div className='text-gray-500 text-lg hover:text-gray-400 cursor-pointer font-base' onClick={() => {
+                setOpenLenta(false);
+              }}>Закрыть ленту</div> : null}
+              <div className={'gap-4 bg-dark2 items-center rounded-2xl flex-col h-full ' + (openLenta ? "flex" : "hidden")}>
+                <div className='h-32 flex flex-col gap-4 w-full text-center justify-center items-center h-full'>
+                  <CgUnavailable size={32} />
+                  <div className='font-bold'>Посты в данный момент недоступны, попробуйте позже</div>
                 </div>
               </div>
             </div>

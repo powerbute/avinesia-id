@@ -6,8 +6,8 @@ import * as React from 'react';
 import { IoMdSearch, IoMdNotificationsOutline, IoMdSend, IoMdCloseCircle } from "react-icons/io";
 import { IoMedalSharp, IoSettingsOutline, IoStar } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck } from "react-icons/ci";
-import { FaBook, FaCity, FaPeace } from "react-icons/fa";
-import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout, MdWork, MdLocalPolice } from "react-icons/md";
+import { FaArrowLeft, FaBook, FaCity, FaPeace } from "react-icons/fa";
+import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout, MdWork, MdLocalPolice, MdEdit, MdCancel } from "react-icons/md";
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
@@ -25,6 +25,9 @@ import LikeCompoennt from '@/components/LikeComponent';
 import Post from '@/components/Post';
 import { GiGrowth, GiTank } from "react-icons/gi";
 import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
+import { CgUnavailable } from 'react-icons/cg';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
+import moment from 'moment';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
@@ -40,6 +43,15 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [miniapp, setMiniApp] = React.useState<any>();
   const [subsData, setSubsData] = React.useState<any>([]);
 
+  const [page, setPage] = React.useState<any>(1);
+
+  const [editRating, setEditRating] = React.useState<any>(false);
+  const [eRatingMode, setERatingMode] = React.useState<any>(0);
+  const [eRatingCost, setERatingCost] = React.useState<any>(0);
+  const [eRatingRealson, setERatingRealson] = React.useState<any>();
+
+  const [ratingData, setRatingData] = React.useState<any>([]);
+
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
 
@@ -49,6 +61,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .select('*')
       .eq("id", id)
       .single();
+    const { data: rating } = await supabase
+      .from('rating')
+      .select('*')
+      .eq("passid", user?.passid)
+      .order('created_at', { ascending: false })
+    setRatingData(rating);
     const { data: posts, error } = await supabase
       .from('posts')
       .select('*')
@@ -98,6 +116,51 @@ export default function HomePage({ params }: { params: { id: string } }) {
     setPostInput("");
     alert("Опубликовано!")
     getPosts(userID)
+
+  }
+
+  async function applynRating() {
+    let oldT = 0;
+    let newT = 0;
+    let { data: rating0 } = await supabase
+      .from('rating')
+      .select()
+      .eq("passid", userData?.passid)
+      .order('created_at', { ascending: false })
+    if (rating0 != null) {
+      oldT = parseInt(rating0[0]?.new);
+    }
+    //console.log(oldT);
+    //console.log(oldT += eRatingCost);
+    if (eRatingMode == 0) {
+      newT = Number(oldT) + Number(eRatingCost);
+      let { data: rating, error } = await supabase
+        .from('rating')
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 0 })
+      setERatingCost("");
+      setERatingRealson("");
+      const { data: rating1 } = await supabase
+        .from('rating')
+        .select('*')
+        .eq("passid", userData?.passid)
+        .order('created_at', { ascending: false })
+      setRatingData(rating1);
+      alert("Успешно!")
+    } else {
+      newT = Number(oldT) - Number(eRatingCost);
+      let { data: rating, error } = await supabase
+        .from('rating')
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 1 })
+      setERatingCost("");
+      setERatingRealson("");
+      const { data: rating1 } = await supabase
+        .from('rating')
+        .select('*')
+        .eq("passid", userData?.passid)
+        .order('created_at', { ascending: false })
+      setRatingData(rating1);
+      alert("Успешно!")
+    }
 
   }
 
@@ -161,111 +224,83 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='flex gap-4 flex-col md:flex-row'>
             <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
-              {loaded ?
-                <div className='hidden md:block rounded-2xl bg-dark2 pb-4'>
-                  <div className='rounded-t-2xl bg-emerald-700 h-4'></div>
-                  <div className='text-2xl font-bold px-4 pt-2'>Лигорщина</div>
-                </div> :
-                <div className='hidden md:block rounded-2xl bg-dark2 animate-pulse text-transparent pb-4'>
-                  <div className='rounded-t-2xl bg-dark4 animate-pulse h-4'></div>
-                  <div className='text-2xl font-bold px-4 pt-2'>Лигорщина</div>
-                </div>}
-              {loaded ?
-                <div className='hidden md:block rounded-2xl bg-dark2 pb-4'>
-                  <div className='text-2xl font-bold px-4 pt-2'>{userData?.job != null ? userData?.job : "Безработный"}</div>
-                </div> :
-                <div className='hidden md:block rounded-2xl bg-dark2 animate-pulse text-transparent pb-4'>
-                  <div className='text-2xl font-bold px-4 pt-2'>Разнорабочий</div>
-                </div>}
-              <Rating passport={{ authData: authData, userID: userID }} />
+              <Rating passport={{ authData: authData, userID: userID, setPage: setPage, ratingData: ratingData }} />
             </div>
-            <div className='flex gap-4 flex-col w-full'>
-              <div className='w-full'>
-                {(userData?.about != null || userData?.heromedal != false || userData?.jobmedal != false || userData?.culturemedal != false || userData?.peacemedal != false || userData?.policemedal != false || userData?.activemedal != false || userData?.warmedal != false) && loaded ?
-                  <div className='mb-4 bg-dark2 rounded-2xl px-4 py-6'>
-                    <div className="flex gap-2 rounded-2xl mb-2">
-                      {userData?.heromedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Герой Авинесии. Выдается за заслуги перед Авинесией по решению Правительства Авинесии.')
-                      }}><IoMedalSharp size={24} /></div> : null}
-                      {userData?.jobmedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль "Герой труда" Вручается за общественнополезный труд и участие в проектах.')
-                      }}><MdWork size={24} /></div> : null}
-                      {userData?.culturemedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль "За вклад в культуру и образование" Вручается за развитие Авинесийской литературы и создания инфоцыганских курсов.')
-                      }}><FaBook size={24} /></div> : null}
-                      {userData?.peacemedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль "За добрососедство и мирное сосуществование" Вручается за укрепление дружественных отношений с другими государствами и за участие в международных миротворческих миссиях.')
-                      }}><FaPeace size={24} /></div> : null}
-                      {userData?.policemedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль "За заслуги перед силовыми структурами" Вручается за 1к доносов.')
-                      }}><MdLocalPolice size={24} /></div> : null}
-                      {userData?.activemedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль "За активное участие в жизни Авинесии"')
-                      }}><IoStar size={24} /></div> : null}
-                      {userData?.warmedal ? <div className="cursor-pointer" onClick={() => {
-                        alert('Медаль военного')
-                      }}><GiTank size={24} /></div> : null}
-                    </div>
-                    {userData?.about}</div>
-                  : null}
-                {loaded ?
-                  <div className='flex gap-2 mb-4 select-none'>
-                    {(authData?.id == userData?.id || (authData?.roles?.includes(1) || authData?.roles?.includes(2))) && loaded ?
-                      <>
-                        <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                          setOpen(true)
-                          window.scrollTo(0, 0);
-                          setMiniApp(<PassportApp passport={{ authData: authData, userID: userID, open: open, setOpen: setOpen }} />)
-                        }} >
-                          <CiPassport1 size={24} />
-                          <div>Паспорт</div>
-                        </div>
-                        <div className='flex gap-1 items-center bg-dark2 cursor-pointer p-2 rounded-2xl hover:bg-dark3' onClick={() => {
-                          setOpen(true)
-                          window.scrollTo(0, 0);
-                          setMiniApp(<PyatiletkaApp passport={{ authData: authData, userID: authData?.id, open: open, setOpen: setOpen }} />)
-                        }} >
-                          <GiGrowth size={24} />
-                          <div>Пятилетка</div>
-                        </div>
-                      </>
-                      : null}
+            {page == 1 ?
+              <div className='flex gap-4 flex-col w-full'>
+                <div className='w-full'>
+                  {(userData?.about != null) && loaded ?
+                    <div className='mb-4 bg-dark2 rounded-2xl px-4 py-6'>
+                      {userData?.about}</div>
+                    : null}
+                  <div className='h-32 flex flex-col gap-4 justify-center items-center h-full'>
+                    <CgUnavailable size={32} />
+                    <div className='font-bold'>Посты в данный момент недоступны, попробуйте позже</div>
                   </div>
-                  :
-                  <div className='flex gap-2 mb-4 select-none'>
-                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
-                      <CiPassport1 size={24} />
-                      <div>Паспорт</div>
+                </div>
+              </div> : null}
+            {page == 2 ?
+              <div className='flex gap-4 flex-col w-full'>
+                <div className='w-full select-none'>
+                  <div className='mb-4 bg-dark2 rounded-2xl flex items-center justify-between gap-4 px-4 py-6'>
+                    <div className='flex items-center gap-4'>
+                      <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setPage(1) }}><FaArrowLeft size={18} /></div>
+                      <div className='text-xl font-bold'>Социальный рейтинг</div></div>
+                    <div className='flex gap-2 items-center'>
+                      {editRating && authData?.roles?.includes(1) ?
+                        <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(false) }}><MdCancel size={18} /></div> :
+                        <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(true) }}><MdEdit size={18} /></div>}
                     </div>
-                    <div className='flex gap-1 items-center bg-dark2 animate-pulse text-transparent p-2 rounded-2xl'>
-                      <GiGrowth size={24} />
-                      <div>Пятилетка</div>
-                    </div>
-                  </div>}
-                {loaded ?
-                  <>
-                    {userData?.id == authData?.id ?
-                      <div className='w-full rounded-2xl bg-dark4 border border-dark3 flex'>
-                        <textarea value={postInput} onChange={(e: any) => setPostInput(e.target.value)} className='w-full bg-dark4 rounded-l-2xl border border-none' placeholder='Что нового?' />
-                        <div className='p-2 flex justify-center items-center cursor-pointer hover:bg-dark3 rounded-r-2xl' onClick={() => createPost()}>
-                          <IoMdSend size={32} />
+                  </div>
+                  {editRating ?
+                    <div className='mb-4 bg-dark2 rounded-2xl flex flex-col px-4 py-6'>
+                      <div className='grid grid-cols-3 items-center'>
+                        <div className='flex gap-2'>
+                          <div className={'p-2 border h-fit hover:bg-dark4 cursor-pointer rounded-md ' + (eRatingMode == 0 ? "border-blue-500" : "border-dark4")} onClick={() => { setERatingMode(0) }}><FaPlus size={18} /></div>
+                          <div className={'p-2 border h-fit hover:bg-dark4 cursor-pointer rounded-md ' + (eRatingMode == 1 ? "border-blue-500" : "border-dark4")} onClick={() => { setERatingMode(1) }}><FaMinus size={18} /></div>
+                        </div>
+                        <div className='flex gap-2'>
+                          <div><input onChange={(e: any) => {
+                            setERatingCost(e.target.value)
+                          }} value={eRatingCost} type='number' className='rounded-2xl bg-dark4 border-none' placeholder='Укажите сколько соц рейтинга надо изменить' /></div>
+                        </div>
+                        <div className='flex gap-2'>
+                          <div><input onChange={(e: any) => {
+                            setERatingRealson(e.target.value)
+                          }} value={eRatingRealson} className='rounded-2xl bg-dark4 border-none' placeholder='Укажите причину' /></div>
                         </div>
                       </div>
-                      : null}</> : null}
-                <div className='flex flex-col gap-4 mt-4'>
-                  {postLoaded ?
-                    <>
-                      {posts.length > 0 ?
-                        <>
-                          {posts?.map((e: any) =>
-                            <Post post={{ authdata: authData, passid: e?.passid, text: e?.text, date: e?.created_at, postData: e, updatePosts: getPosts, userID: authData?.id, subsData: subsData, subEn: false }} />
-                          )}
-                        </> :
-                        <div className='text-lg font-bold text-center'>Постов нет, подпишитесь на кого-то и их посты будут появлятся в ленте</div>}
-                    </> : <div className='flex justify-center mt-8'><AiOutlineLoading size={32} className='animate-spin' /></div>}
+                      <div className='flex justify-end mt-4'>
+                        <div className='bg-blue-500 cursor-pointer hover:bg-blue-600 p-2 rounded-2xl' onClick={() => { applynRating() }}>Применить</div>
+                      </div>
+                    </div> : null}
+                  <div className='mb-4 bg-dark2 rounded-2xl w-full text-center grid grid-cols-4 md:grid-cols-5 md:px-4 py-6'>
+                    <div className='font-bold text-lg'>Было</div>
+                    <div className='font-bold text-lg mb-4'>Причина</div>
+                    <div className='font-bold text-lg'>Стало</div>
+                    <div className='font-bold text-lg'>Изменено</div>
+                    <div className='hidden md:block font-bold text-lg'>Дата</div>
+                    {ratingData?.map((e: any) =>
+                      <>
+                        {e?.type == 1 ?
+                          <>
+                            <div className='text-green-500'>{e?.old}</div>
+                            <div className='text-start'>{e?.realson}</div>
+                            <div className='text-red-500'>{e?.new}</div>
+                            <div className=''>{e?.by}</div>
+                            <div className='hidden md:block'>{moment(e?.created_at).format("DD.MM.YYYY H:mm")}</div>
+                          </> : <>
+                            <div className='text-red-500'>{e?.old}</div>
+                            <div className='text-start'>{e?.realson}</div>
+                            <div className='text-green-500'>{e?.new}</div>
+                            <div className=''>{e?.by}</div>
+                            <div className='hidden md:block'>{moment(e?.created_at).format("DD.MM.YYYY H:mm")}</div>
+                          </>}
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
+              </div> : null}
           </div>
         </section>
       </section>

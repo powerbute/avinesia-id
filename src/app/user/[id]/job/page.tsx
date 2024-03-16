@@ -206,7 +206,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
               location.replace("/");
             }}><MdLogout color='white' size={28} /></div> : null}
             {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => setAvatarMenu(!avatarMenu)}>
-              <img src={'https://visage.surgeplay.com/face/512/' + (authData?.nickname)} className='rounded-2xl' />
+              <img src={'https://avatar.spworlds.ru/face/512/' + (authData?.nickname)} className='rounded-2xl' />
             </div> : null}
           </div>
         </header>

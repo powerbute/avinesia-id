@@ -187,7 +187,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
             }}>
               <NextImage onError={(e) => {
                 e.currentTarget.srcset = "/Steve.webp";
-              }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (authData?.nickname)} />
+              }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (authData?.nickname)} />
             </div> : null}
           </div>
         </header>
@@ -230,7 +230,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                 <div className='flex gap-2 md:gap-0 md:flex-col'>
                   <NextImage onError={(e) => {
                     e.currentTarget.srcset = "/Steve.webp";
-                  }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (userData?.nickname)} />
+                  }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (userData?.nickname)} />
                   <div className='flex flex-col'>
                     <div className='font-bold text-3xl'>{userData?.surname}</div>
                     <div className='font-medium text-zinc-400 text-xl'>{userData?.nickname}</div>

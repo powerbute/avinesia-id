@@ -20,7 +20,7 @@ export default function Passport() {
               <div className="relative w-fit">
                 <NextImage onError={(e) => {
                   e.currentTarget.srcset = "/Steve.webp";
-                }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/Miyaki_XD'} />
+                }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/Miyaki_XD'} />
                 <span className="absolute bottom-0 right-0 flex justify-center items-center rounded-full h-6 w-6 bg-dark2">
                   <span className="inline-flex rounded-full h-4 w-4 bg-green-500"></span>
                 </span>

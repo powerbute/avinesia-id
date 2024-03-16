@@ -50,7 +50,7 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
             }}>
               <NextImage onError={(e) => {
                 e.currentTarget.srcset = "/Steve.webp";
-              }} width={56} height={56} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (passport.authData?.nickname)} />
+              }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (passport.authData?.nickname)} />
             </div> : null}
           </div>
         </header>

@@ -26,7 +26,8 @@ export default {
         dark: '#0c0c0c',
         dark2: "#111",
         dark3: "#505050",
-        dark4: "#1d1d1d"
+        dark4: "#1d1d1d",
+        dark5: "#161616"
       },
       keyframes: {
         flicker: {

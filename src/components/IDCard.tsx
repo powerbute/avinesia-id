@@ -4,10 +4,14 @@ import React, { useEffect } from "react";
 import { useState } from "react"
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 import { IoMdHeartEmpty } from "react-icons/io";
-import { IoHeartOutline } from "react-icons/io5";
+import { IoCloseCircleOutline, IoHeartOutline } from "react-icons/io5";
 import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle, MdWork, MdOutlineContentCopy } from "react-icons/md";
 import { CiHeart } from "react-icons/ci";
 import dynamic from 'next/dynamic'
+import { FaStar } from "react-icons/fa";
+import { FaAnglesDown, FaAnglesUp, FaArrowTurnUp, FaArrowUp, FaBan, FaFire, FaStarOfDavid, FaTicketSimple } from "react-icons/fa6";
+import useLocalStorage from "use-local-storage";
+import { BiSolidCool } from "react-icons/bi";
 
 const LikeCompoennt = dynamic(() => import('@/components/LikeComponent'), { ssr: false })
 
@@ -16,7 +20,10 @@ export default function Passport({ passport }: { passport: { authData: any, user
   const [loaded, setLoaded] = React.useState(false);
   const [userData, setUserData] = React.useState<any>({});
   const [rolesData, setRolesData] = React.useState<any>({});
-  const currentYear = 2023;
+  const [ratingData, setRatingData] = React.useState<any>([]);
+  const currentYear = 2024;
+
+  const [ratingOld, setRatingOld] = useLocalStorage<any>("ratingOld", 0);
 
   function getColor() {
     if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 20) {
@@ -44,6 +51,15 @@ export default function Passport({ passport }: { passport: { authData: any, user
       .eq("id", id)
       .single();
     setUserData(user);
+    const { data: rating } = await supabase
+      .from('rating')
+      .select('*')
+      .eq("passid", user?.passid)
+      .order('created_at', { ascending: false })
+    setRatingData(rating);
+    if (rating != null && ratingOld == 0) {
+      setRatingOld(rating[0]);
+    }
   }
 
   async function getRolesData() {
@@ -149,61 +165,246 @@ export default function Passport({ passport }: { passport: { authData: any, user
           </div>
         </div>
         :
-        <div className={'bg-dark2 h-fit rounded-2xl px-4 py-6' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? " shadow shadow-yellow-500" : "")}>
+        <div className={'bg-dark5 h-fit rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
           <div className={'flex flex-col gap-2' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
-            <div className="flex justify-between flex-col md:flex-row">
-              <div className='flex gap-2 md:gap-0 md:flex-col'>
-                <div className={"relative w-fit rounded-2xl " + getColor()}>
-                  <NextImage onError={(e) => {
-                    e.currentTarget.srcset = "/Steve.webp";
-                  }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/bust/512/' + (userData?.nickname)} />
+
+            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new > ratingOld.new && passport.userID == passport.authData?.id && userData?.status != 5 ?
+              <div onClick={(e) => {
+                setRatingOld(ratingData[0])
+              }} className="flex px-4 py-2 items-center justify-center gap-1 relative overflow-hidden rounded-t-2xl bg-green-500 hover:bg-green-600 cursor-pointer" title="Нажмите, чтобы скрыть">
+                <div className="hidden scale-x-[-1]"><FaArrowTurnUp size={24} /></div>
+                <div className="font-bold">Соц. рейтинг увеличился</div>
+                <div className="hidden"><FaArrowTurnUp size={24} /></div>
+                <div className="flex absolute">
+                  <div className="grid grid-cols-4 opacity-40 text-green-200 w-32 rotate-45">
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-green-200 w-32 rotate-45">
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-green-200 w-32 rotate-45">
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                    <div className=""><FaAnglesUp size={24} /></div>
+                  </div>
                 </div>
-                <div className='flex flex-col mt-2'>
-                  <div className='font-bold text-3xl'>{userData?.surname}</div>
-                  <div className='font-medium text-zinc-400 text-xl'>{userData?.nickname}</div>
-                  <div className='text-zinc-500 flex gap-2 items-center'>@user{passport.userID} <span className="cursor-pointer" onClick={() => {
-                    navigator.clipboard.writeText("https://id.gooseland.cc/user/" + passport.userID);
-                    alert("Ссылка скопирована!")
-                  }}><MdOutlineContentCopy /></span></div>
+                <div className="absolute top-[-16px] left-[-20px] cursor-pointer hover:bg-dark4 p-0.5 rounded-md" title="Отметить как прочитано"><IoCloseCircleOutline size={18} /></div>
+              </div> : null
+            }
+
+            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new < ratingOld.new && passport.userID == passport.authData?.id && userData?.status != 5 ?
+              <div onClick={() => {
+                setRatingOld(ratingData[0])
+              }} className="flex px-4 py-2 items-center justify-center gap-1 relative overflow-hidden rounded-t-2xl bg-red-500 hover:bg-red-600 cursor-pointer" title="Нажмите, чтобы скрыть">
+                <div className="hidden scale-x-[-1]"><FaArrowTurnUp size={24} /></div>
+                <div className="font-bold">Соц. рейтинг уменьшился</div>
+                <div className="hidden"><FaArrowTurnUp size={24} /></div>
+                <div className="flex absolute">
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32 rotate-45">
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32 rotate-45">
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32 rotate-45">
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                    <div className=""><FaAnglesDown size={24} /></div>
+                  </div>
                 </div>
+                <div className="absolute top-[-16px] left-[-20px] cursor-pointer hover:bg-dark4 p-0.5 rounded-md" title="Отметить как прочитано"><IoCloseCircleOutline size={18} /></div>
+              </div> : null
+            }
+
+            {userData?.status == 5 ?
+              <div className="flex px-4 py-2 items-center justify-center gap-1 relative overflow-hidden rounded-t-2xl bg-red-500">
+                <div className="font-bold">Въезд запрещен</div>
+                <div className="hidden absolute">
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32">
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32">
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                  </div>
+                  <div className="grid grid-cols-4 opacity-40 text-red-200 w-32">
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                    <div className=""><FaBan size={24} /></div>
+                  </div>
+                </div>
+                <div className="absolute top-[-16px] left-[-20px] cursor-pointer hover:bg-dark4 p-0.5 rounded-md" title="Отметить как прочитано"><IoCloseCircleOutline size={18} /></div>
+              </div> : null
+            }
+
+            <div className={"flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
+              <div className={"relative w-fit rounded-2xl " + getColor()}>
+                <NextImage onError={(e) => {
+                  e.currentTarget.srcset = "/Steve.webp";
+                }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/bust/512/' + (userData?.nickname)} />
               </div>
-              <div className="mt-1.5 md:mt-0 flex w-full gap-2 flex-col">
-                <div className="flex justify-end gap-2">
-                  <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
-                  {passport.authData?.id != passport.userID && !(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-                    <>
-                      {checkSub() == true ? <div className="flex md:hidden select-none w-full bg-blue-500 hover:bg-blue-600 cursor-pointer p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
-                        sub();
-                      }}>Вы подписаны</div> :
-                        <div className="flex md:hidden select-none w-full bg-dark4 hover:bg-dark3 cursor-pointer p-1 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
-                          sub();
-                        }}>Подписаться</div>}
-                    </>
-                    : null}
-                  {(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-                    <div className="flex md:hidden select-none w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 cursor-not-allowed p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Вы подписаны</div>
-                    : null}
+              <div className="flex flex-col justify-between items-end">
+                <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
+                <div className="flex gap-2 bg-dark2 rounded-2xl py-1 px-2">
+                  {userData?.nickname == "Ligor4ik" ?
+                    <div className="" title="Точно не еврей"><FaStarOfDavid className="text-red-500" /></div> : null}
+                  {userData?.heromedal ?
+                    <div className="" title="Герой Авинесии"><FaStar className="text-red-500" /></div> : null}
+                  {userData?.activemedal ?
+                    <div className="" title="Активный гражданин"><FaFire className="text-orange-500" /></div> : null}
+                  {userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" && userData?.status == 1 ?
+                    <div className="" title="Гражданин с 2021г."><FaStar className="text-yellow-500" /></div> : null}
+                  {userData?.status == 4 ?
+                    <div className="" title="Туристическая виза"><FaTicketSimple className="text-blue-500" /></div> : null}
+                  {userData?.status == 0 ?
+                    <div className="" title="Рассмотрение заявки на гражданство"><FaTicketSimple className="text-yellow-500" /></div> : null}
                 </div>
               </div>
             </div>
-            <div className='flex flex-wrap gap-1 select-none'>
-              {userData?.roles?.map((e: any) =>
-                <div key={makeid(5)} className={'rounded-md px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
-              )}
+
+            <div className="flex flex-col gap-2 bg-dark2 px-4 pt-2 pb-6 mt-2 rounded-b-2xl">
+              <div className='flex flex-col'>
+                <div className='font-bold text-2xl'>{userData?.surname}</div>
+                <div className='font-medium text-zinc-400'>{userData?.nickname}</div>
+                <div className='text-zinc-500 flex gap-2 items-center text-sm'>@user{passport.userID} <span className="cursor-pointer" onClick={() => {
+                  navigator.clipboard.writeText("https://id.gooseland.cc/user/" + passport.userID);
+                  alert("Ссылка скопирована!")
+                }}><MdOutlineContentCopy /></span></div>
+                <div className='flex flex-wrap gap-1 select-none mt-2'>
+                  {userData?.roles?.map((e: any) =>
+                    <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
+                  )}
+                </div>
+              </div>
             </div>
-            {passport.authData?.id != passport.userID && !(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-              <>
-                {checkSub() == true ? <div className="hidden md:flex select-none bg-blue-500 hover:bg-blue-600 cursor-pointer p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold" onClick={() => {
-                  sub();
-                }}>Вы подписаны</div> :
-                  <div className="hidden md:flex select-none bg-dark4 hover:bg-dark3 cursor-pointer p-2 rounded-2xl flex justify-center md:mt-4 text-lg font-bold" onClick={() => {
-                    sub();
-                  }}>Подписаться</div>}
-              </>
-              : null}
-            {(userData?.passid == "LGS-P7nX10" || userData?.passid == "LGS-49fb3e") ?
-              <div className="hidden md:flex select-none w-full bg-gradient-to-br from-[#FFD700] to-yellow-600 cursor-not-allowed p-1 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Вы подписаны</div>
-              : null}
           </div>
         </div>
       }

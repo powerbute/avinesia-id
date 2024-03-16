@@ -79,7 +79,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
     let { error: a1 } = await supabase
       .from('users')
-      .insert({ tg: input4, passid: passIDt, invitedby: inviterData?.nickname, nickname: input1, rating: 0, surname: input2, issuedby: "Правительство Авинесии", dateofissue: issdata, validuntil: "10.06.2025", status: 0, birthdate: input3 })
+      .insert({ tg: input4, passid: passIDt, invitedby: inviterData?.passid, nickname: input1, rating: 0, surname: input2, issuedby: "Правительство Авинесии", dateofissue: issdata, validuntil: "01.04.2024", status: 4, birthdate: input3 })
     setInput1("");
     setInput2("");
     setInput3("");
@@ -161,11 +161,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
         <div className='flex flex-col gap-2 items-center'>
           <NextImage onError={(e) => {
             e.currentTarget.srcset = "/Steve.webp";
-          }} width={128} height={128} alt='profile avatar' src={'https://visage.surgeplay.com/face/512/' + (inviterData?.nickname)} />
+          }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (inviterData?.nickname)} />
           <div className='text-3xl text-fond text-center text-white'>Вас приглашает {inviterData?.nickname}</div>
           <div className='md:w-[105%] mb-12 flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit text-white'>
-            <div className='flex justify-between items-center mb-4 select-none flex-col md:flex-row'>
-              <div className='text-3xl font-bold flex items-center gap-2'>Анкета</div>
+            <div className='flex justify-between items-center mb-4 select-none flex-col'>
+              <div className='text-3xl font-bold flex items-center gap-2'>Регистрация</div>
+              <div className='mt-2'>Регистрируясь в Avinesia ID, вы автоматически подаете заявку на туристическую визу,<br />после нее вы уже сможете оформить гражданство или дальше посещать Авинесию.</div>
+              <div className='mt-2 text-red-400'>Если ваш никнейм или Telegram занят, возможно вы уже внесены в систему,<br />попробуйте авторизоваться через Telegram или запросить код у правительства</div>
             </div>
             <div className='grid grid-cols-1 gap-2 md:gap-0 md:grid-cols-2 mb-4'>
               <div className='flex flex-col gap-0.5'>
@@ -211,6 +213,6 @@ export default function HomePage({ params }: { params: { id: string } }) {
           </div>
         </div>
       </section>
-    </main>
+    </main >
   );
 }
