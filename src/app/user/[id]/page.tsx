@@ -47,10 +47,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   const [editRating, setEditRating] = React.useState<any>(false);
   const [eRatingMode, setERatingMode] = React.useState<any>(0);
+  const [eRatingRegion, setERatingRegion] = React.useState<any>("LGS");
   const [eRatingCost, setERatingCost] = React.useState<any>(0);
   const [eRatingRealson, setERatingRealson] = React.useState<any>();
 
   const [ratingData, setRatingData] = React.useState<any>([]);
+
+  const [ratingRegion, setRatingRegion] = React.useState<any>("LGS");
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -65,6 +68,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .from('rating')
       .select('*')
       .eq("passid", user?.passid)
+      .eq('region', ratingRegion)
       .order('created_at', { ascending: false })
     setRatingData(rating);
     const { data: posts, error } = await supabase
@@ -86,6 +90,23 @@ export default function HomePage({ params }: { params: { id: string } }) {
       setSubsData(subsArray);
     }
     setUserData(user);
+  }
+
+  async function updateRating(region: any) {
+    setRatingRegion(region)
+    const { data: rating } = await supabase
+      .from('rating')
+      .select('*')
+      .eq("passid", userData?.passid)
+      .eq('region', region)
+      .order('created_at', { ascending: false })
+    setRatingData(rating);
+  }
+
+  function renderRating(rating: any) {
+    if (rating > 1000) return 100;
+    if (rating < -1000) return 100;
+    return rating
   }
 
   React.useEffect(() => {
@@ -120,45 +141,44 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function applynRating() {
+    if (authData?.nickname != "MiniPeka200609" || authData?.nickname != "Ligor4ik" || authData?.nickname != "ThePowerbute") {
+      return;
+    }
+    if (authData?.nickname == "MiniPeka200609" && eRatingRegion == "LGS") {
+      alert("У вас нет прав на редактирование соц рейтинга этого региона")
+      return;
+    }
     let oldT = 0;
     let newT = 0;
     let { data: rating0 } = await supabase
       .from('rating')
       .select()
       .eq("passid", userData?.passid)
+      .eq("region", eRatingRegion)
       .order('created_at', { ascending: false })
-    if (rating0 != null) {
+    if (rating0 != null && rating0.length > 0) {
       oldT = parseInt(rating0[0]?.new);
     }
-    //console.log(oldT);
+
     //console.log(oldT += eRatingCost);
     if (eRatingMode == 0) {
       newT = Number(oldT) + Number(eRatingCost);
-      let { data: rating, error } = await supabase
+      console.log("old: " + Number(oldT) + "; new: " + Number(newT) + "; realson: " + eRatingRealson + "; region:" + eRatingRegion)
+      let { error } = await supabase
         .from('rating')
-        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 0 })
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 0, region: eRatingRegion })
       setERatingCost("");
       setERatingRealson("");
-      const { data: rating1 } = await supabase
-        .from('rating')
-        .select('*')
-        .eq("passid", userData?.passid)
-        .order('created_at', { ascending: false })
-      setRatingData(rating1);
+      updateRating(eRatingRegion)
       alert("Успешно!")
     } else {
       newT = Number(oldT) - Number(eRatingCost);
-      let { data: rating, error } = await supabase
+      let { error } = await supabase
         .from('rating')
-        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 1 })
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 1, region: eRatingRegion })
       setERatingCost("");
       setERatingRealson("");
-      const { data: rating1 } = await supabase
-        .from('rating')
-        .select('*')
-        .eq("passid", userData?.passid)
-        .order('created_at', { ascending: false })
-      setRatingData(rating1);
+      updateRating(eRatingRegion)
       alert("Успешно!")
     }
 
@@ -247,7 +267,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setPage(1) }}><FaArrowLeft size={18} /></div>
                       <div className='text-xl font-bold'>Социальный рейтинг</div></div>
                     <div className='flex gap-2 items-center'>
-                      {editRating && authData?.roles?.includes(1) ?
+                      {editRating && (authData?.roles?.includes(1) || authData?.nickname == "MiniPeka200609") ?
                         <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(false) }}><MdCancel size={18} /></div> :
                         <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(true) }}><MdEdit size={18} /></div>}
                     </div>
@@ -262,18 +282,37 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         <div className='flex gap-2'>
                           <div><input onChange={(e: any) => {
                             setERatingCost(e.target.value)
-                          }} value={eRatingCost} type='number' className='rounded-2xl bg-dark4 border-none' placeholder='Укажите сколько соц рейтинга надо изменить' /></div>
+                          }} value={eRatingCost || ''} type='number' className='rounded-2xl bg-dark4 border-none' placeholder='Укажите сколько соц рейтинга надо изменить' /></div>
                         </div>
                         <div className='flex gap-2'>
                           <div><input onChange={(e: any) => {
                             setERatingRealson(e.target.value)
-                          }} value={eRatingRealson} className='rounded-2xl bg-dark4 border-none' placeholder='Укажите причину' /></div>
+                          }} value={eRatingRealson || ''} className='rounded-2xl bg-dark4 border-none' placeholder='Укажите причину' /></div>
+                        </div>
+                        <div className='flex gap-2'>
+                          <div className={'p-2 border h-fit hover:bg-dark4 cursor-pointer rounded-md ' + (eRatingRegion == "LGS" ? "border-blue-500" : "border-dark4")} onClick={() => { setERatingRegion("LGS") }}>Глобальный</div>
+                          <div className={'p-2 border h-fit hover:bg-dark4 cursor-pointer rounded-md ' + (eRatingRegion == "HST" ? "border-blue-500" : "border-dark4")} onClick={() => { setERatingRegion("HST") }}>Хаустония</div>
                         </div>
                       </div>
                       <div className='flex justify-end mt-4'>
                         <div className='bg-blue-500 cursor-pointer hover:bg-blue-600 p-2 rounded-2xl' onClick={() => { applynRating() }}>Применить</div>
                       </div>
                     </div> : null}
+                  {(userData?.residenceregion == "HST" || authData?.roles?.includes(1) || authData?.roles?.includes(2)) &&
+                    <div className='flex mb-4'>
+                      <div onClick={() => {
+                        updateRating("LGS")
+                      }} className='rounded-l-2xl bg-dark2 hover:bg-dark4 cursor-pointer p-2 flex justify-center w-full'>Глобальный</div>
+                      <div onClick={() => {
+                        updateRating("HST")
+                      }} className='rounded-к-2xl bg-dark2 hover:bg-dark4 cursor-pointer p-2 flex justify-center w-full'>Хаустония</div>
+                    </div>}
+                  <div className='mb-4 flex flex-col bg-dark2 px-4 pb-6 pt-2 rounded-2xl'>
+                    <div className={'mt-2 text-lg text-start font-bold' + (ratingData[0]?.new >= 0 ? " text-green-500" : " text-red-500")}>{ratingData[0]?.new != null ? ratingData[0]?.new : "0"}</div>
+                    <div className='flex w-full bg-dark4 rounded-2xl h-2'>
+                      <div className='flex w-full justify-start'><div className={'h-2 rounded-2xl w-[' + (renderRating(Math.abs(ratingData[0]?.new) / 10)) + "%] " + (ratingData[0]?.new > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
+                    </div>
+                  </div>
                   <div className='mb-4 bg-dark2 rounded-2xl w-full text-center grid grid-cols-4 md:grid-cols-5 md:px-4 py-6'>
                     <div className='font-bold text-lg'>Было</div>
                     <div className='font-bold text-lg mb-4'>Причина</div>

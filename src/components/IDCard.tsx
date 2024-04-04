@@ -55,6 +55,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       .from('rating')
       .select('*')
       .eq("passid", user?.passid)
+      .eq("region", "LGS")
       .order('created_at', { ascending: false })
     setRatingData(rating);
     if (rating != null && ratingOld == 0) {
@@ -402,6 +403,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   {userData?.roles?.map((e: any) =>
                     <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
                   )}
+                  <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{passport.authData?.residenceregion == "LGS" && "Житель Лигорщины"}{passport.authData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
                 </div>
               </div>
             </div>

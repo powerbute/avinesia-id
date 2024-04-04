@@ -9,7 +9,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 export default function PassportApp({ passport }: { passport: { authData: any, userID: any, open: any, setOpen: any } }) {
   const supabase = createClientComponentClient();
   const [page, setPage] = useState<number>(1);
-  const maxPage = 3;
+  const maxPage = 4;
 
   return (
     <>
@@ -81,6 +81,34 @@ export default function PassportApp({ passport }: { passport: { authData: any, u
             </div>
             : null}
           {page == 3 ?
+            <div className="w-full rounded-2xl px-8 py-8 h-full bg-gray-300 text-black flex flex-col overflow-y-scroll overflow-x-hidden md:overflow-y-hidden">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className={"relative w-1/2 rounded-2xl bg-blue-200 pt-2"}>
+                  <div className="flex flex-col items-center p-2">
+                    <div>Место проживания</div>
+                    <div>Регион: {passport.authData?.residenceregion == "LGS" && "Лигорщина"}{passport.authData?.residenceregion == "HST" && "Хаустония"}</div>
+                    <div>Строение: {passport?.authData?.house}</div>
+                  </div>
+                </div>
+                <div className="flex gap-4 flex-col w-full">
+                  <div className="flex flex-col border-b border-black w-full">
+                    <div>Дата рождения</div>
+                    <div className="text-xl bg-dark3 text-dark3 hover:text-black hover:bg-gray-300">{passport.authData?.birthdate}</div>
+                  </div>
+                  <div className="flex flex-col border-b border-black w-full">
+                    <div>Telegram</div>
+                    <div className="text-xl">{passport.authData?.tg}</div>
+                  </div>
+                  <div className="flex flex-col border-b border-black w-full">
+                    <div>Discord</div>
+                    <div className="text-xl">{passport.authData?.discord}</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            : null}
+          {page == 4 ?
             <div className="w-full rounded-2xl px-8 py-8 h-full bg-red-800 flex flex-col items-center justify-end">
               <div>Авинесия</div>
 

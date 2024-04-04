@@ -24,6 +24,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
       .from('rating')
       .select('*')
       .eq("passid", user?.passid)
+      .eq("region", "LGS")
       .order('created_at', { ascending: false })
     if (rating != null) {
       setRatingData(rating[0]);
@@ -52,18 +53,6 @@ export default function Passport({ passport }: { passport: { authData: any, user
     return result;
   }
 
-  async function applyRating(rating1: any) {
-    if (rating1 > 1000 || rating1 < -1000) {
-      alert("Минимальный и максимальный рейтинг: -1000 и 1000!!")
-      return;
-    }
-    const { error: a1 } = await supabase
-      .from('users')
-      .update({ rating: rating1 })
-      .eq('id', userData?.id);
-    getUser(passport.userID);
-  }
-
   function renderRating(rating: any) {
     if (rating > 1000) return 100;
     if (rating < -1000) return 100;
@@ -84,7 +73,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
           <div className='flex justify-between items-center'><div className="text-xl font-bold ">Соц. рейтинг</div><div onClick={() => {
             passport.setPage(2);
           }} className="hover:bg-dark4 cursor-pointer p-2 rounded-md"><FaArrowRightToBracket size={18} /></div></div>
-          <div className={'mt-2 text-lg text-start font-bold' + (ratingData?.new > 0 ? " text-green-500" : " text-red-500")}>{ratingData?.new}</div>
+          <div className={'mt-2 text-lg text-start font-bold' + (ratingData?.new >= 0 ? " text-green-500" : " text-red-500")}>{ratingData?.new != null ? ratingData?.new : "0"}</div>
           <div className='flex w-full bg-dark4 rounded-2xl h-2'>
             <div className='flex w-full justify-start'><div className={'h-2 rounded-2xl w-[' + (renderRating(Math.abs(ratingData?.new) / 10)) + "%] " + (ratingData?.new > 0 ? "bg-green-500" : "bg-red-500")}></div></div>
           </div>
