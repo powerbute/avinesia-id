@@ -20,6 +20,9 @@ export default function HomePage() {
 
   React.useEffect(() => {
     setAuthCode(authCode1);
+    if (!isClient) {
+      getPassID(authCode);
+    }
     setIsClient(true)
   }, [])
 
