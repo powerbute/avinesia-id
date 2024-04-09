@@ -154,7 +154,7 @@ export default function HomePage() {
       .single();
     if (users?.id == null) {
       alert("Пользователь не найден!")
-      window.open("/home", "_self")
+      window.open("/", "_self")
     } else {
       setAuthData(users);
     }

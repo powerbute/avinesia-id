@@ -123,7 +123,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .single();
     if (users?.id == null) {
       alert("Пользователь не найден!")
-      window.open("/home", "_self")
+      window.open("/", "_self")
     } else {
       setAuthData(users);
     }
