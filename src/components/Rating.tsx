@@ -3,8 +3,8 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { useEffect } from "react";
 import { useState } from "react"
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
-import { FaArrowRightToBracket } from "react-icons/fa6";
-import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle } from "react-icons/md";
+import { FaArrowRight, FaArrowRightToBracket } from "react-icons/fa6";
+import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle, MdEdit } from "react-icons/md";
 
 export default function Passport({ passport }: { passport: { authData: any, userID: any, setPage: any, ratingData: any } }) {
   const supabase = createClientComponentClient();
@@ -72,7 +72,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
         <div className={'bg-dark2 rounded-2xl px-4 py-6 select-none' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
           <div className='flex justify-between items-center'><div className="text-xl font-bold ">Соц. рейтинг</div><div onClick={() => {
             passport.setPage(2);
-          }} className="hover:bg-dark4 cursor-pointer p-2 rounded-md"><FaArrowRightToBracket size={18} /></div></div>
+          }} className="hover:bg-dark4 cursor-pointer p-2 rounded-md"><FaArrowRight size={18} /></div></div>
           <div className={'mt-2 text-lg text-start font-bold' + (ratingData?.new >= 0 ? " text-green-500" : " text-red-500")}>{ratingData?.new != null ? ratingData?.new : "0"}</div>
           <div className='flex w-full bg-dark4 rounded-2xl h-2'>
             <div className='flex w-full justify-start'><div className={'h-2 rounded-2xl w-[' + (renderRating(Math.abs(ratingData?.new) / 10)) + "%] " + (ratingData?.new > 0 ? "bg-green-500" : "bg-red-500")}></div></div>

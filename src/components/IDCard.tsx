@@ -133,41 +133,37 @@ export default function Passport({ passport }: { passport: { authData: any, user
   return (
     <>
       {!loaded ?
-        <div className={'bg-dark2 h-fit rounded-2xl px-4 py-6 w-fit'}>
-          <div className={'flex flex-col gap-2'}>
-            <div className="flex justify-between flex-col md:flex-row">
-              <div className='flex gap-2 md:gap-0 md:flex-col'>
-                <div className={"relative w-fit rounded-2xl bg-dark4"}>
-                  <div className="bg-dark2 animate-pulse w-[128px] h-[128px]"></div>
-                </div>
-                <div className='flex flex-col mt-2 gap-1'>
-                  <div className='font-bold text-3xl text-transparent animate-pulse bg-dark4 rounded-2xl w-fit'>Displayname</div>
-                  <div className='font-medium text-transparent animate-pulse bg-dark4 rounded-2xl text-xl w-fit'>Nickname</div>
-                  <div className='text-transparent animate-pulse bg-dark4 rounded-2xl w-fit'>@userID</div>
-                </div>
-              </div>
-              <div className="mt-1.5 md:mt-0 flex w-full gap-2 flex-col">
-                <div className="flex justify-end w-full gap-2">
-                  <div className={"flex select-none w-fit justify-center relative items-center pt-[1px] h-10 px-2 rounded-2xl bg-dark4 animate-pulse text-transparent"}>
-                    <CiHeart size={32} className="relative text-dark3 cursor-pointer" />
-                    <div>1</div>
-                  </div>
-                  <div className="flex md:hidden select-none bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold w-full">Подписаться</div>
-                </div>
-              </div>
-            </div>
-            <div className='flex flex-wrap gap-1 select-none'>
+        <div className={'h-fit rounded-2xl'}>
+          <div className={'flex flex-col '}>
 
-              <div className={'rounded-md px-2 py-0.5 bg-dark3 animate-pulse text-transparent'}>Example role</div>
-              <div className={'rounded-md px-2 py-0.5 bg-dark3 animate-pulse text-transparent'}>Example role</div>
-              <div className={'rounded-md px-2 py-0.5 bg-dark3 animate-pulse text-transparent'}>Example role</div>
+            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
+              <div className={"relative w-32 h-32 rounded-2xl bg-dark4 animate-pulse"}>
+              </div>
+              <div className="flex flex-col justify-between items-end">
+                <div className={"flex select-none animate-pulse w-fit justify-center relative items-center cursor-pointer pt-[1px] h-10 px-2 rounded-2xl bg-dark4 hover:bg-dark3 text-white"}>
+                  <CiHeart color={"white"} size={32} className="relative cursor-pointer" />
+                  <div></div>
+                </div>
+                <div className="flex gap-2 bg-dark2 rounded-2xl py-1 px-2">
+                </div>
+              </div>
             </div>
-            <div className="hidden md:flex select-none bg-dark4 animate-pulse text-transparent p-2 rounded-2xl md:mt-4 flex justify-center text-lg font-bold">Подписан</div>
+
+            <div className="flex flex-col gap-2 bg-dark2 px-4 pb-4 pt-2 rounded-b-2xl">
+              <div className='flex flex-col animate-pulse text-dark4 bg-dark4 h-fit select-none rounded-2xl'>
+                <div className='font-bold text-2xl'>Displayname</div>
+                <div className='font-medium'>Nickname</div>
+                <div className='flex gap-2 items-center text-sm'>@userID</div>
+                <div className='flex flex-wrap gap-1 select-none mt-2'>
+                  <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>Житель региона</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         :
-        <div className={'bg-dark5 h-fit rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
-          <div className={'flex flex-col gap-2' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
+        <div className={'h-fit rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
+          <div className={'flex flex-col ' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
 
             {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new > ratingOld.new && passport.userID == passport.authData?.id && userData?.status != 5 ?
               <div onClick={(e) => {
@@ -366,7 +362,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div> : null
             }
 
-            <div className={"flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
+            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
               <div className={"relative w-fit rounded-2xl " + getColor()}>
                 <NextImage onError={(e) => {
                   e.currentTarget.srcset = "/Steve.webp";
@@ -391,7 +387,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 bg-dark2 px-4 pt-2 pb-6 mt-2 rounded-b-2xl">
+            <div className="flex flex-col gap-2 bg-dark2 px-4 pb-4 pt-2 rounded-b-2xl">
               <div className='flex flex-col'>
                 <div className='font-bold text-2xl'>{userData?.surname}</div>
                 <div className='font-medium text-zinc-400'>{userData?.nickname}</div>

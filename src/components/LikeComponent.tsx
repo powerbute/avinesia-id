@@ -70,8 +70,8 @@ export default function LikeCompoennt({ passport }: { passport: { authData: any,
   }
 
   return (
-    <div className={"flex select-none w-fit justify-center relative items-center cursor-pointer pt-[1px] h-10 px-2 rounded-2xl " + (!liked ? "bg-white hover:bg-gray-200 text-black" : "bg-red-500 hover:bg-red-400 text-white")} onClick={(e) => handleLike(e)}>
-      <CiHeart color={!liked ? "black" : "white"} size={32} className="relative cursor-pointer" />
+    <div className={"flex select-none w-fit justify-center relative items-center cursor-pointer pt-[1px] h-10 px-2 rounded-2xl " + (!liked ? "bg-dark4 hover:bg-dark3 text-white" : "bg-red-500 hover:bg-red-400 text-white")} onClick={(e) => handleLike(e)}>
+      <CiHeart color={!liked ? "white" : "white"} size={32} className="relative cursor-pointer" />
       <div>{passport.userData?.likes?.length > 0 ? passport.userData?.likes?.length : null}</div>
     </div>
   )

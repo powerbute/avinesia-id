@@ -55,7 +55,7 @@ export default function HomePage() {
         <title>Hi</title>
       </Head>
       <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px] flex flex-col justify-center items-center text-center'>
-        {loaded &&
+        {(loaded && session != "") &&
           <div className='flex flex-col gap-6 bg-dark2 h-[70vh] rounded-2xl justify-between items-center py-8 px-2 md:w-1/2'>
             <div className='flex flex-col gap-4'>
               <div className='text-2xl font-bold text-center'>Авторизация</div>

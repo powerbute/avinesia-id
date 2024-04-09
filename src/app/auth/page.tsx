@@ -13,7 +13,20 @@ export default function HomePage() {
 
   const [authMode, setAuthMode] = React.useState(0);
 
-  const [authCode, setAuthCode] = React.useState<any>(0);
+  const [isClient, setIsClient] = React.useState(false)
+
+  const [authCode1, setAuthCode1] = useLocalStorage("authreq", "0");
+  const [authCode, setAuthCode2] = React.useState<any>("0");
+
+  React.useEffect(() => {
+    setAuthCode(authCode1);
+    setIsClient(true)
+  }, [])
+
+  async function setAuthCode(code: any) {
+    setAuthCode1(code);
+    setAuthCode2(code);
+  }
 
   supabase
     .channel('room1')
@@ -63,6 +76,7 @@ export default function HomePage() {
 
   async function genSession(passID: any, authID: any) {
     if (passID == null) return;
+    setAuthCode("0");
     let sess = makeid(256);
     const { error } = await supabase
       .from('sessions')
@@ -134,17 +148,27 @@ export default function HomePage() {
               <div className='flex flex-col'>
                 <div className='mb-1 font-bold text-lg'>Ваш код авторизации</div>
                 <div className='mb-8'>Вставьте его в чат с Telegram ботом, чтобы авторизоваться на сайте</div>
-                <div className='flex gap-2 justify-center select-none'>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{String([authCode[0]])}</div>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[1]}</div>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[2]}</div>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[3]}</div>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[4]}</div>
-                  <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[5]}</div>
-                </div>
+                {authCode != null && (isClient && authCode.length > 5) ?
+                  <div className='flex gap-2 justify-center select-none'>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{String([authCode[0]])}</div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[1]}</div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[2]}</div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[3]}</div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[4]}</div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'>{authCode[5]}</div>
+                  </div> :
+                  <div className='flex gap-2 justify-center select-none'>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                    <div className='bg-dark4 md:text-4xl text-2xl p-2 rounded-md flex justify-center items-center md:w-14 md:h-14 w-10 h-10'></div>
+                  </div>
+                }
               </div>
               <div className='flex flex-col gap-2 w-full select-none'>
-                {authCode == 0 ?
+                {authCode == "0" ?
                   <div className='p-4 rounded-2xl bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer w-full' onClick={() => genCode()}><FaIdCard /> Сгенерировать</div>
                   :
                   <div className='p-4 rounded-2xl bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer w-full' onClick={() => {

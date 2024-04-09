@@ -3,7 +3,7 @@
 import Head from 'next/head';
 import * as React from 'react';
 
-import { IoMdSearch, IoMdNotificationsOutline, IoMdSend, IoMdCloseCircle } from "react-icons/io";
+import { IoMdSearch, IoMdNotificationsOutline, IoMdSend, IoMdCloseCircle, IoMdMail } from "react-icons/io";
 import { IoMedalSharp, IoSettingsOutline, IoStar } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck } from "react-icons/ci";
 import { FaArrowLeft, FaBook, FaCity, FaPeace } from "react-icons/fa";
@@ -26,7 +26,7 @@ import Post from '@/components/Post';
 import { GiGrowth, GiTank } from "react-icons/gi";
 import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
 import { CgUnavailable } from 'react-icons/cg';
-import { FaMinus, FaPlus } from 'react-icons/fa6';
+import { FaLink, FaMinus, FaNewspaper, FaPlus, FaTelegram } from 'react-icons/fa6';
 import moment from 'moment';
 
 
@@ -123,7 +123,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .single();
     if (users?.id == null) {
       alert("Пользователь не найден!")
-      window.open("/error", "_self")
+      window.open("/home", "_self")
     } else {
       setAuthData(users);
     }
@@ -244,6 +244,54 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='flex gap-4 flex-col md:flex-row'>
             <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
+              {userData?.residenceregion == "LGS" &&
+                <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
+                  <div className='flex gap-2 items-center'>
+                    <img src='/LigorshhinaFlag.png' className='w-20' />
+                    <div className='flex flex-col w-full gap-1'>
+                      <div className='font-bold text-xl'>Лигорщина</div>
+                      <div className='grid grid-cols-3 w-full gap-2 select-none'>
+                        <div onClick={() => {
+                          window.open("https://t.me/av_lgs")
+                        }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
+                        <div onClick={() => {
+                          alert("Сайт в разработке")
+                        }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
+                        <div onClick={() => {
+                          window.open("https://t.me/ligor4ik")
+                        }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div onClick={() => {
+                    window.open("https://t.me/avinesiamedia")
+                  }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
+                </div>
+              }
+              {userData?.residenceregion == "HST" &&
+                <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
+                  <div className='flex gap-2 items-center'>
+                    <img src='/HoustoniaFlag.png' className='w-20' />
+                    <div className='flex flex-col w-full gap-1'>
+                      <div className='font-bold text-xl'>Хаустония</div>
+                      <div className='grid grid-cols-3 w-full gap-2 select-none'>
+                        <div onClick={() => {
+                          window.open("https://t.me/av_hst")
+                        }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
+                        <div onClick={() => {
+                          window.open("https://hst.gooseland.cc/")
+                        }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
+                        <div onClick={() => {
+                          window.open("https://t.me/Mini_Peka2006")
+                        }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div onClick={() => {
+                    window.open("https://t.me/avinesiamedia")
+                  }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
+                </div>
+              }
               <Rating passport={{ authData: authData, userID: userID, setPage: setPage, ratingData: ratingData }} />
             </div>
             {page == 1 ?
