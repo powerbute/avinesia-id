@@ -49,6 +49,8 @@ export default function HomePage() {
 
   const [openLenta, setOpenLenta] = React.useState(false);
 
+  const [authCode1, setAuthCode1] = useLocalStorage("authreq", "0");
+
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
 
@@ -153,12 +155,52 @@ export default function HomePage() {
       .eq("passid", passid)
       .single();
     if (users?.id == null) {
+      if (authCode1 != "0") {
+        getPassID(authCode1)
+        return;
+      }
       alert("Пользователь не найден!")
       window.open("/", "_self")
     } else {
       setAuthData(users);
     }
 
+  }
+
+  async function genSession(passID: any, authID: any) {
+    if (passID == null) return;
+    setAuthCode1("0");
+    let sess = makeid(256);
+    const { error } = await supabase
+      .from('sessions')
+      .insert({ passid: passID, session: sess })
+    setSession(sess);
+    const a = await supabase
+      .from('authReq')
+      .delete()
+      .eq('code', authID)
+    getProfile(passID);
+  }
+
+  async function getProfile(passID: any) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('passid', passID)
+      .single()
+    setAuthData(data)
+    window.open("/home", "_self");
+  }
+
+  async function getPassID(authID: any) {
+    const { data, error } = await supabase
+      .from('authReq')
+      .select('*')
+      .eq('code', authID)
+      .single()
+    if (data != null) {
+      genSession(data?.passid, authID);
+    }
   }
 
   async function createPost() {
