@@ -49,7 +49,7 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
               window.open("/home", "_self")
             }}>
               <NextImage onError={(e) => {
-                e.currentTarget.srcset = "/Steve.webp";
+                e.currentTarget.srcset = "/Steve1.webp";
               }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (passport.authData?.nickname)} />
             </div> : null}
           </div>

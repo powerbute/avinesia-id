@@ -155,11 +155,13 @@ export default function Passport({ passport }: { passport: { authData: any, user
                       }}>
                         <div className="flex gap-2 items-center">
                           <NextImage onError={(e) => {
-                            e.currentTarget.srcset = "/Steve.webp";
+                            e.currentTarget.srcset = "/Steve1.webp";
                           }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
-                          <div>{e?.surname}</div>
+                          <div className="flex flex-col">
+                            <div className="font-bold">{e?.surname}</div>
+                            <div className="text-sm">{e?.nickname}</div>
+                          </div>
                         </div>
-                        <div>{e?.nickname}</div>
                       </div>
                     )}
                   </div>
@@ -184,7 +186,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   window.open("/home", "_self")
                 }}>
                   <NextImage onError={(e) => {
-                    e.currentTarget.srcset = "/Steve.webp";
+                    e.currentTarget.srcset = "/Steve1.webp";
                   }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (passport.authData?.nickname)} />
                 </div> : null}
               </div>

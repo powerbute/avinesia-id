@@ -399,7 +399,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   {userData?.roles?.map((e: any) =>
                     <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
                   )}
-                  <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{passport.authData?.residenceregion == "LGS" && "Житель Лигорщины"}{passport.authData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
+                  <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{userData?.residenceregion == "LGS" && "Житель Лигорщины"}{userData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
                 </div>
               </div>
             </div>
