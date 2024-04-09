@@ -4,6 +4,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Head from 'next/head';
 import * as React from 'react';
 import { FaCopy, FaIdCard, FaTelegram } from 'react-icons/fa6';
+import { MdClose } from 'react-icons/md';
 import useLocalStorage from 'use-local-storage';
 
 export default function HomePage() {
@@ -17,6 +18,8 @@ export default function HomePage() {
 
   const [authCode1, setAuthCode1] = useLocalStorage("authreq", "0");
   const [authCode, setAuthCode2] = React.useState<any>("0");
+
+  const [alerT, setAlerT] = React.useState<any>("");
 
   React.useEffect(() => {
     setAuthCode(authCode1);
@@ -138,6 +141,12 @@ export default function HomePage() {
       <Head>
         <title>Hi</title>
       </Head>
+      {alerT != "" &&
+        <div className='absolute right-0 bottom-0 m-4 p-2 flex gap-2 text-white text-2xl rounded-2xl bg-dark4'>
+          <div>{alerT}</div>
+          <div className='h-fit' onClick={() => setAlerT("")}><MdClose /></div>
+        </div>
+      }
       <section className='bg-dark min-w-screen min-h-screen py-4 mx-auto text-white xl:w-[1280px] flex flex-col justify-center items-center text-center'>
         <div className='flex flex-col gap-6 bg-dark2 h-[70vh] rounded-2xl items-center py-8 px-2 md:w-1/2'>
           <div className='text-2xl font-bold text-center'>Авторизация</div>
@@ -175,7 +184,7 @@ export default function HomePage() {
                   :
                   <div className='p-4 rounded-2xl bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer w-full' onClick={() => {
                     navigator.clipboard.writeText(authCode);
-                    alert("Скопировано!")
+                    setAlerT("Скопировано!")
                   }}><FaCopy /> Скопировать</div>}
                 <div onClick={() => {
                   window.open("https://t.me/avinesiabot")
