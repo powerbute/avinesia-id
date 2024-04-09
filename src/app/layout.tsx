@@ -56,6 +56,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html>
       <body className='bg-dark'>{children}</body>

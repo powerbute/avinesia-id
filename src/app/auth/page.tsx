@@ -20,14 +20,14 @@ export default function HomePage() {
 
   React.useEffect(() => {
     setAuthCode(authCode1);
-    if (!isClient) {
-      getPassID(authCode);
-    }
     setIsClient(true)
   }, [])
 
   async function setAuthCode(code: any) {
     setAuthCode1(code);
+    if (code != "0") {
+      getPassID(code);
+    }
     setAuthCode2(code);
   }
 
@@ -111,7 +111,6 @@ export default function HomePage() {
   }
 
   async function getPassID(authID: any) {
-
     if (authMode == 1) {
       const { data, error } = await supabase
         .from('authcodes')
