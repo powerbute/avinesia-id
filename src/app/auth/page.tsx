@@ -2,6 +2,7 @@
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import Head from 'next/head';
+import { useSearchParams } from 'next/navigation';
 import * as React from 'react';
 import { FaCopy, FaIdCard, FaTelegram } from 'react-icons/fa6';
 import { MdClose } from 'react-icons/md';
@@ -20,6 +21,10 @@ export default function HomePage() {
   const [authCode, setAuthCode2] = React.useState<any>("0");
 
   const [alerT, setAlerT] = React.useState<any>("");
+
+  const searchParams = useSearchParams()
+
+  const search = searchParams.get('backurl')
 
   React.useEffect(() => {
     setAuthCode(authCode1);
@@ -110,6 +115,10 @@ export default function HomePage() {
       .eq('passid', passID)
       .single()
     setAuthData(data)
+    if (search != null) {
+      window.open("/" + search, "_self")
+      return;
+    }
     window.open("/home", "_self");
   }
 

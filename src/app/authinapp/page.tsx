@@ -20,6 +20,15 @@ export default function HomePage() {
   const vote = searchParams.get('vote')
 
   React.useEffect(() => {
+    if (loaded) {
+      if (session == "") {
+        if (vote == null) {
+          window.open("/auth?backurl=authinapp?app=" + search, "_self")
+        } else {
+          window.open("/auth?backurl=authinapp?app=" + search + "&vote=" + vote, "_self")
+        }
+      }
+    }
     if (!loaded) {
       setLoaded(true);
     }
