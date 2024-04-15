@@ -15,6 +15,7 @@ import NextImage from '@/components/NextImage';
 import useLocalStorage from "use-local-storage";
 import dynamic from 'next/dynamic'
 import RealtimeStatus from '@/components/RealtimeStatus';
+import { FaHashtag } from 'react-icons/fa6';
 
 const AdminList = dynamic(() => import('@/components/AdminList'), { ssr: false })
 const Header = dynamic(() => import('@/components/AdminHeader'), { ssr: false })
@@ -32,6 +33,8 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [usersData, setUsersData] = React.useState<any>([]);
   const [userData, setUserData] = React.useState<any>({ id: 0 });
 
+  const [rolesData, setRolesData] = React.useState<any>([]);
+
   const [status0, setStatus0] = React.useState(false);
   const [status1, setStatus1] = React.useState(true);
   const [status2, setStatus2] = React.useState(false);
@@ -48,6 +51,137 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [input7, setInput7] = React.useState<any>();
   const [input8, setInput8] = React.useState<any>();
 
+  const [rID, setRID] = React.useState<any>(-1);
+  const [rName, setRName] = React.useState<any>();
+  const [rColor, setRColor] = React.useState<any>();
+  const [rPriority, setRPriority] = React.useState<any>();
+  const [rPravo1, setRPravo1] = React.useState<any>(false);
+  const [rPravo2, setRPravo2] = React.useState<any>(false);
+  const [rPravo3, setRPravo3] = React.useState<any>(false);
+  const [rPravo4, setRPravo4] = React.useState<any>(false);
+  const [rPravo5, setRPravo5] = React.useState<any>(false);
+  const [rPravo6, setRPravo6] = React.useState<any>(false);
+  const [rPravo7, setRPravo7] = React.useState<any>(false);
+  const [rPravo8, setRPravo8] = React.useState<any>(false);
+
+  async function setRoleEdit(id: any) {
+    let { data: role, error } = await supabase
+      .from('roles')
+      .select('*')
+      .eq('id', id)
+      .single();
+    setRName(role?.name)
+    setRColor(role?.color)
+    setRPriority(role?.priority);
+    if (role?.perms?.includes("admin")) {
+      setRPravo1(true)
+    } else {
+      setRPravo1(false)
+    }
+    if (role?.perms?.includes("changePassData")) {
+      setRPravo2(true)
+    } else {
+      setRPravo2(false)
+    }
+    if (role?.perms?.includes("changeContacts")) {
+      setRPravo3(true)
+    } else {
+      setRPravo3(false)
+    }
+    if (role?.perms?.includes("changeRoles")) {
+      setRPravo4(true)
+    } else {
+      setRPravo4(false)
+    }
+    if (role?.perms?.includes("editRating")) {
+      setRPravo5(true)
+    } else {
+      setRPravo5(false)
+    }
+    if (role?.perms?.includes("editRatingHST")) {
+      setRPravo6(true)
+    } else {
+      setRPravo6(false)
+    }
+    if (role?.perms?.includes("changePolls")) {
+      setRPravo7(true)
+    } else {
+      setRPravo7(false)
+    }
+    if (role?.perms?.includes("changeHome")) {
+      setRPravo8(true)
+    } else {
+      setRPravo8(false)
+    }
+
+  }
+
+  async function applyToRole() {
+    const pAr: any = [];
+    if (rPravo1) {
+      pAr.push("admin")
+    }
+    if (rPravo2) {
+      pAr.push("changePassData")
+    }
+    if (rPravo3) {
+      pAr.push("changeContacts")
+    }
+    if (rPravo4) {
+      pAr.push("changeRoles")
+    }
+    if (rPravo5) {
+      pAr.push("editRating")
+    }
+    if (rPravo6) {
+      pAr.push("editRatingHST")
+    }
+    if (rPravo7) {
+      pAr.push("changePolls")
+    }
+    if (rPravo8) {
+      pAr.push("changeHome")
+    }
+    const { error } = await supabase
+      .from('roles')
+      .update({ name: rName, color: rColor, priority: rPriority, perms: pAr })
+      .eq('id', rID)
+  }
+
+  async function createRole() {
+    const pAr: any = [];
+    if (rPravo1) {
+      pAr.push("admin")
+    }
+    if (rPravo2) {
+      pAr.push("changePassData")
+    }
+    if (rPravo3) {
+      pAr.push("changeContacts")
+    }
+    if (rPravo4) {
+      pAr.push("changeRoles")
+    }
+    if (rPravo5) {
+      pAr.push("editRating")
+    }
+    if (rPravo6) {
+      pAr.push("editRatingHST")
+    }
+    if (rPravo7) {
+      pAr.push("changePolls")
+    }
+    if (rPravo8) {
+      pAr.push("changeHome")
+    }
+    const { data, error } = await supabase
+      .from('roles')
+      .insert({ name: rName, color: rColor, priority: rPriority, perms: pAr })
+      .select()
+      .single()
+    setRID(data?.id)
+  }
+
   async function handleSearch(event: any) {
     if (event.key === 'Enter') {
       //getUser(event.target.value)
@@ -55,14 +189,101 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   React.useEffect(() => {
-    if (!(authData?.roles?.includes(1) || authData?.roles?.includes(2))) {
-      window.open("/home", "_self")
-    }
+    allowAccess();
     if (!loaded) {
       getUsers([1]);
       setLoaded(true);
     }
   })
+
+  async function allowAccess() {
+    let hasAccess = false;
+    for (let a = 0; a < authData?.roles?.length; a++) {
+      let { data: user, error } = await supabase
+        .from('roles')
+        .select('*')
+        .eq('id', authData?.roles[a])
+        .single();
+      if (user?.perms?.includes("admin")) {
+        hasAccess = true;
+      }
+    }
+    if (!hasAccess) {
+      window.open("/home", "_self")
+    }
+  }
+  async function allowAccess2() {
+    let hasAccess = false;
+    for (let a = 0; a < authData?.roles?.length; a++) {
+      let { data: user, error } = await supabase
+        .from('roles')
+        .select('*')
+        .eq('id', authData?.roles[a])
+        .single();
+      if (user?.perms?.includes("changeStatus")) {
+        hasAccess = true;
+      }
+    }
+    if (hasAccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  async function allowAccess3() {
+    let hasAccess = false;
+    for (let a = 0; a < authData?.roles?.length; a++) {
+      let { data: user, error } = await supabase
+        .from('roles')
+        .select('*')
+        .eq('id', authData?.roles[a])
+        .single();
+      if (user?.perms?.includes("superAdmin")) {
+        hasAccess = true;
+      }
+    }
+    if (hasAccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  async function allowAccess4() {
+    let hasAccess = false;
+    for (let a = 0; a < authData?.roles?.length; a++) {
+      let { data: user, error } = await supabase
+        .from('roles')
+        .select('*')
+        .eq('id', authData?.roles[a])
+        .single();
+      if (user?.perms?.includes("changePassData")) {
+        hasAccess = true;
+      }
+    }
+    if (hasAccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  async function allowAccess5() {
+    let hasAccess = false;
+    for (let a = 0; a < authData?.roles?.length; a++) {
+      let { data: user, error } = await supabase
+        .from('roles')
+        .select('*')
+        .eq('id', authData?.roles[a])
+        .single();
+      if (user?.perms?.includes("changeContacts")) {
+        hasAccess = true;
+      }
+    }
+    if (hasAccess) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   async function getUser(nickname: any) {
     setPage("member-" + nickname)
@@ -86,6 +307,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function apply1() {
+    if (!allowAccess5) {
+      alert("Нет доступа!")
+      return;
+    }
     const { error } = await supabase
       .from('users')
       .update({ nickname: input1, dateofissue: input3, surname: input4, issuedby: input5, validuntil: input6 })
@@ -95,6 +320,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function apply2() {
+    if (!allowAccess4) {
+      alert("Нет доступа!")
+      return;
+    }
     const { error } = await supabase
       .from('users')
       .update({ tg: input7 })
@@ -104,6 +333,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function apply3(status: any) {
+    if (!allowAccess2) {
+      alert("Изменять статус гражданства может только Правительство!")
+      return;
+    }
     const { error } = await supabase
       .from('users')
       .update({ status: status })
@@ -182,6 +415,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
     console.log(usersFinal)
     setUsersData(usersFinal);
+    let { data: roles, error } = await supabase
+      .from('roles')
+      .select('*')
+    setRolesData(roles);
   }
 
   function setStatus(type: any) {
@@ -263,9 +500,99 @@ export default function HomePage({ params }: { params: { id: string } }) {
         <div className='flex mt-6 w-full h-[80vh] gap-2'>
           <div className='w-48 flex gap-1 pr-6 flex-col border-r border-dark4'>
             <div className='p-2 w-full text-center text-lg hover:bg-dark4 rounded-2xl cursor-pointer' onClick={() => setPage("members")}>Участники</div>
+            <div className='p-2 w-full text-center text-lg hover:bg-dark4 rounded-2xl cursor-pointer' onClick={() => {
+              if (!allowAccess3) {
+                alert("Нет доступа!")
+                return;
+              }
+              setPage("roles")
+            }}>Роли</div>
             <div className='p-2 w-full text-center text-lg hover:bg-dark4 rounded-2xl cursor-pointer'>Статистика</div>
             <div className='p-2 w-full text-center text-lg hover:bg-dark4 rounded-2xl cursor-pointer'>av 100</div>
           </div>
+          {page == "roles" &&
+            <div className='flex w-full flex-col'>
+              <div className='grid grid-cols-4 gap-4'>
+                <div className='flex flex-col gap-2'>
+                  <div onClick={() => {
+                    setRID(-1);
+                  }} className='flex gap-2 items-center bg-dark5 hover:bg-dark4 cursor-pointer rounded-2xl p-2'>
+                    <div>Создать</div>
+                  </div>
+                  {rolesData?.map((e: any) =>
+                    <div onClick={() => {
+                      setRoleEdit(e?.id)
+                    }} className='flex gap-2 items-center hover:bg-dark4 cursor-pointer rounded-2xl p-2'>
+                      <div className='w-4 h-4 rounded-md' style={{ backgroundColor: e?.color }}></div>
+                      <div>{e?.name}</div>
+                    </div>
+                  )}
+                </div>
+                <div className='flex flex-col col-span-3'>
+                  <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col'>
+                      <div className='pl-4 font-bold'>Название</div>
+                      <input value={rName} onChange={(e) => setRName(e.target.value)} className='rounded-2xl bg-dark2 border-dark2' />
+                    </div>
+                    <div className='flex flex-col'>
+                      <div className='pl-4 font-bold'>Цвет</div>
+                      <div className='items-center flex'>
+                        <div className='bg-dark2 rounded-l-2xl p-2 h-[42px] w-[42px] flex items-center justify-center'><FaHashtag style={{ color: rColor }} size={24} /></div>
+                        <input value={rColor} onChange={(e) => setRColor(e.target.value)} className='rounded-r-2xl bg-dark2 border-dark2 w-full' />
+                      </div>
+                    </div>
+                    <div className='flex flex-col'>
+                      <div className='pl-4 font-bold'>Приоритет (WIP)</div>
+                      <input type='number' value={rPriority} onChange={(e) => setRPriority(e.target.value)} className='rounded-2xl bg-dark2 border-dark2' />
+                    </div>
+                    <div className='flex flex-col gap-4'>
+                      <div className='text-2xl font-bold pl-4'>Права</div>
+                      <div className='flex flex-col gap-2'>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Заходить в админку</div>
+                          <div onClick={() => setRPravo1(!rPravo1)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo1 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Редактировать паспортные данные</div>
+                          <div onClick={() => setRPravo2(!rPravo2)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo2 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Редактировать контакты</div>
+                          <div onClick={() => setRPravo3(!rPravo3)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo3 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Редактировать жилые данные (WIP)</div>
+                          <div onClick={() => setRPravo8(!rPravo8)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo8 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Выдавать роли (WIP)</div>
+                          <div onClick={() => setRPravo4(!rPravo4)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo4 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Управлять глобальным рейтингом (WIP)</div>
+                          <div onClick={() => setRPravo5(!rPravo5)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo5 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Управлять рейтингом Хаустонии (WIP)</div>
+                          <div onClick={() => setRPravo6(!rPravo6)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo6 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                        <div className='text-xl font-bold'>Сторонние сайты</div>
+                        <div className='flex items-center justify-between'>
+                          <div className='font-medium'>Создавать голосования (WIP)</div>
+                          <div onClick={() => setRPravo7(!rPravo7)} className={'w-4 h-4 cursor-pointer rounded-md ' + (rPravo7 ? "bg-blue-500 hover:bg-blue-600" : "bg-dark5 hover:bg-dark4")}></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className='flex justify-end mt-8'>
+                      {rID == -1 ?
+                        <div onClick={() => createRole()} className='bg-blue-500 rounded-2xl p-2 hover:bg-blue-600 cursor-pointer'>Создать</div> :
+                        <div onClick={() => applyToRole()} className='bg-blue-500 rounded-2xl p-2 hover:bg-blue-600 cursor-pointer'>Обновить</div>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
           {page == "members" &&
             <div className='flex w-full flex-col select-none'>
               <div className='flex justify-end gap-4 pb-2'>

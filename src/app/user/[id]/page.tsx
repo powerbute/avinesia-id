@@ -244,6 +244,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='flex gap-4 flex-col md:flex-row'>
             <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
+              <div className='flex flex-col select-none gap-2'>
+                {userData?.tg != null &&
+                  <div onClick={() => {
+                    window.open("https://t.me/" + userData?.tg)
+                  }} className='p-4 rounded-2xl bg-[#1c93e3] flex items-center justify-center gap-2 hover:bg-[#1a8ad5] cursor-pointer w-full'><FaTelegram /> Telegram</div>
+                }
+              </div>
               {userData?.residenceregion == "LGS" &&
                 <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
                   <div className='flex gap-2 items-center'>
@@ -315,9 +322,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setPage(1) }}><FaArrowLeft size={18} /></div>
                       <div className='text-xl font-bold'>Социальный рейтинг</div></div>
                     <div className='flex gap-2 items-center'>
-                      {editRating && (authData?.roles?.includes(1) || authData?.nickname == "MiniPeka200609") ?
-                        <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(false) }}><MdCancel size={18} /></div> :
-                        <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(true) }}><MdEdit size={18} /></div>}
+                      {(authData?.roles?.includes(1) || authData?.nickname == "MiniPeka200609") &&
+                        <>
+                          {editRating ?
+                            <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(false) }}><MdCancel size={18} /></div> :
+                            <div className='p-2 cursor-pointer hover:bg-dark4 rounded-md' onClick={() => { setEditRating(true) }}><MdEdit size={18} /></div>}
+                        </>
+                      }
                     </div>
                   </div>
                   {editRating ?

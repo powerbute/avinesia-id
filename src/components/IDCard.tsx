@@ -66,7 +66,8 @@ export default function Passport({ passport }: { passport: { authData: any, user
   async function getRolesData() {
     const { data: roles, error } = await supabase
       .from('roles')
-      .select('*');
+      .select('*')
+      .order('id', { ascending: true })
     setRolesData(roles);
   }
 
@@ -397,7 +398,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 }}><MdOutlineContentCopy /></span></div>
                 <div className='flex flex-wrap gap-1 select-none mt-2'>
                   {userData?.roles?.map((e: any) =>
-                    <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-' + (rolesData[e - 1]?.color)}>{rolesData[e - 1]?.name}</div>
+                    <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5'} style={{ backgroundColor: (rolesData[e - 1]?.color) }}>{rolesData[e - 1]?.name}</div>
                   )}
                   <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{userData?.residenceregion == "LGS" && "Житель Лигорщины"}{userData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
                 </div>

@@ -38,6 +38,7 @@ export default function HomePage() {
   const [invites, setInvites] = React.useState<any>([]);
   const [invited, setInvited] = React.useState<any>(0);
   let subsData = null;
+  const invOpen = false;
   function getPosts() { }
 
   moment.locale('ru')
@@ -186,30 +187,32 @@ export default function HomePage() {
                     }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
                   </div>
                 </div>
-                <div className='flex flex-col mt-8'>
-                  <div className='flex'>
-                    <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
-                  </div>
-                  <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
-                  <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
-                  <div className='flex flex-col gap-2 mt-4'>
-                    {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
-                    {invites?.map((e: any) =>
-                      <div className='bg-dark4 p-2 rounded-2xl gap-2 flex flex-col w-full'>
-                        <div className='text-2xl font-bold'>{e?.code}</div>
-                        <div className='flex justify-end gap-2'>
-                          <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
-                            navigator.clipboard.writeText("https://id.gooseland.cc/invite/" + e?.code)
-                            alert("Скопировано!")
-                          }}>Копировать ссылку</div>
-                          <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
-                            delInvite(e?.id);
-                          }}>Удалить</div>
+                {invOpen &&
+                  <div className='flex flex-col mt-8'>
+                    <div className='flex'>
+                      <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
+                    </div>
+                    <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
+                    <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
+                    <div className='flex flex-col gap-2 mt-4'>
+                      {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
+                      {invites?.map((e: any) =>
+                        <div className='bg-dark4 p-2 rounded-2xl gap-2 flex flex-col w-full'>
+                          <div className='text-2xl font-bold'>{e?.code}</div>
+                          <div className='flex justify-end gap-2'>
+                            <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                              navigator.clipboard.writeText("https://id.gooseland.cc/invite/" + e?.code)
+                              alert("Скопировано!")
+                            }}>Копировать ссылку</div>
+                            <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                              delInvite(e?.id);
+                            }}>Удалить</div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
+                }
               </div>
             </div>
           </div>
