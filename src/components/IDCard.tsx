@@ -18,7 +18,7 @@ const LikeCompoennt = dynamic(() => import('@/components/LikeComponent'), { ssr:
 export default function Passport({ passport }: { passport: { authData: any, userID: any, subsData: any, updatePage: any } }) {
   const supabase = createClientComponentClient();
   const [loaded, setLoaded] = React.useState(false);
-  const [userData, setUserData] = React.useState<any>({});
+  const [userData, setUserData] = useLocalStorage<any>("_cacheUserData" + passport.userID, "{}");
   const [rolesData, setRolesData] = React.useState<any>({});
   const [ratingData, setRatingData] = React.useState<any>([]);
   const currentYear = 2024;
@@ -26,19 +26,19 @@ export default function Passport({ passport }: { passport: { authData: any, user
   const [ratingOld, setRatingOld] = useLocalStorage<any>("ratingOld", 0);
 
   function getColor() {
-    if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 20) {
+    if (currentYear - userData?.dateofissue?.substring(0, 4) > 20) {
       return "bg-lime-600"
     }
-    if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 10) {
+    if (currentYear - userData?.dateofissue?.substring(0, 4) > 10) {
       return "bg-indigo-600"
     }
-    if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 5) {
+    if (currentYear - userData?.dateofissue?.substring(0, 4) > 5) {
       return "bg-amber-500"
     }
-    if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 3) {
+    if (currentYear - userData?.dateofissue?.substring(0, 4) > 3) {
       return "bg-teal-600"
     }
-    if (currentYear - userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) > 1) {
+    if (currentYear - userData?.dateofissue?.substring(0, 4) > 1) {
       return "bg-cyan-600"
     }
     return "bg-dark4"
@@ -364,10 +364,10 @@ export default function Passport({ passport }: { passport: { authData: any, user
             }
 
             <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
-              <div className={"relative w-fit rounded-2xl " + getColor()}>
+              <div className={"relative w-fit rounded-2xl pt-2 " + getColor()}>
                 <NextImage onError={(e) => {
                   e.currentTarget.srcset = "/Steve.webp";
-                }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/bust/512/' + (userData?.nickname)} />
+                }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/front/512/' + (userData?.nickname)} />
               </div>
               <div className="flex flex-col justify-between items-end">
                 <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
@@ -378,7 +378,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
                     <div className="" title="Герой Авинесии"><FaStar className="text-red-500" /></div> : null}
                   {userData?.activemedal ?
                     <div className="" title="Активный гражданин"><FaFire className="text-orange-500" /></div> : null}
-                  {userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" && userData?.status == 1 ?
+                  {userData?.dateofissue?.substring(0, 4) == "2021" && userData?.status == 1 ?
                     <div className="" title="Гражданин с 2021г."><FaStar className="text-yellow-500" /></div> : null}
                   {userData?.status == 4 ?
                     <div className="" title="Туристическая виза"><FaTicketSimple className="text-blue-500" /></div> : null}

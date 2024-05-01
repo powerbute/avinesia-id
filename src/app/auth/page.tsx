@@ -10,7 +10,7 @@ import useLocalStorage from 'use-local-storage';
 
 export default function HomePage() {
   const [session, setSession] = useLocalStorage("session", "");
-  const [authData, setAuthData] = useLocalStorage("authdata", {});
+  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
   const supabase = createClientComponentClient();
 
   const [authMode, setAuthMode] = React.useState(0);
@@ -119,7 +119,7 @@ export default function HomePage() {
       window.open("/" + search, "_self")
       return;
     }
-    window.open("/home", "_self");
+    window.open("/user/" + authData?.id, "_self");
   }
 
   async function getPassID(authID: any) {

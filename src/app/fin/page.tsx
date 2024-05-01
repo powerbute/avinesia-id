@@ -31,7 +31,7 @@ import { TbSword, TbReceiptTax } from "react-icons/tb";
 import { CgUnavailable } from "react-icons/cg";
 import TouristVizaApp from '@/components/miniapps/TouristVizaApp';
 import moment from 'moment';
-import { FaZ } from 'react-icons/fa6';
+import Chart from 'react-apexcharts'
 
 export default function HomePage() {
   const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
@@ -271,8 +271,8 @@ export default function HomePage() {
           <div className='text-lg'><span className='uppercase font-black'>Внимание!</span> Для безопасности и быстрого входа, привяжите свой Telegram, <span className='cursor-pointer'>инструкция</span></div>
         </section>
         <section className='px-4 mt-4'>
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-            <div className='flex gap-4 flex-col'>
+          <div className='flex gap-4 flex-col md:flex-row'>
+            <div className='flex gap-4 flex-col md:w-1/3'>
               <IDCard passport={{ authData: authData, userID: authData?.id, subsData: subsData, updatePage: getPosts }} />
               <div className='hidden flex-col bg-yellow-700 rounded-2xl gap-1'>
                 <div className='p-2 flex justify-between items-center'>
@@ -315,139 +315,85 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className='flex gap-4 flex-col w-full col-span-3'>
-              <div className='w-full'>
+            <div className='flex gap-4 flex-col w-full'>
+              <div className='p-4 rounded-2xl bg-dark2 flex gap-4'>
+                <div><img src='https://avatar.spworlds.ru/face/100/Mr__Feel' className='rounded-[25px]' /></div>
                 <div className='flex flex-col gap-1'>
-                  <div className='text-xl font-bold'>Быстрые действия</div>
-                  <div className='flex overflow-x-auto gap-2'>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-orange-500 hover:bg-orange-600 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Биржа труда</div>
-                    </div>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Рынок</div>
-                    </div>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-red-800 hover:bg-red-900 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Паспорт</div>
-                    </div>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-yellow-500 hover:bg-yellow-600 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Кварцбанк</div>
-                    </div>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-dark5 hover:bg-dark4 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Проекты</div>
-                    </div>
-                    <div className='flex h-[150px] w-[150px] p-3 rounded-2xl bg-red-500 hover:bg-red-600 cursor-pointer flex-col justify-between gap-2'>
-                      <div className=''><FaZ size={32} /></div>
-                      <div className='font-semibold'>Репорт</div>
-                    </div>
+                  <div className='flex flex-col'>
+                    <div className='text-4xl font-bold'>Mr_Feel</div>
+                    <div>Простофиля</div>
                   </div>
+                  <div className='text-xl font-bold'>Министр экономики с апреля 2022г.</div>
                 </div>
-                <div className='flex flex-col gap-1'>
-                  <div className='text-lg font-medium flex justify-between items-center'>Документы
-                    {!openLenta ? <div className='text-gray-500 select-none hover:text-gray-400 cursor-pointer font-base' onClick={() => {
-                      setOpenLenta(true);
-                    }}>Открыть ленту</div> : null}</div>
-                  <div className='flex gap-2 pl-4 overflow-x-scroll'>
-                    {loaded ?
-                      <>
-                        {authData?.status == 4 || authData?.status == 0 ?
-                          <div onClick={() => {
-                            setMiniApp(<TouristVizaApp passport={{
-                              authData: authData,
-                              userID: userData?.id,
-                              open: open,
-                              setOpen: setOpen
-                            }} />)
-                            setOpen(true);
-                          }} className='select-none h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-blue-500 hover:bg-blue-600 cursor-pointer flex flex-col justify-between'>
-                            <CiPassport1 size={32} />
-                            <div>Туристическая виза</div>
-                          </div>
-                          : null}
-                        {authData?.status == 1 || authData?.status == 2 ?
-                          <div onClick={() => {
-                            setMiniApp(<PassportApp passport={{
-                              authData: authData,
-                              userID: userData?.id,
-                              open: open,
-                              setOpen: setOpen
-                            }} />)
-                            setOpen(true);
-                          }} className='select-none h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-800 hover:bg-red-900 cursor-pointer flex flex-col justify-between'>
-                            <CiPassport1 size={32} />
-                            <div>Паспорт</div>
-                          </div> : null}
-                      </> : null}
-                  </div>
-                </div>
-                <div className='flex flex-col gap-1'>
-                  <div className='text-lg font-medium'>Мы можем помочь вам с</div>
-                  {userData?.status != 4 ?
-                    <div className='h-32 flex flex-col justify-center items-center'>
-                      <CgUnavailable size={32} />
-                      <div className='font-bold'>Гос. услуги в данный момент недоступны, попробуйте позже</div>
-                    </div> : null}
-                  {userData?.status == 4 ?
-                    <div className='flex gap-2 pl-4 overflow-x-scroll' onClick={() => {
-                      applicationC();
-                      alert("Заявка отправлена.");
-                    }}>
-                      <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-800 hover:bg-red-900 cursor-pointer flex flex-col justify-between'>
-                        <CiPassport1 size={32} />
-                        <div>Подать на гражданство</div>
-                      </div>
-                    </div> : null}
-                  <div className='hidden gap-2 pl-4 overflow-x-scroll'>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-red-500 hover:bg-red-600 cursor-pointer flex flex-col justify-between'>
-                      <MdLocalPolice size={32} />
-                      <div>Вызов полиции</div>
-                    </div>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-lime-500 hover:bg-lime-600 cursor-pointer flex flex-col justify-between'>
-                      <MdWork size={32} />
-                      <div>Найти работу</div>
-                    </div>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-yellow-500 hover:bg-yellow-600 cursor-pointer flex flex-col justify-between'>
-                      <MdOutlineWarning size={32} />
-                      <div>Заплатить штрафы</div>
-                    </div>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-purple-500 hover:bg-purple-600 cursor-pointer flex flex-col justify-between'>
-                      <MdBusiness size={32} />
-                      <div>Оформить бизнес</div>
-                    </div>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-orange-500 hover:bg-orange-600 cursor-pointer flex flex-col justify-between'>
-                      <TbSword size={32} />
-                      <div>Получение лицензии на оружие</div>
-                    </div>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-rose-500 hover:bg-rose-600 cursor-pointer flex flex-col justify-between'>
-                      <TbReceiptTax size={32} />
-                      <div>Заплатить налоги</div>
-                    </div>
-                  </div>
-                </div>
-                <div className='hidden flex-col gap-1'>
-                  <div className='text-lg font-medium'>Приложения</div>
-                  <div className='flex gap-2 pl-4 overflow-x-scroll'>
-                    <div className='h-32 w-[128px] min-w-[128px] p-2 rounded-2xl bg-green-500 hover:bg-green-600 cursor-pointer flex flex-col justify-between'>
-                      <GiGrowth size={32} />
-                      <div>Пятилетка</div>
-                    </div>
-                  </div>
-                </div>
-
               </div>
-            </div>
-            <div className={'gap-4 items-end rounded-2xl select-none flex-col md:w-[60%] ' + (openLenta ? "flex" : "hidden")}>
-              {openLenta ? <div className='text-gray-500 text-lg hover:text-gray-400 cursor-pointer font-base' onClick={() => {
-                setOpenLenta(false);
-              }}>Закрыть ленту</div> : null}
-              <div className={'gap-4 bg-dark2 items-center rounded-2xl flex-col h-full ' + (openLenta ? "flex" : "hidden")}>
-                <div className='h-32 flex flex-col gap-4 w-full text-center justify-center items-center h-full'>
-                  <CgUnavailable size={32} />
-                  <div className='font-bold'>Посты в данный момент недоступны, попробуйте позже</div>
+              <div className='flex flex-col bg-dark2 p-4 rounded-2xl'>
+                <div className='flex flex-col pl-4'>
+                  <div className='text-xl font-bold'>Казна Авинесии</div>
+                  <div className='text-dark3'>Для измерения используются алмазы, указано в тысячах</div>
+                </div>
+                <div className='grid grid-cols-2'>
+                  <Donut />
+                  <div className='text-3xl flex flex-col justify-center items-center'>
+                    <div className='font-medium'>На данный момент в казне</div>
+                    <div className='font-bold text-blue-500'>14341 алмаз</div>
+                  </div>
+                </div>
+              </div>
+              <div className='flex flex-col bg-dark2 p-4 rounded-2xl'>
+                <div className='flex flex-col pl-4'>
+                  <div className='text-xl font-bold'>Доходы</div>
+                  <div className='text-dark3'>Для измерения используются алмазы</div>
+                </div>
+                <div className='grid grid-cols-2'>
+                  <Donut2 />
+                  <div className='flex flex-col gap-1 h-[14em] bg-dark5 rounded-2xl p-2 overflow-y-scroll'>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>+10</div>
+                      <div>Аренда земли в центре</div>
+                      <div>КО Говновозы</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className='flex flex-col bg-dark2 p-4 rounded-2xl'>
+                <div className='flex flex-col pl-4'>
+                  <div className='text-xl font-bold'>Расходы</div>
+                  <div className='text-dark3'>Для измерения используются алмазы</div>
+                </div>
+                <div className='grid grid-cols-2'>
+                  <Donut3 />
+                  <div className='flex flex-col gap-1 h-[14em] bg-dark5 rounded-2xl p-2 overflow-y-scroll'>
+                    <div className='grid grid-cols-3 gap-2'>
+                      <div>-1000</div>
+                      <div>Покупка HIMARS</div>
+                      <div>Правительство</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -457,4 +403,188 @@ export default function HomePage() {
       {open ? miniapp : null}
     </main>
   );
+}
+
+class Donut extends React.Component {
+
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      options: {
+        chart: {
+          height: 350,
+          type: 'line',
+          foreColor: "#fff",
+          zoom: {
+            enabled: false
+          },
+          toolbar: {
+            show: false
+          },
+        },
+        fill: {
+          colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
+          type: "gradient"
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 4
+        },
+        title: {
+          enable: false
+        },
+        tooltip: {
+          theme: "dark"
+        },
+        grid: {
+          borderColor: "#505050",
+          row: {
+            colors: ['transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        xaxis: {
+          categories: ['01.24', '02.24', '03.24', '04.24', '05.24', '06.24', '07.24', '08.24', '09.24'],
+        }
+      },
+      series: [{
+        name: "Алмазы (в тысячах)",
+        data: [10, 4.1, 35, 51, 49, 62, 6.9, 9.1, 1.4]
+      }],
+      labels: ['A', 'B', 'C', 'D', 'E']
+    }
+  }
+
+  render() {
+
+    return (
+      <div className="area w-full">
+        <Chart stroke={{ curve: 'smooth' }} options={this.state?.options} series={this.state?.series} type="area" width="380" />
+      </div>
+    );
+  }
+}
+
+class Donut2 extends React.Component {
+
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      options: {
+        chart: {
+          height: 550,
+          type: 'donut',
+          foreColor: "#fff",
+          zoom: {
+            enabled: false
+          },
+          toolbar: {
+            show: false
+          },
+        },
+        dataLabels: {
+          enabled: true
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 0
+        },
+        fill: {
+
+        },
+        title: {
+          enable: false
+        },
+        tooltip: {
+          theme: "dark"
+        },
+        grid: {
+          borderColor: "#505050",
+          row: {
+            colors: ['transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        xaxis: {
+          categories: ['01.24', '02.24', '03.24', '04.24', '05.24', '06.24', '07.24', '08.24', '09.24'],
+        },
+        labels: ["Налоги", "Сборы и пошлины", "Организации", "Торговля", "Аренда", "Пожертвования"],
+      },
+      series: [44, 55, 41, 17, 15, 30],
+    }
+  }
+
+  render() {
+
+    return (
+      <div className="area w-full">
+        <Chart stroke={{ curve: 'smooth' }} options={this.state?.options} series={this.state?.series} type="donut" width="380" />
+      </div>
+    );
+  }
+}
+
+class Donut3 extends React.Component {
+
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+      options: {
+        chart: {
+          height: 550,
+          type: 'donut',
+          foreColor: "#fff",
+          zoom: {
+            enabled: false
+          },
+          toolbar: {
+            show: false
+          },
+        },
+        dataLabels: {
+          enabled: true
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 0
+        },
+        fill: {
+
+        },
+        title: {
+          enable: false
+        },
+        tooltip: {
+          theme: "dark"
+        },
+        grid: {
+          borderColor: "#505050",
+          row: {
+            colors: ['transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        xaxis: {
+          categories: ['01.24', '02.24', '03.24', '04.24', '05.24', '06.24', '07.24', '08.24', '09.24'],
+        },
+        labels: ["Соц. программы", "Военные", "Проекты", "Медицина", "Образование", "Зарплаты"],
+      },
+      series: [44, 78, 41, 17, 15, 30],
+    }
+  }
+
+  render() {
+
+    return (
+      <div className="area w-full">
+        <Chart stroke={{ curve: 'smooth' }} options={this.state?.options} series={this.state?.series} type="donut" width="380" />
+      </div>
+    );
+  }
 }

@@ -6,7 +6,7 @@ import * as React from 'react';
 import { IoMdSearch, IoMdNotificationsOutline, IoMdSend, IoMdCloseCircle, IoMdMail } from "react-icons/io";
 import { IoMedalSharp, IoSettingsOutline, IoStar } from "react-icons/io5";
 import { CiPassport1, CiMedicalCross, CiDeliveryTruck } from "react-icons/ci";
-import { FaArrowLeft, FaBook, FaCity, FaPeace } from "react-icons/fa";
+import { FaArrowLeft, FaBan, FaBook, FaCity, FaCopy, FaDiscord, FaEdit, FaPassport, FaPeace, FaTruckMoving } from "react-icons/fa";
 import { MdOutlineWorkOutline, MdOutlinePolicy, MdOutlinePauseCircle, MdOutlinePlayCircle, MdOutlineAdminPanelSettings, MdLogout, MdWork, MdLocalPolice, MdEdit, MdCancel } from "react-icons/md";
 import { AiOutlineHistory, AiOutlineLoading } from "react-icons/ai";
 
@@ -28,6 +28,7 @@ import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
 import { CgUnavailable } from 'react-icons/cg';
 import { FaLink, FaMinus, FaNewspaper, FaPlus, FaTelegram } from 'react-icons/fa6';
 import moment from 'moment';
+import Link from 'next/link';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
@@ -43,6 +44,9 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [miniapp, setMiniApp] = React.useState<any>();
   const [subsData, setSubsData] = React.useState<any>([]);
 
+  const datenow = Date.now();
+  const [validuntilC, setValiduntilC] = React.useState<any>(0);
+
   const [page, setPage] = React.useState<any>(1);
 
   const [editRating, setEditRating] = React.useState<any>(false);
@@ -54,6 +58,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
   const [ratingData, setRatingData] = React.useState<any>([]);
 
   const [ratingRegion, setRatingRegion] = React.useState<any>("LGS");
+
+  const [extendD, setExtendD] = React.useState(2);
+  const [extendD1, setExtendD1] = React.useState(0);
+  const [extendD2, setExtendD2] = React.useState(0);
 
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
@@ -90,6 +98,112 @@ export default function HomePage({ params }: { params: { id: string } }) {
       setSubsData(subsArray);
     }
     setUserData(user);
+    setValiduntilC(new Date(user?.validuntil).getTime());
+  }
+
+  async function banUs() {
+    const { data: subs } = await supabase
+      .from('users')
+      .update({ status: 5 })
+      .eq("passid", userData?.passid);
+    getPosts(userID)
+  }
+
+  async function exxtend() {
+    if (extendD == 0) {
+      let date = moment().add(14, "days").format();
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ validuntil: date })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD == 1) {
+      let date = moment().add(1, "M").format();
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ validuntil: date })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD == 2) {
+      let date = moment().add(3, "M").format();
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ validuntil: date })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD == 3) {
+      let date = moment().add(6, "M").format();
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ validuntil: date })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD == 4) {
+      let date = moment().add(12, "M").format();
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ validuntil: date })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    getPosts(userID)
+    setPage(1);
+  }
+
+  async function exxtend1() {
+    if (extendD1 == 1) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ status: 3 })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD1 == 2) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ status: 4 })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD1 == 3) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ status: 1 })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD1 == 4) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ status: 0 })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    getPosts(userID)
+    setPage(1);
+  }
+
+  async function exxtend2() {
+    if (extendD2 == 1) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ residenceregion: "LGS" })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    if (extendD2 == 2) {
+      const { data: subs } = await supabase
+        .from('users')
+        .update({ residenceregion: "HST" })
+        .eq("passid", userData?.passid);
+      alert("Успех!")
+    }
+    getPosts(userID)
+    setPage(1);
   }
 
   async function updateRating(region: any) {
@@ -241,16 +355,9 @@ export default function HomePage({ params }: { params: { id: string } }) {
           </section>
           : null}
         <section className='px-4 mt-4'>
-          <div className='flex gap-4 flex-col md:flex-row'>
-            <div className='flex gap-4 flex-col md:w-1/3'>
+          <div className='grid grid-cols-4 gap-4 md:grid-cols-4'>
+            <div className='flex gap-4 flex-col'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
-              <div className='flex flex-col select-none gap-2'>
-                {userData?.tg != null &&
-                  <div onClick={() => {
-                    window.open("https://t.me/" + userData?.tg)
-                  }} className='p-4 rounded-2xl bg-[#1c93e3] flex items-center justify-center gap-2 hover:bg-[#1a8ad5] cursor-pointer w-full'><FaTelegram /> Telegram</div>
-                }
-              </div>
               {userData?.residenceregion == "LGS" &&
                 <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
                   <div className='flex gap-2 items-center'>
@@ -301,21 +408,210 @@ export default function HomePage({ params }: { params: { id: string } }) {
               }
               <Rating passport={{ authData: authData, userID: userID, setPage: setPage, ratingData: ratingData }} />
             </div>
-            {page == 1 ?
-              <div className='flex gap-4 flex-col w-full'>
-                <div className='w-full'>
-                  {(userData?.about != null) && loaded ?
-                    <div className='mb-4 bg-dark2 rounded-2xl px-4 py-6'>
-                      {userData?.about}</div>
-                    : null}
-                  <div className='h-32 flex flex-col gap-4 justify-center items-center h-full'>
-                    <CgUnavailable size={32} />
-                    <div className='font-bold'>Посты в данный момент недоступны, попробуйте позже</div>
+            {page == 3 &&
+              <div className='col-span-3'>
+                <div className='flex justify-center items-center h-full'>
+                  <div className='md:w-1/3 flex flex-col text-center bg-dark2 rounded-2xl p-8 gap-4'>
+                    <div className='text-2xl font-bold'>Подтвердите действие</div>
+                    <div className='text-lg font-bold'>Запрет на въезд {userData?.nickname}</div>
+                    <div onClick={() => banUs()} className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl'>Да</div>
+                    <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
                   </div>
+                </div>
+              </div>
+            }
+            {page == 4 &&
+              <div className='col-span-3'>
+                <div className='flex w-full'>
+                  <div className='flex w-full flex-col text-center bg-dark2 rounded-2xl p-8 gap-4'>
+                    <div className='text-2xl font-bold'>Продлить срок действия</div>
+                    <div className='flex justify-center'>
+                      <div className='rounded-l-2xl p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD == 0 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD(0)}>2 недели</div></div>
+                      <div className='p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD == 1 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD(1)}>1 месяц</div></div>
+                      <div className='p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD == 2 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD(2)}>3 месяца</div></div>
+                      <div className='p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD == 3 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD(3)}>6 месяцев</div></div>
+                      <div className='p-2 bg-dark rounded-r-2xl'><div className={'p-2 rounded-2xl ' + (extendD == 4 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD(4)}>12 месяцев</div></div>
+                    </div>
+                    <div className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl' onClick={() => exxtend()}>Да</div>
+                    <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
+                  </div>
+                </div>
+              </div>
+            }
+            {page == 5 &&
+              <div className='col-span-3'>
+                <div className='flex w-full'>
+                  <div className='flex w-full flex-col text-center bg-dark2 rounded-2xl p-8 gap-4'>
+                    <div className='text-2xl font-bold'>Выберите статус</div>
+                    <div className='flex justify-center'>
+                      <div className='rounded-l-2xl p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD1 == 1 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD1(1)}>Изъято</div></div>
+                      <div className='p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD1 == 2 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD1(2)}>Турвиза</div></div>
+                      <div className='p-2 bg-dark'><div className={'p-2 rounded-2xl ' + (extendD1 == 4 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD1(4)}>На рассмотрении</div></div>
+                      <div className='p-2 bg-dark rounded-r-2xl'><div className={'p-2 rounded-2xl ' + (extendD1 == 3 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD1(3)}>Гражданство</div></div>
+                    </div>
+                    <div className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl' onClick={() => exxtend1()}>Да</div>
+                    <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
+                  </div>
+                </div>
+              </div>
+            }
+            {page == 6 &&
+              <div className='col-span-3'>
+                <div className='flex w-full'>
+                  <div className='flex w-full flex-col text-center bg-dark2 rounded-2xl p-8 gap-4'>
+                    <div className='text-2xl font-bold'>Выберите регион проживания</div>
+                    <div className='flex justify-center'>
+                      <div className='rounded-l-2xl p-2 bg-dark'><div className={'p-2 rounded-2xl flex items-center gap-2 ' + (extendD2 == 1 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD2(1)}><img src='/LigorshhinaFlag.png' width={32} className='rounded-md' />Лигорщина</div></div>
+                      <div className='p-2 bg-dark rounded-r-2xl'><div className={'p-2 rounded-2xl flex items-center gap-2 ' + (extendD2 == 2 ? "bg-blue-500" : "bg-dark5 hover:bg-dark4 cursor-pointer")} onClick={() => setExtendD2(2)}><img src='/HoustoniaFlag.png' width={32} className='rounded-md' />Хаустония</div></div>
+                    </div>
+                    <div className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl' onClick={() => exxtend2()}>Да</div>
+                    <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
+                  </div>
+                </div>
+              </div>
+            }
+            {page == 1 && loaded ?
+              <div className='col-span-3'>
+                <div className="flex flex-col gap-4">
+                  {userData?.status == 1 &&
+                    <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
+                      <div className="text-xl font-bold flex items-center gap-2">Паспорт <FaPassport className="text-red-700" /></div>
+                      {validuntilC < datenow &&
+                        <div className='px-4 py-3 text-xl font-bold rounded-2xl text-center bg-red-500'>
+                          <div>Срок действия гражданства закончился. Продлите его на КПП или у Правительства</div>
+                        </div>
+                      }
+                      <div className="w-full grid md:grid-cols-2 gap-4">
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Никнейм</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.nickname}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Псевдоним</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.surname}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Дата рождения</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.birthdate}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">PassID</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.passid}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Дата выдачи</div>
+                          <div className="text-lg md:text-2xl font-semibold">{moment(userData?.dateofissue).format("DD.MM.YYYY")}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Действителен до</div>
+                          <div className="text-lg md:text-2xl font-semibold">{moment(userData?.validuntil).format("DD.MM.YYYY")}</div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  {(userData?.status == 0 || userData?.status == 4) &&
+                    <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
+                      <div className="text-xl font-bold flex items-center gap-2">Турвиза <FaPassport className="text-blue-500" /></div>
+                      {validuntilC < datenow &&
+                        <div className='px-4 py-3 text-xl font-bold rounded-2xl text-center bg-red-500'>
+                          <div>Срок действия турвизы закончился. Продлите его на КПП или у Правительства</div>
+                        </div>
+                      }
+                      <div className="w-full grid md:grid-cols-2 gap-4">
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Никнейм</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.nickname}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Псевдоним</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.surname}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Дата рождения</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.birthdate}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">PassID</div>
+                          <div className="text-lg md:text-2xl font-semibold">{userData?.passid}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Дата выдачи</div>
+                          <div className="text-lg md:text-2xl font-semibold">{moment(userData?.dateofissue).format("DD.MM.YYYY")}</div>
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="md:text-lg">Действителен до</div>
+                          <div className="text-lg md:text-2xl font-semibold">{moment(userData?.validuntil).format("DD.MM.YYYY")}</div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  {userData?.status == 3 &&
+                    <div className="flex flex-col text-center gap-2 px-6 py-4 bg-dark2 rounded-2xl">
+                      <div className='text-2xl font-bold'>Паспорт или турвиза не оформлена</div>
+                      {authData?.id == userData?.id && <Link href={"https://t.me/avinesiangovernment"}><div className='text-blue-500 underline hover:text-blue-600 cursor-pointer'>Обратитесь к Правительству или на КПП, чтобы оформить</div></Link>}
+                    </div>
+                  }
+                  {userData?.discord != null ?
+                    <div onClick={() => {
+                      alert("Скопировано!")
+                      navigator.clipboard.writeText(userData?.discord)
+                    }} className="flex select-none flex-col items-center justify-center gap-4 px-6 py-4 bg-[#5865F2] hover:bg-[#4f5cf2] cursor-pointer rounded-2xl">
+                      <div className="flex items-center gap-2">
+                        <div><FaDiscord size={36} /></div>
+                        <div className="text-2xl font-bold">Discord</div>
+                      </div>
+                    </div> :
+                    <div className="flex select-none flex-col items-center justify-center gap-4 px-6 py-4 bg-dark5 cursor-pointer rounded-2xl">
+                      <div className="flex items-center gap-2 flex-col">
+                        <div className="text-2xl font-bold">Discord не привязан</div>
+                        {authData?.id == userData?.id && <Link href={"https://t.me/avinesiangovernment"}><div className='text-blue-500 underline hover:text-blue-600 cursor-pointer'>Обратитесь к Правительству, чтобы привязать его</div></Link>}
+                      </div>
+                    </div>
+                  }
+                  {userData?.tg != null ?
+                    <Link href={"https://t.me/" + userData?.tg}>
+                      <div className="flex select-none flex-col items-center justify-center gap-4 px-6 py-4 bg-[#1c93e3] hover:bg-[#1a8ad5] cursor-pointer rounded-2xl">
+                        <div className="flex items-center gap-2">
+                          <div><FaTelegram size={36} /></div>
+                          <div className="text-2xl font-bold">Telegram</div>
+                        </div>
+                      </div>
+                    </Link> :
+                    <div className="flex select-none flex-col items-center justify-center gap-4 px-6 py-4 bg-dark5 cursor-pointer rounded-2xl">
+                      <div className="flex items-center gap-2 flex-col">
+                        <div className="text-2xl font-bold">Telegram не привязан</div>
+                        {authData?.id == userData?.id && <Link href={"https://t.me/avinesiangovernment"}><div className='text-blue-500 underline hover:text-blue-600 cursor-pointer'>Обратитесь к Правительству, чтобы привязать его</div></Link>}
+                      </div>
+                    </div>
+                  }
+                  {(authData?.roles?.includes(1) || authData?.roles?.includes(2)) &&
+                    <div className="grid select-none grid-cols-4 gap-2">
+                      <div onClick={() => setPage(3)} className="bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaBan />
+                        Запретить въезд
+                      </div>
+                      <div onClick={() => setPage(4)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaPlus />
+                        Продлить срок действия
+                      </div>
+                      <div onClick={() => setPage(5)} className="bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaCopy />
+                        Изменить статус
+                      </div>
+                      <div onClick={() => setPage(2)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaEdit />
+                        Редактировать соц. рейтинг
+                      </div>
+                      <div onClick={() => setPage(6)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaTruckMoving />
+                        Изменить регион проживания
+                      </div>
+                    </div>
+                  }
                 </div>
               </div> : null}
             {page == 2 ?
-              <div className='flex gap-4 flex-col w-full'>
+              <div className='flex col-span-3 gap-4 flex-col w-full'>
                 <div className='w-full select-none'>
                   <div className='mb-4 bg-dark2 rounded-2xl flex items-center justify-between gap-4 px-4 py-6'>
                     <div className='flex items-center gap-4'>

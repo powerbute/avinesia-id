@@ -156,7 +156,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   React.useEffect(() => {
     if (!(authData?.roles?.includes(1) || authData?.roles?.includes(2) || authData?.roles?.includes(6))) {
-      window.open("/home", "_self")
+      window.open("/user/" + authData?.id, "_self")
     }
     if (!loaded) {
       getStats();

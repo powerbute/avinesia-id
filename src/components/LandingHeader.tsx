@@ -46,7 +46,7 @@ export default function Passport({ passport }: { passport: { authData: any } }) 
                 window.open("/auth", "_self")
               }}><MdLogin color='white' size={28} /></div>}
             {session != "" ? <div className='w-14 h-14 cursor-pointer' onClick={() => {
-              window.open("/home", "_self")
+              window.open("/user/" + authData?.id, "_self")
             }}>
               <NextImage onError={(e) => {
                 e.currentTarget.srcset = "/Steve1.webp";

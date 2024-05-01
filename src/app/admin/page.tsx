@@ -209,7 +209,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       }
     }
     if (!hasAccess) {
-      window.open("/home", "_self")
+      window.open("/user/" + authData?.id, "_self")
     }
   }
   async function allowAccess2() {
@@ -296,7 +296,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       setUserData(user);
       setInput1(user?.nickname);
       setInput2(user?.passid);
-      setInput3(user?.dateofissue);
+      //setInput3(user?.dateofissue);
       setInput4(user?.surname);
       setInput5(user?.issuedby);
       setInput6(user?.validuntil);
@@ -313,7 +313,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
     const { error } = await supabase
       .from('users')
-      .update({ nickname: input1, dateofissue: input3, surname: input4, issuedby: input5, validuntil: input6 })
+      .update({ nickname: input1, surname: input4, issuedby: input5 })
       .eq('id', userData?.id)
     alert("Изменения сохранены!");
     getUser(input1);
@@ -670,7 +670,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         <div>PassID</div>
                         <input disabled className='bg-dark4 rounded-2xl border-dark4' value={input2} onChange={((e: any) => { setInput2(e.target.value) })} />
                       </div>
-                      <div className='flex flex-col'>
+                      <div className='hidden flex-col'>
                         <div>Дата выдачи</div>
                         <input className='bg-dark2 rounded-2xl border-dark4' value={input3} onChange={((e: any) => { setInput3(e.target.value) })} />
                       </div>
@@ -680,18 +680,18 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         <div>Псевдоним</div>
                         <input className='bg-dark2 rounded-2xl border-dark4' value={input4} onChange={((e: any) => { setInput4(e.target.value) })} />
                       </div>
-                      <div className='flex flex-col'>
+                      <div className='hidden flex-col'>
                         <div>Кем выдан</div>
                         <input className='bg-dark2 rounded-2xl border-dark4' value={input5} onChange={((e: any) => { setInput5(e.target.value) })} />
                       </div>
-                      <div className='flex flex-col'>
+                      <div className='hidden flex-col'>
                         <div>Действителен до</div>
                         <input className='bg-dark2 rounded-2xl border-dark4' value={input6} onChange={((e: any) => { setInput6(e.target.value) })} />
                       </div>
                     </div>
                   </div>
                   <div className='flex w-full mb-4 justify-between gap-2 px-4 py-4 bg-dark2 rounded-b-2xl'>
-                    <div className='grid grid-cols-3 gap-2 items-center'>
+                    <div className='hidden grid-cols-3 gap-2 items-center'>
                       <div className={'bg-green-500 w-full rounded-md py-1 px-2 hover:bg-green-600 cursor-pointer' + (userData?.status == 1 ? " border-2 border-blue-500" : "")} onClick={() => apply3(1)}>Активный гражданин</div>
                       <div className={'bg-purple-500 w-full rounded-md py-1 px-2 hover:bg-purple-600 cursor-pointer' + (userData?.status == 2 ? " border-2 border-blue-500" : "")} onClick={() => apply3(2)}>Приостановлено</div>
                       <div className={'bg-red-500 w-full rounded-md py-1 px-2 hover:bg-red-600 cursor-pointer' + (userData?.status == 3 ? " border-2 border-blue-500" : "")} onClick={() => apply3(3)}>Изъято</div>

@@ -9,6 +9,7 @@ import '@/styles/colors.css';
 import { siteConfig } from '@/constant/config';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import useLocalStorage from 'use-local-storage';
+import NextTopLoader from 'nextjs-toploader';
 
 // !STARTERCONF Change these default meta
 // !STARTERCONF Look at @/constant/config to change them
@@ -59,7 +60,10 @@ export default function RootLayout({
 
   return (
     <html>
-      <body className='bg-dark'>{children}</body>
+      <body className='bg-dark'>
+        <NextTopLoader />
+        {children}
+      </body>
     </html>
   );
 }

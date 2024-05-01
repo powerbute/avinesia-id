@@ -7,6 +7,7 @@ import useLocalStorage from "use-local-storage";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import NextImage from '@/components/NextImage';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
+import moment from 'moment';
 
 export default function HomePage({ params }: { params: { id: string } }) {
   const inviteID = params.id;
@@ -77,9 +78,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
       alert("На один ТГ не может быть привязано больше 1 аккаунта")
       return;
     }
+    let date = moment().add(7, "days").format();
     let { error: a1 } = await supabase
       .from('users')
-      .insert({ tg: input4, passid: passIDt, invitedby: inviterData?.passid, nickname: input1, rating: 0, surname: input2, issuedby: "Правительство Авинесии", dateofissue: issdata, validuntil: "01.04.2024", status: 4, birthdate: input3 })
+      .insert({ tg: input4, discord: input5, passid: passIDt, invitedby: inviterData?.passid, nickname: input1, surname: input2, issuedby: "Правительство Авинесии", status: 4, birthdate: input3, validuntil: date })
     setInput1("");
     setInput2("");
     setInput3("");
@@ -159,15 +161,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
       </Head>
       <section className='bg-dark w-screen h-screen flex justify-center items-center'>
         <div className='flex flex-col gap-2 items-center'>
-          <NextImage onError={(e) => {
-            e.currentTarget.srcset = "/Steve.webp";
-          }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (inviterData?.nickname)} />
-          <div className='text-3xl text-fond text-center text-white'>Вас приглашает {inviterData?.nickname}</div>
+          <div className='hidden text-3xl text-fond text-center text-white'>Вас приглашает {inviterData?.nickname}</div>
           <div className='md:w-[105%] mb-12 flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl h-fit text-white'>
             <div className='flex justify-between items-center mb-4 select-none flex-col'>
               <div className='text-3xl font-bold flex items-center gap-2'>Регистрация</div>
               <div className='mt-2'>Регистрируясь в Avinesia ID, вы автоматически подаете заявку на туристическую визу,<br />после нее вы уже сможете оформить гражданство или дальше посещать Авинесию.</div>
-              <div className='mt-2 text-red-400'>Если ваш никнейм или Telegram занят, возможно вы уже внесены в систему,<br />попробуйте авторизоваться через Telegram или запросить код у правительства</div>
+              <div className='mt-2 text-red-400'>Если ваш никнейм или Telegram занят, возможно вы уже внесены в систему,<br />попробуйте авторизоваться через Telegram или запросить код у правительства или на КПП</div>
             </div>
             <div className='grid grid-cols-1 gap-2 md:gap-0 md:grid-cols-2 mb-4'>
               <div className='flex flex-col gap-0.5'>
@@ -201,6 +200,14 @@ export default function HomePage({ params }: { params: { id: string } }) {
                 <div className='flex gap-2'>
                   <input className='bg-dark2 border-dark3 border rounded-2xl' value={input4} onChange={(e) => {
                     setInput4(e.target.value)
+                  }} />
+                </div>
+              </div>
+              <div className='flex flex-col gap-0.5'>
+                <div className='text-lg text-zinc-400'>Discord</div>
+                <div className='flex gap-2'>
+                  <input className='bg-dark2 border-dark3 border rounded-2xl' value={input5} onChange={(e) => {
+                    setInput5(e.target.value)
                   }} />
                 </div>
               </div>
