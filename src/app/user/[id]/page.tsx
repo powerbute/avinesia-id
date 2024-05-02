@@ -355,7 +355,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
           </section>
           : null}
         <section className='px-4 mt-4'>
-          <div className='grid grid-cols-4 gap-4 md:grid-cols-4'>
+          <div className='flex flex-col md:grid md:grid-cols-4 gap-4 md:grid-cols-4'>
             <div className='flex gap-4 flex-col'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
               {userData?.residenceregion == "LGS" &&
@@ -585,12 +585,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     </div>
                   }
                   {(authData?.roles?.includes(1) || authData?.roles?.includes(2)) &&
-                    <div className="grid select-none grid-cols-4 gap-2">
+                    <div className="grid select-none md:grid-cols-4 gap-2">
                       <div onClick={() => setPage(3)} className="bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaBan />
                         Запретить въезд
                       </div>
-                      <div onClick={() => setPage(4)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                      <div onClick={() => setPage(4)} className="md:col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaPlus />
                         Продлить срок действия
                       </div>
@@ -598,11 +598,11 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         <FaCopy />
                         Изменить статус
                       </div>
-                      <div onClick={() => setPage(2)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                      <div onClick={() => setPage(2)} className="md:col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaEdit />
                         Редактировать соц. рейтинг
                       </div>
-                      <div onClick={() => setPage(6)} className="col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                      <div onClick={() => setPage(6)} className="md:col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaTruckMoving />
                         Изменить регион проживания
                       </div>
