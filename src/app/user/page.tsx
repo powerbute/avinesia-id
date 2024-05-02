@@ -37,6 +37,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       getProfile(data?.passid)
     } else {
       alert("Пользователь не найден!")
+      location.replace("/auth")
     }
   }
 
