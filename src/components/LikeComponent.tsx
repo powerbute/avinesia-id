@@ -1,10 +1,13 @@
+import { AVauth, AVauthC } from "@/components/SecurityAuth";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import { CiHeart } from "react-icons/ci";
+import useLocalStorage from "use-local-storage";
 
 export default function LikeCompoennt({ passport }: { passport: { authData: any, userData: any } }) {
   const [liked, setLiked] = useState(passport.userData?.likes?.includes(passport?.authData?.passid));
   const supabase = createClientComponentClient();
+  const [session, setSession] = useLocalStorage<any>("session", "");
   let set = 0;
 
   function random(min: any, max: any) {
@@ -50,6 +53,11 @@ export default function LikeCompoennt({ passport }: { passport: { authData: any,
   }
 
   async function handleLike(event: any) {
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
     const newLikes: any[] = passport.userData?.likes;
     if (liked) {
       removeA(newLikes, passport.authData?.passid);

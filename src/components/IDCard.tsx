@@ -369,23 +369,29 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   e.currentTarget.srcset = "/Steve.webp";
                 }} width={128} height={128} alt='profile avatar' src={'https://avatar.spworlds.ru/front/512/' + (userData?.nickname)} />
               </div>
-              <div className="flex flex-col justify-between items-end">
-                <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
-                <div className="flex gap-2 bg-dark2 rounded-2xl py-1 px-2">
-                  {userData?.nickname == "Ligor4ik" ?
-                    <div className="" title="Точно не еврей"><FaStarOfDavid className="text-red-500" /></div> : null}
-                  {userData?.heromedal ?
-                    <div className="" title="Герой Авинесии"><FaStar className="text-red-500" /></div> : null}
-                  {userData?.activemedal ?
-                    <div className="" title="Активный гражданин"><FaFire className="text-orange-500" /></div> : null}
-                  {userData?.dateofissue?.substring(0, 4) == "2021" && userData?.status == 1 ?
-                    <div className="" title="Гражданин с 2021г."><FaStar className="text-yellow-500" /></div> : null}
-                  {userData?.status == 4 ?
-                    <div className="" title="Туристическая виза"><FaTicketSimple className="text-blue-500" /></div> : null}
-                  {userData?.status == 0 ?
-                    <div className="" title="Рассмотрение заявки на гражданство"><FaTicketSimple className="text-yellow-500" /></div> : null}
+              {!passport.authData?.deactive &&
+                <div className="flex flex-col justify-between items-end">
+                  {!userData?.deactive &&
+                    <>
+                      <LikeCompoennt passport={{ authData: passport.authData, userData: userData }} />
+                      <div className="flex gap-2 bg-dark2 rounded-2xl py-1 px-2">
+                        {userData?.nickname == "Ligor4ik" ?
+                          <div className="" title="Точно не еврей"><FaStarOfDavid className="text-red-500" /></div> : null}
+                        {userData?.heromedal ?
+                          <div className="" title="Герой Авинесии"><FaStar className="text-red-500" /></div> : null}
+                        {userData?.activemedal ?
+                          <div className="" title="Активный гражданин"><FaFire className="text-orange-500" /></div> : null}
+                        {userData?.dateofissue?.substring(0, 4) == "2021" && userData?.status == 1 ?
+                          <div className="" title="Гражданин с 2021г."><FaStar className="text-yellow-500" /></div> : null}
+                        {userData?.status == 4 ?
+                          <div className="" title="Туристическая виза"><FaTicketSimple className="text-blue-500" /></div> : null}
+                        {userData?.status == 0 ?
+                          <div className="" title="Рассмотрение заявки на гражданство"><FaTicketSimple className="text-yellow-500" /></div> : null}
+                      </div>
+                    </>
+                  }
                 </div>
-              </div>
+              }
             </div>
 
             <div className="flex flex-col gap-2 bg-dark2 px-4 pb-4 pt-2 rounded-b-2xl">
@@ -396,12 +402,14 @@ export default function Passport({ passport }: { passport: { authData: any, user
                   navigator.clipboard.writeText("https://id.gooseland.cc/user/" + passport.userID);
                   alert("Ссылка скопирована!")
                 }}><MdOutlineContentCopy /></span></div>
-                <div className='flex flex-wrap gap-1 select-none mt-2'>
-                  {userData?.roles?.map((e: any) =>
-                    <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5'} style={{ backgroundColor: (rolesData[e - 1]?.color) }}>{rolesData[e - 1]?.name}</div>
-                  )}
-                  <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{userData?.residenceregion == "LGS" && "Житель Лигорщины"}{userData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
-                </div>
+                {!passport.authData?.deactive &&
+                  <div className='flex flex-wrap gap-1 select-none mt-2'>
+                    {userData?.roles?.map((e: any) =>
+                      <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5'} style={{ backgroundColor: (rolesData[e - 1]?.color) }}>{rolesData[e - 1]?.name}</div>
+                    )}
+                    <div key={makeid(5)} className={'rounded-md text-sm px-2 py-0.5 bg-dark4'}>{userData?.residenceregion == "LGS" && "Житель Лигорщины"}{userData?.residenceregion == "HST" && "Житель Хаустонии"}</div>
+                  </div>
+                }
               </div>
             </div>
           </div>

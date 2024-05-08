@@ -26,19 +26,26 @@ import Post from '@/components/Post';
 import { GiGrowth, GiTank } from "react-icons/gi";
 import PyatiletkaApp from '@/components/miniapps/PyatiletkaApp';
 import { CgUnavailable } from 'react-icons/cg';
-import { FaLink, FaMinus, FaNewspaper, FaPlus, FaTelegram } from 'react-icons/fa6';
+import { FaLink, FaMinus, FaNewspaper, FaPlus, FaRegClock, FaTelegram } from 'react-icons/fa6';
 import moment from 'moment';
+import 'moment/locale/ru';
 import Link from 'next/link';
+import SecurityAuth, { AVauth, AVauthC } from '@/components/SecurityAuth';
+import { useRouter } from 'next/navigation';
 
 
 export default function HomePage({ params }: { params: { id: string } }) {
   const userID = params.id;
-  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
+  moment.locale('ru');
+  //const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
+  const [authData, setAuthData] = React.useState<any>();
+
   const [postInput, setPostInput] = React.useState("");
   const [posts, setPosts] = React.useState<any>([]);
   const [userData, setUserData] = React.useState<any>({});
   const [session, setSession] = useLocalStorage<any>("session", "");
   const [loaded, setLoaded] = React.useState(false);
+  const [loaded1, setLoaded1] = React.useState(false);
   const [postLoaded, setPostLoaded] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [miniapp, setMiniApp] = React.useState<any>();
@@ -66,7 +73,11 @@ export default function HomePage({ params }: { params: { id: string } }) {
   // Create a single supabase client for interacting with your database
   const supabase = createClientComponentClient();
 
+  const router = useRouter();
+
   async function getPosts(id: any) {
+    //if (!loaded) return;
+    const tempAuth = await AVauthC(session);
     const { data: user } = await supabase
       .from('users')
       .select('*')
@@ -89,7 +100,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     const { data: subs } = await supabase
       .from('subs')
       .select('*')
-      .eq("passid1", authData?.passid);
+      .eq("passid1", tempAuth?.passid);
     const subsArray: any[] = [];
     if (subs != null) {
       for (let g3 = 0; g3 < subs?.length; g3++) {
@@ -99,9 +110,16 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
     setUserData(user);
     setValiduntilC(new Date(user?.validuntil).getTime());
+    setLoaded(true);
   }
 
   async function banUs() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
     const { data: subs } = await supabase
       .from('users')
       .update({ status: 5 })
@@ -110,6 +128,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function exxtend() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
     if (extendD == 0) {
       let date = moment().add(14, "days").format();
       const { data: subs } = await supabase
@@ -155,6 +179,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function exxtend1() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
     if (extendD1 == 1) {
       const { data: subs } = await supabase
         .from('users')
@@ -188,6 +218,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function exxtend2() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
     if (extendD2 == 1) {
       const { data: subs } = await supabase
         .from('users')
@@ -229,6 +265,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       : (document.body.style.overflow = 'auto');
   }, [open]);
 
+  //TODO: REMOVE
   async function getUserByPassID(passid: any) {
     let { data: users, error } = await supabase
       .from('users')
@@ -244,6 +281,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   }
 
+  //TODO: REMOVE
   async function createPost() {
     let { data: users, error } = await supabase
       .from('posts')
@@ -254,11 +292,34 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   }
 
-  async function applynRating() {
-    if (authData?.nickname != "MiniPeka200609" || authData?.nickname != "Ligor4ik" || authData?.nickname != "ThePowerbute") {
+  async function activeAcc() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
       return;
     }
-    if (authData?.nickname == "MiniPeka200609" && eRatingRegion == "LGS") {
+    if (!tempAuth?.roles?.includes(1)) {
+      return;
+    }
+    const { data: subs } = await supabase
+      .from('users')
+      .update({ deactive: false })
+      .eq("passid", userData?.passid);
+    router.refresh();
+  }
+
+  async function applynRating() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    };
+    if (tempAuth?.nickname != "MiniPeka200609" && tempAuth?.nickname != "Ligor4ik" && tempAuth?.nickname != "ThePowerbute") {
+      return;
+    }
+    if (tempAuth?.nickname == "MiniPeka200609" && eRatingRegion == "LGS") {
       alert("У вас нет прав на редактирование соц рейтинга этого региона")
       return;
     }
@@ -280,7 +341,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       console.log("old: " + Number(oldT) + "; new: " + Number(newT) + "; realson: " + eRatingRealson + "; region:" + eRatingRegion)
       let { error } = await supabase
         .from('rating')
-        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 0, region: eRatingRegion })
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: tempAuth?.nickname, type: 0, region: eRatingRegion })
       setERatingCost("");
       setERatingRealson("");
       updateRating(eRatingRegion)
@@ -289,7 +350,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       newT = Number(oldT) - Number(eRatingCost);
       let { error } = await supabase
         .from('rating')
-        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: authData?.nickname, type: 1, region: eRatingRegion })
+        .insert({ passid: userData?.passid, old: oldT, new: newT, realson: eRatingRealson, by: tempAuth?.nickname, type: 1, region: eRatingRegion })
       setERatingCost("");
       setERatingRealson("");
       updateRating(eRatingRegion)
@@ -313,15 +374,15 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   React.useEffect(() => {
-    if (!loaded) {
+    if (!loaded1) {
       getPosts(userID)
-      setLoaded(true);
+      setLoaded1(true);
       /*roomOne.subscribe(async (status) => {
         if (status !== 'SUBSCRIBED') { return }
 
         const presenceTrackStatus = await roomOne.track(userStatus)
       })*/
-      getUserByPassID(authData?.passid);
+      //getUserByPassID(authData?.passid);
     }
   })
 
@@ -339,7 +400,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
 
   return (
     <main className='bg-dark'>
-      <RealtimeStatus />
+      <SecurityAuth authData={{ data: authData, setData: setAuthData }} />
       <Head>
         <title>Hi</title>
       </Head>
@@ -358,55 +419,59 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='flex flex-col md:grid md:grid-cols-4 gap-4 md:grid-cols-4'>
             <div className='flex gap-4 flex-col'>
               <IDCard passport={{ authData: authData, userID: userID, subsData: subsData, updatePage: getPosts }} />
-              {userData?.residenceregion == "LGS" &&
-                <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
-                  <div className='flex gap-2 items-center'>
-                    <img src='/LigorshhinaFlag.png' className='w-20' />
-                    <div className='flex flex-col w-full gap-1'>
-                      <div className='font-bold text-xl'>Лигорщина</div>
-                      <div className='grid grid-cols-3 w-full gap-2 select-none'>
-                        <div onClick={() => {
-                          window.open("https://t.me/av_lgs")
-                        }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
-                        <div onClick={() => {
-                          alert("Сайт в разработке")
-                        }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
-                        <div onClick={() => {
-                          window.open("https://t.me/ligor4ik")
-                        }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+              {(!userData?.deactive && !authData?.deactive) &&
+                <>
+                  {userData?.residenceregion == "LGS" &&
+                    <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
+                      <div className='flex gap-2 items-center'>
+                        <img src='/LigorshhinaFlag.png' className='w-20' />
+                        <div className='flex flex-col w-full gap-1'>
+                          <div className='font-bold text-xl'>Лигорщина</div>
+                          <div className='grid grid-cols-3 w-full gap-2 select-none'>
+                            <div onClick={() => {
+                              window.open("https://t.me/av_lgs")
+                            }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
+                            <div onClick={() => {
+                              alert("Сайт в разработке")
+                            }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
+                            <div onClick={() => {
+                              window.open("https://t.me/ligor4ik")
+                            }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+                          </div>
+                        </div>
                       </div>
+                      <div onClick={() => {
+                        window.open("https://t.me/avinesiamedia")
+                      }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
                     </div>
-                  </div>
-                  <div onClick={() => {
-                    window.open("https://t.me/avinesiamedia")
-                  }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
-                </div>
-              }
-              {userData?.residenceregion == "HST" &&
-                <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
-                  <div className='flex gap-2 items-center'>
-                    <img src='/HoustoniaFlag.png' className='w-20' />
-                    <div className='flex flex-col w-full gap-1'>
-                      <div className='font-bold text-xl'>Хаустония</div>
-                      <div className='grid grid-cols-3 w-full gap-2 select-none'>
-                        <div onClick={() => {
-                          window.open("https://t.me/av_hst")
-                        }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
-                        <div onClick={() => {
-                          window.open("https://hst.gooseland.cc/")
-                        }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
-                        <div onClick={() => {
-                          window.open("https://t.me/Mini_Peka2006")
-                        }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+                  }
+                  {userData?.residenceregion == "HST" &&
+                    <div className='bg-dark2 flex flex-col gap-2 rounded-2xl p-4'>
+                      <div className='flex gap-2 items-center'>
+                        <img src='/HoustoniaFlag.png' className='w-20' />
+                        <div className='flex flex-col w-full gap-1'>
+                          <div className='font-bold text-xl'>Хаустония</div>
+                          <div className='grid grid-cols-3 w-full gap-2 select-none'>
+                            <div onClick={() => {
+                              window.open("https://t.me/av_hst")
+                            }} title='Телеграм канал администрации' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaTelegram /></div>
+                            <div onClick={() => {
+                              window.open("https://hst.gooseland.cc/")
+                            }} title='Сайт региона' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><FaLink /></div>
+                            <div onClick={() => {
+                              window.open("https://t.me/Mini_Peka2006")
+                            }} title='Телеграм для связи с администрацией' className='bg-dark5 hover:bg-dark4 cursor-pointer p-2 rounded-md flex items-center justify-center'><IoMdMail /></div>
+                          </div>
+                        </div>
                       </div>
+                      <div onClick={() => {
+                        window.open("https://t.me/avinesiamedia")
+                      }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
                     </div>
-                  </div>
-                  <div onClick={() => {
-                    window.open("https://t.me/avinesiamedia")
-                  }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
-                </div>
+                  }
+                  <Rating passport={{ authData: authData, userID: userID, setPage: setPage, ratingData: ratingData }} />
+                </>
               }
-              <Rating passport={{ authData: authData, userID: userID, setPage: setPage, ratingData: ratingData }} />
             </div>
             {page == 3 &&
               <div className='col-span-3'>
@@ -470,12 +535,41 @@ export default function HomePage({ params }: { params: { id: string } }) {
                 </div>
               </div>
             }
-            {page == 1 && loaded ?
+            {page == 1 && loaded && (userData?.deactive || authData?.deactive) &&
+              <div className='flex flex-col gap-4 w-full col-span-3'>
+                {userData?.nickname == "Sa1ping" &&
+                  <>
+                    <div className='text-3xl font-bold'>ЕГО ЕБАЛИ 100 НЕГРОВ</div>
+                    <div className='flex flex-col gap-2'>
+                      <div>Обращение к Сайпингу</div>
+                      <div>ты че блядина ебучая, вообще блять ахуела чудовищная мразота?злоепиздие,блядоссущая семихуюлина, мразотоблядская шлюхососалка,распиздоблядская блядропиздище, шлюхоебище ахуевающее само от своей нищей сущности,хуепездолочь мразепиздическая еблаочкущище,косоуебище пиздопроебское, сын ебищенской скотобляди хуелизины далбопиздический дегенерат болеющий раком мозга,шлюхогноище еблищее, спидобольное вафлепиздище трихломидозапиздоёблухое.Старая шалава блядиздище,слабоумище еблядское,копирка шлюхи,хуепропиздище очкобздунище тарантул ебучий!оберблядок дрочепиздищный,анальнососище,стрипиздище,уёбищное блядище хуерванное отъебанное во все щели до потери сознания,у тебя по венам течёт сперма лошадей пиздобляудище ухозаёбище залупиздрическое блириздопёрдище,выщемленноебышь подъездный,хуйня ущербная, спидохуическое распиздище,шлюха на рельсах,чмо спиздиблядищерское,сын шалавины припиздошенной, мёртвая шалава пропиздошенная отъебом хуил таджиков чувырла еблищее.Ебун хуеголовый, пидрасня ебаная. Залупоголовая блядоящерица. Трипиздоблядская промудохуина! Распроеб твою в крестище через коромысло в копейку мать блядская пиздопроебина, охуевающая своей пидорестической заебучестью невъебенной степени охуения. Заебись невъебенным проебом тримандоблядская пиздопроебина воспиздозаолупоклинившаяся в собственном злопиздии. Мордоблядина залупоглазая. Ебись ты триебучим проебом пиздуй пока трамваи ходят. Склипездень двужопостворчатый. Злоебучее страхопиздище трипиздоблятский мандопроеб найвыебенищее распиздоблятство! Застрявший в ебенгво гавнопрягопизд отпизднутый от хуеблища и ебанагандонный хуепедераст. Мудагавнопердь. Стоебучее страхопиздище охуевающее в собственной пидарастической злоебучести... Cемиголовый восьмихуй с четырьмя пиздопроебинами. Облямудевшая страпиздихуюлина. Пидористический мудаблядин. Трипездоклятый мудопроеб. Промудохуеблядская пиздопроебина, невьебенно охуевающая от своей собственной облядипизденелости. Трипиздоблядское мудопроебное трипиздие, ебоблядище охуевающее от собственной злоебучести. Облямуденный злоебучий страхопизднутый трихуемандаблядский ебаквакнутый распиздаеб... Да разъебись ты триебучим проебом хуепуполо залупоглазое, промонодблядская трипиздыпроебина. Хуеблядская пиздопроебина. Да разъебись ты тризлоебучим пробиздом тримандаблядская пиздопроушина охуевающая от собственного блядского невъебения! Шлюшья мразота приохуебенивающая от собственного недохуеплетского злоетрахания. Да произпездуй с 2000 этажа своей припиздоблядской тушей на землю в труху! Трипиздоблядское мудопроебное трипиздие, ебоблядище охуевающее от собственной злоебучести. Облямуденный злоебучий страхопизднутый трихуемандаблядский ебаквакнутый распиздаеб... Хуесосляблядивый расхуйдяй припиздоблядского четвертоногого происхождения прошу завали свой хуеобрыганский блядозвукоговоритель. Промудохуепиздамразоблядское злоепиздие, ебоблядищая пиздопроебина сама ахуевающее от того какая оно пездоблядехуепроклятое Обосробосанная пиздоблядмна двадцати головая семихуюлина припиздовывающее от хуеглотности своей трипиздговноглоталки. Облямудевшая хуеблядина четырестохуйная и двестипёздная мразотоблядская шлюхасосалка.  Хуесосная мудохуепиздопроебная мудаблядина сукв безмаманя блядь шмара козельуебок сдохни хуесоска  ебланафт чмырь пидорска манда тупая гандопляс пидрила ебалай долбоеб обмудок овцееб дауниха ненавижу гомодрилла сучка шлюха трахарила гавносос миньетчик пидэраст пиздоеб хуеплет кончиглот ебище сын шлюхи гавноеб мудяра еботрон вафлеглот ебалдуй захуятор имбицил подонок пиздопромудище выебок ахуяэетер ебозер пиздолиз злоуебок хуиман ебил долбоебина пиндос мудазвон хуеб амеба хуйло хуила пиздорвань смесь ебланства и говна ебанат умалишенный дегенерат мандопроушина очкоблут порванный обрубок хуяраспиздяй свинозалупа семиголовый восьмихуй ебоблядище свинохуярище вафлепиздище хуй лохматый жопа рванная мудопроеб страхапиздище ебосос дурфанка косоуебище долбоногий лихохуетеньхуета ребёнок мертвой шалавы Заебись невъебенным проебом тримандоблядская пиздопроебина воспиздозаолупоклинившаяся</div>
+                    </div>
+                  </>
+                }
+                <div className='bg-red-500 flex justify-center items-center flex-col rounded-md p-2'>
+                  <div className='flex items-center gap-2'>
+                    <div><FaRegClock /></div>
+                    <div>{(userData?.id == authData?.id || authData?.deactive) ? "Ваш аккаунт деактивирован. Обратитесь в Правительство или на КПП, чтобы активировать его вновь" : "Этот аккаунт деактивирован."}</div>
+                  </div>
+                  <div onClick={() => alert("Мы деактивируем инактивные аккаунты в целях безопасности.")} className='cursor-pointer font-bold text-blue-500 hover:text-blue-600'>Почему это произошло?</div>
+                </div>
+                {((authData?.roles?.includes(1)) && authData?.id != userData?.id) &&
+                  <div onClick={() => activeAcc()} className='p-4 rounded-2xl bg-dark5 hover:bg-dark4 cursor-pointer flex items-center justify-center gap-2'>
+                    <div>Активировать аккаунт</div>
+                  </div>
+                }
+              </div>
+            }
+            {page == 1 && loaded && (!userData?.deactive && !authData?.deactive) ?
               <div className='col-span-3'>
                 <div className="flex flex-col gap-4">
                   {userData?.status == 1 &&
                     <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
-                      <div className="text-xl font-bold flex items-center gap-2">Паспорт <FaPassport className="text-red-700" /></div>
+                      <div className="text-xl font-bold flex items-center gap-2">Паспорт <FaPassport className="text-red-700" />
+                        {validuntilC > datenow &&
+                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(authData?.validuntil).fromNow()}</div>
+                        }
+                      </div>
                       {validuntilC < datenow &&
                         <div className='px-4 py-3 text-xl font-bold rounded-2xl text-center bg-red-500'>
                           <div>Срок действия гражданства закончился. Продлите его на КПП или у Правительства</div>
@@ -492,7 +586,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="flex flex-col">
                           <div className="md:text-lg">Дата рождения</div>
-                          <div className="text-lg md:text-2xl font-semibold">{userData?.birthdate}</div>
+                          <div className="text-lg md:text-2xl font-semibold">{(userData?.id == authData?.id || (authData?.roles?.includes(1) || authData?.roles?.includes(2) || authData?.roles?.includes(7))) ? userData?.birthdate : "Скрыто"}</div>
                         </div>
                         <div className="flex flex-col">
                           <div className="md:text-lg">PassID</div>
@@ -511,7 +605,11 @@ export default function HomePage({ params }: { params: { id: string } }) {
                   }
                   {(userData?.status == 0 || userData?.status == 4) &&
                     <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
-                      <div className="text-xl font-bold flex items-center gap-2">Турвиза <FaPassport className="text-blue-500" /></div>
+                      <div className="text-xl font-bold flex items-center gap-2">Турвиза <FaPassport className="text-blue-500" />
+                        {validuntilC > datenow &&
+                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(authData?.validuntil).fromNow()}</div>
+                        }
+                      </div>
                       {validuntilC < datenow &&
                         <div className='px-4 py-3 text-xl font-bold rounded-2xl text-center bg-red-500'>
                           <div>Срок действия турвизы закончился. Продлите его на КПП или у Правительства</div>
@@ -528,7 +626,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="flex flex-col">
                           <div className="md:text-lg">Дата рождения</div>
-                          <div className="text-lg md:text-2xl font-semibold">{userData?.birthdate}</div>
+                          <div className="text-lg md:text-2xl font-semibold">{(userData?.id == authData?.id || (authData?.roles?.includes(7) || authData?.roles?.includes(7) || authData?.roles?.includes(7))) ? userData?.birthdate : "Скрыто"}</div>
                         </div>
                         <div className="flex flex-col">
                           <div className="md:text-lg">PassID</div>
@@ -549,6 +647,13 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col text-center gap-2 px-6 py-4 bg-dark2 rounded-2xl">
                       <div className='text-2xl font-bold'>Паспорт или турвиза не оформлена</div>
                       {authData?.id == userData?.id && <Link href={"https://t.me/avinesiangovernment"}><div className='text-blue-500 underline hover:text-blue-600 cursor-pointer'>Обратитесь к Правительству или на КПП, чтобы оформить</div></Link>}
+                    </div>
+                  }
+                  {userData?.foreigner == "KMR" &&
+                    <div className="flex select-none flex-col items-center justify-center gap-4 px-6 py-4 bg-red-800 rounded-2xl">
+                      <div className="flex items-center gap-2 flex-col">
+                        <div className="text-2xl font-bold">Гражданин Каменруси</div>
+                      </div>
                     </div>
                   }
                   {userData?.discord != null ?

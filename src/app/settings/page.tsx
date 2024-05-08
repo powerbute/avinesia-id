@@ -27,10 +27,11 @@ import Header from '@/components/Header';
 import IDCard from '@/components/IDCard';
 import moment from 'moment';
 import 'moment/locale/ru'
+import SecurityAuth, { AVauth, AVauthC } from '@/components/SecurityAuth';
 
 
 export default function HomePage() {
-  const [authData, setAuthData] = useLocalStorage<any>("authdata", {});
+  const [authData, setAuthData] = React.useState<any>();
   const [loaded, setLoaded] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>("");
@@ -47,25 +48,29 @@ export default function HomePage() {
   const supabase = createClientComponentClient();
 
   async function getUserData() {
-    getPassID(session);
+    //getPassID(session);
     setLoaded(true);
   }
 
   async function applyInput1() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
     let { error } = await supabase
       .from('users')
       .update({ surname: input1 })
-      .eq('id', authData?.id);
+      .eq('id', tempAuth?.id);
     getUserData()
     setInput1("");
     alert("Псевдоним успешно изменен!")
   }
 
   async function applyInput2() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
     let { error } = await supabase
       .from('users')
       .update({ about: input2 })
-      .eq('id', authData?.id);
+      .eq('id', tempAuth?.id);
     getUserData()
     setInput2("");
     alert("'О себе' успешно изменен!")
@@ -98,6 +103,7 @@ export default function HomePage() {
     setInvited(invites?.length);
   }
 
+  //TODO: REMOVE
   async function genInvite() {
     let generatedCode = makeid(6);
     let { error } = await supabase
@@ -106,6 +112,7 @@ export default function HomePage() {
     getInvites(authData?.passid);
   }
 
+  //TODO: REMOVE
   async function delInvite(id: any) {
     let { error } = await supabase
       .from('invites')
@@ -149,7 +156,7 @@ export default function HomePage() {
 
   return (
     <main className='bg-dark'>
-      <RealtimeStatus />
+      <SecurityAuth authData={{ data: authData, setData: setAuthData }} />
       <Head>
         <title>Hi</title>
       </Head>
@@ -164,56 +171,59 @@ export default function HomePage() {
             <IDCard passport={{ userID: authData?.id, authData: authData, subsData: subsData, updatePage: getPosts }} />
             <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
               <div className='text-3xl font-bold flex items-center gap-2'>Настройки</div>
-              <div className='flex flex-col gap-2 mt-4'>
-                <div className='flex flex-col'>
-                  <div className='text-lg mb-[1px]'>Псевдоним</div>
-                  <div className='flex gap-2'>
-                    <input placeholder={authData?.surname} className='bg-dark2 border-dark3 border rounded-2xl' value={input1} onChange={(e) => {
-                      setInput1(e.target.value)
-                    }} />
-                    <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                      applyInput1();
-                    }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                  </div>
-                </div>
-                <div className='flex flex-col'>
-                  <div className='text-lg mb-[1px]'>О себе</div>
-                  <div className='flex gap-2'>
-                    <input placeholder={authData?.about} className='bg-dark2 border-dark3 border rounded-2xl' value={input2} onChange={(e) => {
-                      setInput2(e.target.value)
-                    }} />
-                    <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
-                      applyInput2();
-                    }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
-                  </div>
-                </div>
-                {invOpen &&
-                  <div className='flex flex-col mt-8'>
-                    <div className='flex'>
-                      <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
+              {!authData?.deactive ?
+                <div className='flex flex-col gap-2 mt-4'>
+                  <div className='flex flex-col'>
+                    <div className='text-lg mb-[1px]'>Псевдоним</div>
+                    <div className='flex gap-2'>
+                      <input placeholder={authData?.surname} className='bg-dark2 border-dark3 border rounded-2xl' value={input1} onChange={(e) => {
+                        setInput1(e.target.value)
+                      }} />
+                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                        applyInput1();
+                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
                     </div>
-                    <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
-                    <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
-                    <div className='flex flex-col gap-2 mt-4'>
-                      {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
-                      {invites?.map((e: any) =>
-                        <div className='bg-dark4 p-2 rounded-2xl gap-2 flex flex-col w-full'>
-                          <div className='text-2xl font-bold'>{e?.code}</div>
-                          <div className='flex justify-end gap-2'>
-                            <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
-                              navigator.clipboard.writeText("https://id.gooseland.cc/invite/" + e?.code)
-                              alert("Скопировано!")
-                            }}>Копировать ссылку</div>
-                            <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
-                              delInvite(e?.id);
-                            }}>Удалить</div>
+                  </div>
+                  <div className='flex flex-col'>
+                    <div className='text-lg mb-[1px]'>О себе</div>
+                    <div className='flex gap-2'>
+                      <input placeholder={authData?.about} className='bg-dark2 border-dark3 border rounded-2xl' value={input2} onChange={(e) => {
+                        setInput2(e.target.value)
+                      }} />
+                      <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
+                        applyInput2();
+                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                    </div>
+                  </div>
+                  {invOpen &&
+                    <div className='flex flex-col mt-8'>
+                      <div className='flex'>
+                        <p>За каждого приглашенного человека вы получите <span className='font-black text-lg'>1 алмаз</span>! Чтобы получить свою награду, обратитесь в дом Правительства.</p>
+                      </div>
+                      <div className='text-lg mb-[1px]'>Пригласить людей (Всего пришедших: {invited})</div>
+                      <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => genInvite()}>Сгенерировать</div>
+                      <div className='flex flex-col gap-2 mt-4'>
+                        {invites?.length == 0 ? <div>У вас нет инвайтов</div> : null}
+                        {invites?.map((e: any) =>
+                          <div className='bg-dark4 p-2 rounded-2xl gap-2 flex flex-col w-full'>
+                            <div className='text-2xl font-bold'>{e?.code}</div>
+                            <div className='flex justify-end gap-2'>
+                              <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                                navigator.clipboard.writeText("https://id.gooseland.cc/invite/" + e?.code)
+                                alert("Скопировано!")
+                              }}>Копировать ссылку</div>
+                              <div className='bg-white hover:bg-gray200 cursor-pointer p-2 text-black w-fit rounded-2xl mt-2' onClick={() => {
+                                delInvite(e?.id);
+                              }}>Удалить</div>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                }
-              </div>
+                  }
+                </div> :
+                <div>Ваш аккаунт деактивирован</div>
+              }
             </div>
           </div>
         </section>

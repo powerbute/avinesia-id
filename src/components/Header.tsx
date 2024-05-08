@@ -14,7 +14,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
   const [searchData1, setSearchData1] = React.useState<any>([]);
   const [loaded, setLoaded] = React.useState(false);
   const [session, setSession] = useLocalStorage("session", "");
-  const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
+  //const [authData, setAuthData] = useLocalStorage<any>("authdata", {})
 
   async function getUser(nickname: any) {
     const { data: users, error } = await supabase
@@ -133,8 +133,8 @@ export default function Passport({ passport }: { passport: { authData: any, user
               setSearchOpen2(true);
             }} />
           </div> : null}
-          <header className='px-4 flex h-[56px] items-center justify-between'>
-            <Link href={"/user/" + authData?.id}>
+          <header className={'px-4 flex h-[56px] items-center justify-between'}>
+            <Link href={"/user/" + passport.authData?.id}>
               <div className='hidden lg:flex items-end translation-transform hover:scale-105 text-lg gap-2'><img src='/AvinesiaFlag.png' className='w-14' /> <span className='font-bold bg-green-500 rounded-md px-[5px] py-[1px]'>ID</span><span className='font-bold bg-gradient-to-br from-rose-600 to-emerald-600 rounded-md px-[5px] py-[1px] hidden'>С днем Авинесии!</span></div>
             </Link>
             <div className="relative h-[38px] w-[384px]">
@@ -148,19 +148,19 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 {searchOpen2 && searchData1.length > 0 ?
                   <div className="flex-col relative p-2 bg-dark2 rounded-b-2xl z-[90] max-h-[80vh] overflow-y-scroll w-[90vw] md:w-full">
                     {searchData1?.map((e: any) =>
-                      <div key={makeid(50)} className="hover:bg-dark3 cursor-pointer flex justify-between items-center p-2 rounded-2xl" onClick={() => {
-                        window.open("/user/" + e?.id, "_self")
-                      }}>
-                        <div className="flex gap-2 items-center">
-                          <NextImage onError={(e) => {
-                            e.currentTarget.srcset = "/Steve1.webp";
-                          }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
-                          <div className="flex flex-col">
-                            <div className="font-bold">{e?.surname}</div>
-                            <div className="text-sm">{e?.nickname}</div>
+                      <Link key={makeid(50)} href={"/user/" + e?.id}>
+                        <div className="hover:bg-dark3 cursor-pointer flex justify-between items-center p-2 rounded-2xl">
+                          <div className="flex gap-2 items-center">
+                            <NextImage onError={(e) => {
+                              e.currentTarget.srcset = "/Steve1.webp";
+                            }} width={56} height={56} alt='profile avatar' src={'https://avatar.spworlds.ru/face/512/' + (e?.nickname)} />
+                            <div className="flex flex-col">
+                              <div className="font-bold">{e?.surname}</div>
+                              <div className="text-sm">{e?.nickname}</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     )}
                   </div>
                   : null}
@@ -168,7 +168,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
             </div>
             <div className="flex items-center gap-2">
               <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none bg-dark2 p-2 rounded-2xl'>
-                {(passport.authData?.roles?.includes(1) || passport.authData?.roles?.includes(2) || passport.authData?.roles?.includes(6)) ?
+                {((passport.authData?.roles?.includes(1) || passport.authData?.roles?.includes(2) || passport.authData?.roles?.includes(6)) && !passport?.authData?.deactive) ?
                   <Link href={"/admin"}>
                     <div className='bg-dark4 hover:bg-dark3 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><MdOutlineAdminPanelSettings color='white' size={28} /></div>
                   </Link>
@@ -177,13 +177,13 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 <Link href={"/settings"}><div className='bg-dark4 hover:bg-dark3 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><IoSettingsOutline color='white' size={28} /></div></Link>
                 <div className='bg-red-500 hover:bg-red-600 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer' onClick={() => {
                   setSession("");
-                  setAuthData({})
+                  //setAuthData({})
                   alert("Выход успешно выполнен!")
                   window.open("/", "_self")
                 }}><MdLogout color='white' size={28} /></div>
               </div>
               <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none'>
-                {session != "" ? <Link href={"/user/" + authData?.id}>
+                {session != "" ? <Link href={"/user/" + passport.authData?.id}>
                   <div className='w-14 h-14 cursor-pointer'>
                     <NextImage onError={(e) => {
                       e.currentTarget.srcset = "/Steve1.webp";
