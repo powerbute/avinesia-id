@@ -567,7 +567,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
                       <div className="text-xl font-bold flex items-center gap-2">Паспорт <FaPassport className="text-red-700" />
                         {validuntilC > datenow &&
-                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(authData?.validuntil).fromNow()}</div>
+                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(userData?.validuntil).fromNow()}</div>
                         }
                       </div>
                       {validuntilC < datenow &&
@@ -607,7 +607,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
                       <div className="text-xl font-bold flex items-center gap-2">Турвиза <FaPassport className="text-blue-500" />
                         {validuntilC > datenow &&
-                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(authData?.validuntil).fromNow()}</div>
+                          <div className='px-1 py-0.5 rounded-md bg-dark4 text-sm'>Закончится {moment(userData?.validuntil).fromNow()}</div>
                         }
                       </div>
                       {validuntilC < datenow &&
