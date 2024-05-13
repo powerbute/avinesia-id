@@ -586,7 +586,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                 <div className='flex flex-col gap-12 w-full items-center'>
                   <div className='flex flex-col items-center w-full gap-4'>
                     <div className='text-3xl font-bold flex items-center text-center gap-2'>Обязательно подайте заявку</div>
-                    <div onClick={() => window.open()} className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                    <div onClick={() => window.open("https://t.me/+d7fWwtHZ4ow5NzEy")} className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
                       <div><img src='/AV_CHAT.png' width={64} className='rounded-md' /></div>
                       <div className='flex flex-col w-full'>
                         <div>Авинесийский чат граждан</div>
@@ -594,14 +594,14 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                     <div className='text-3xl font-bold flex items-center text-center gap-2'>Рекомендуем подписаться</div>
-                    <div className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                    <div onClick={() => window.open("https://t.me/avinesiamedia")} className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
                       <div className='w-fit'><img src='/razgruzka.jpg' width={64} className='rounded-md' /></div>
                       <div className='flex flex-col w-full'>
                         <div>Разгрузка Авинесии</div>
                         <div>Телеграм лента самого эффективного государства в мире. Все самые актуальные новости Авинесии</div>
                       </div>
                     </div>
-                    <div className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                    <div onClick={() => window.open("https://t.me/avinesianunion")} className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
                       <div className='w-fit'><img src='/AvinesiaFlag.png' width={64} className='rounded-md' /></div>
                       <div className='flex flex-col w-full'>
                         <div>Справочник</div>
@@ -609,14 +609,14 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                     <div className='text-3xl font-bold flex items-center text-center gap-2'>Рекомендуем вступить</div>
-                    <div className='flex w-full gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                    <div onClick={() => window.open("https://t.me/+N3JtQTOK1p9iNmI6")} className='flex w-full gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
                       <div><img src='/selhoz.png' width={64} className='rounded-md' /></div>
                       <div className='flex flex-col w-full'>
                         <div>Авинесия и запятая</div>
                         <div>Телеграм канал с отчетами, работой и торговлей</div>
                       </div>
                     </div>
-                    <div className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                    <div onClick={() => window.open("https://discord.gg/JhrQCjSwgw")} className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
                       <div><img src='/Gooseland.png' width={64} className='rounded-md' /></div>
                       <div className='flex flex-col w-full'>
                         <div>Gooseland</div>
