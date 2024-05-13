@@ -275,7 +275,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     let rRG = "LGS";
     let inoagentCountry = "KMR";
     let issueDate = moment().format();
-    let issueDate1 = moment().add(7, "days").format();
+    let issueDate1 = moment().add(14, "days").format();
     if (region == 1) {
       rRG = "HST"
     }
