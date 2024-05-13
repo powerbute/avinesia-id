@@ -18,9 +18,10 @@ const LikeCompoennt = dynamic(() => import('@/components/LikeComponent'), { ssr:
 export default function Passport({ passport }: { passport: { authData: any, userID: any, subsData: any, updatePage: any } }) {
   const supabase = createClientComponentClient();
   const [loaded, setLoaded] = React.useState(false);
-  const [userData, setUserData] = useLocalStorage<any>("_cacheUserData" + passport.userID, "{}");
+  const [userData, setUserData] = React.useState<any>({});
   const [rolesData, setRolesData] = React.useState<any>({});
   const [ratingData, setRatingData] = React.useState<any>([]);
+  const [cidData, setCIDData] = React.useState<any>([]);
   const currentYear = 2024;
 
   const [ratingOld, setRatingOld] = useLocalStorage<any>("ratingOld", 0);
@@ -45,12 +46,23 @@ export default function Passport({ passport }: { passport: { authData: any, user
   }
 
   async function getUser(id: any) {
+    const { data: cidCheck } = await supabase
+      .from('cid')
+      .select('*')
+      .eq("name", id)
+      .single();
     const { data: user, error } = await supabase
       .from('users')
       .select('*')
-      .eq("id", id)
+      .eq("id", (cidCheck == null ? id : cidCheck?.userid))
       .single();
     setUserData(user);
+    const { data: cidReq } = await supabase
+      .from('cid')
+      .select('*')
+      .eq("userid", (cidCheck == null ? id : cidCheck?.userid))
+      .order('id', { ascending: true })
+    setCIDData(cidReq);
     const { data: rating } = await supabase
       .from('rating')
       .select('*')
@@ -137,7 +149,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
         <div className={'h-fit rounded-2xl'}>
           <div className={'flex flex-col '}>
 
-            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
+            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || userData?.id != passport.authData?.id ? "pt-6" : "pt-2")}>
               <div className={"relative w-32 h-32 rounded-2xl bg-dark4 animate-pulse"}>
               </div>
               <div className="flex flex-col justify-between items-end">
@@ -166,7 +178,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
         <div className={'h-fit rounded-2xl' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
           <div className={'flex flex-col ' + (userData?.dateofissue?.substring(userData?.dateofissue?.length - 4) == "2021" ? "" : "")}>
 
-            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new > ratingOld.new && passport.userID == passport.authData?.id && userData?.status != 5 ?
+            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new > ratingOld.new && userData?.id == passport.authData?.id && userData?.status != 5 ?
               <div onClick={(e) => {
                 setRatingOld(ratingData[0])
               }} className="flex px-4 py-2 items-center justify-center gap-1 relative overflow-hidden rounded-t-2xl bg-green-500 hover:bg-green-600 cursor-pointer" title="Нажмите, чтобы скрыть">
@@ -233,7 +245,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div> : null
             }
 
-            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new < ratingOld.new && passport.userID == passport.authData?.id && userData?.status != 5 ?
+            {ratingOld?.id != ratingData[0]?.id && ratingData[0]?.new < ratingOld.new && userData?.id == passport.authData?.id && userData?.status != 5 ?
               <div onClick={() => {
                 setRatingOld(ratingData[0])
               }} className="flex px-4 py-2 items-center justify-center gap-1 relative overflow-hidden rounded-t-2xl bg-red-500 hover:bg-red-600 cursor-pointer" title="Нажмите, чтобы скрыть">
@@ -363,7 +375,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div> : null
             }
 
-            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || passport.userID != passport.authData?.id ? "pt-6" : "pt-2")}>
+            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || userData?.id != passport.authData?.id ? "pt-6" : "pt-2")}>
               <div className={"relative w-fit rounded-2xl pt-2 " + getColor()}>
                 <NextImage onError={(e) => {
                   e.currentTarget.srcset = "/Steve.webp";
@@ -398,8 +410,15 @@ export default function Passport({ passport }: { passport: { authData: any, user
               <div className='flex flex-col'>
                 <div className='font-bold text-2xl'>{userData?.surname}</div>
                 <div className='font-medium text-zinc-400'>{userData?.nickname}</div>
-                <div className='text-zinc-500 flex gap-2 items-center text-sm'>@user{passport.userID} <span className="cursor-pointer" onClick={() => {
-                  navigator.clipboard.writeText("https://id.gooseland.cc/user/" + passport.userID);
+                {cidData?.length > 0 &&
+                  <div className="w-full flex gap-1">
+                    {cidData?.map((e: any, index: any) =>
+                      <div className="text-zinc-500 w-fit text-sm">@{e?.name}{index + 1 != cidData?.length ? "," : ""}</div>
+                    )}
+                  </div>
+                }
+                <div className='text-zinc-500 flex gap-2 items-center text-sm'>@user{userData?.id} <span className="cursor-pointer" onClick={() => {
+                  navigator.clipboard.writeText("https://id.gooseland.cc/user/" + userData?.id);
                   alert("Ссылка скопирована!")
                 }}><MdOutlineContentCopy /></span></div>
                 {!passport.authData?.deactive &&
