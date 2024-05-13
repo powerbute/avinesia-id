@@ -295,7 +295,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
         <title>Hi</title>
       </Head>
       <section className='bg-dark w-screen h-screen flex justify-center w-full items-center'>
-        <div className='flex flex-col gap-2 items-center px-6 md:w-1/3 h-full py-16 md:h-1/2 md:p-0'>
+        <div className={'flex flex-col gap-2 items-center px-6 md:w-1/3 py-16 ' + (step == 12 ? "h-full" : "h-full md:h-1/2 md:p-0")}>
           <div className='hidden text-3xl text-fond text-center text-white'>Вас приглашает {inviterData?.nickname}</div>
           {step == 0 &&
             <div className='flex flex-col text-white h-full'>
@@ -574,8 +574,59 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     }
                     setStep(6);
                   } else {
-                    setStep(10);
+                    setStep(12);
                   }
+                }}>Далее</div>
+              </div>
+            </div>
+          }
+          {step == 12 &&
+            <div className='flex flex-col w-full h-full text-white'>
+              <div className='flex justify-between w-full h-full items-center mb-4 select-none flex-col gap-4'>
+                <div className='flex flex-col gap-12 w-full items-center'>
+                  <div className='flex flex-col items-center w-full gap-4'>
+                    <div className='text-3xl font-bold flex items-center text-center gap-2'>Обязательно подайте заявку</div>
+                    <div onClick={() => window.open()} className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                      <div><img src='/AV_CHAT.png' width={64} className='rounded-md' /></div>
+                      <div className='flex flex-col w-full'>
+                        <div>Авинесийский чат граждан</div>
+                        <div>Телеграм чат граждан Авинесии. Обязателен для всех граждан Авинесии (возможны персональные исключения)</div>
+                      </div>
+                    </div>
+                    <div className='text-3xl font-bold flex items-center text-center gap-2'>Рекомендуем подписаться</div>
+                    <div className='flex gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                      <div className='w-fit'><img src='/razgruzka.jpg' width={64} className='rounded-md' /></div>
+                      <div className='flex flex-col w-full'>
+                        <div>Разгрузка Авинесии</div>
+                        <div>Телеграм лента самого эффективного государства в мире. Все самые актуальные новости Авинесии</div>
+                      </div>
+                    </div>
+                    <div className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                      <div className='w-fit'><img src='/AvinesiaFlag.png' width={64} className='rounded-md' /></div>
+                      <div className='flex flex-col w-full'>
+                        <div>Справочник</div>
+                        <div>Вся нужная информация в одном месте</div>
+                      </div>
+                    </div>
+                    <div className='text-3xl font-bold flex items-center text-center gap-2'>Рекомендуем вступить</div>
+                    <div className='flex w-full gap-4 p-4 rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                      <div><img src='/selhoz.png' width={64} className='rounded-md' /></div>
+                      <div className='flex flex-col w-full'>
+                        <div>Авинесия и запятая</div>
+                        <div>Телеграм канал с отчетами, работой и торговлей</div>
+                      </div>
+                    </div>
+                    <div className='flex gap-4 p-4 w-full rounded-2xl items-center bg-dark5 hover:bg-dark4 cursor-pointer select-none'>
+                      <div><img src='/Gooseland.png' width={64} className='rounded-md' /></div>
+                      <div className='flex flex-col w-full'>
+                        <div>Gooseland</div>
+                        <div>Официальный Discord сервер</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className='w-full text-center font-bold bg-blue-500 hover:bg-blue-600 select-none cursor-pointer rounded-2xl p-4' onClick={() => {
+                  setStep(10);
                 }}>Далее</div>
               </div>
             </div>
