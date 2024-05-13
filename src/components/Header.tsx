@@ -54,7 +54,8 @@ export default function Passport({ passport }: { passport: { authData: any, user
     const { data: a1 } = await supabase
       .from('users')
       .select('*')
-      .ilike('surname', '%' + event.target.value + '%');
+      .ilike('surname', '%' + event.target.value + '%')
+      .eq("deactive", false)
     if (a1 != null) {
       for (let g1 = 0; g1 < a1.length; g1++) {
         const newArray = {
@@ -68,7 +69,8 @@ export default function Passport({ passport }: { passport: { authData: any, user
     const { data: a2 } = await supabase
       .from('users')
       .select('*')
-      .ilike('nickname', '%' + event.target.value + '%');
+      .ilike('nickname', '%' + event.target.value + '%')
+      .eq("deactive", false)
     if (a2 != null) {
       for (let g1 = 0; g1 < a2.length; g1++) {
         const newArray = {
