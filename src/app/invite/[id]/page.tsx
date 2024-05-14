@@ -265,7 +265,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     if (await checkNickname() && await checkTelegram() && await checkDiscord() && await checkCID()) {
       const { error } = await supabase
         .from('users')
-        .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofssiue: issueDate, validuntil: issueDate1 })
+        .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofissue: issueDate, validuntil: issueDate1 })
     } else {
       alert("Что-то пошло не так... Повторите попытку")
     }
@@ -283,7 +283,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     if (await checkNickname() && await checkTelegram() && await checkDiscord() && await checkCID()) {
       const { error } = await supabase
         .from('users')
-        .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofssiue: issueDate, validuntil: issueDate1, foreigner: inoagentCountry })
+        .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofissue: issueDate, validuntil: issueDate1, foreigner: inoagentCountry })
     } else {
       alert("Что-то пошло не так... Повторите попытку")
     }
