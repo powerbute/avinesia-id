@@ -119,7 +119,7 @@ export default function HomePage() {
       window.open("/" + search, "_self")
       return;
     }
-    window.open("/user/" + authData?.id, "_self");
+    window.open("/user/" + data?.id, "_self");
   }
 
   async function getPassID(authID: any) {

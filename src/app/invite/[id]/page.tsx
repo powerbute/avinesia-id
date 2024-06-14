@@ -205,6 +205,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function checkTelegram() {
+    if (telegram == "") return true;
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -218,6 +219,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function checkDiscord() {
+    if (discord == "") return true;
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -231,6 +233,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function checkCID() {
+    if (cid == "") return true;
     const { data, error } = await supabase
       .from('cid')
       .select('*')
@@ -263,9 +266,23 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
 
     if (await checkNickname() && await checkTelegram() && await checkDiscord() && await checkCID()) {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofissue: issueDate, validuntil: issueDate1 })
+        .select().single()
+      if (cid != null) {
+        if (await checkCID()) {
+          const { error } = await supabase
+            .from('cid')
+            .insert({ name: cid, userid: data?.id })
+        }
+      }
+      let sess = makeid(256);
+      const { error: a1 } = await supabase
+        .from('sessions')
+        .insert({ passid: passID, session: sess })
+      setSession(sess);
+      window.open("/user/" + data?.id, "_self")
     } else {
       alert("Что-то пошло не так... Повторите попытку")
     }
@@ -281,9 +298,23 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
 
     if (await checkNickname() && await checkTelegram() && await checkDiscord() && await checkCID()) {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .insert({ tg: telegram, discord: discord, passid: passID, surname: surname, birthdate: birthdate, issuedby: "Правительство Авинесии", nickname: nickname, residenceregion: rRG, dateofissue: issueDate, validuntil: issueDate1, foreigner: inoagentCountry })
+        .select().single()
+      if (cid != null) {
+        if (await checkCID()) {
+          const { error } = await supabase
+            .from('cid')
+            .insert({ name: cid, userid: data?.id })
+        }
+      }
+      let sess = makeid(256);
+      const { error: a1 } = await supabase
+        .from('sessions')
+        .insert({ passid: passID, session: sess })
+      setSession(sess);
+      window.open("/user/" + data?.id, "_self")
     } else {
       alert("Что-то пошло не так... Повторите попытку")
     }
@@ -301,8 +332,8 @@ export default function HomePage({ params }: { params: { id: string } }) {
             <div className='flex flex-col text-white h-full'>
               <div className='flex justify-between h-full items-center mb-4 select-none flex-col gap-1'>
                 <div className='flex flex-col gap-1 items-center'>
-                  <div className='text-3xl font-bold flex items-center gap-2'>Добро пожаловать в Авинесию</div>
-                  <div className='font-semibold text-xl text-dark3 mb-4'>Сейчас мы поможем тебе зарегистрироваться в Авинесия ID...</div>
+                  <div className='text-3xl font-bold flex items-center gap-2 text-center'>Добро пожаловать в Авинесию</div>
+                  <div className='font-semibold text-xl text-dark3 mb-4 text-center'>Сейчас мы поможем тебе зарегистрироваться в Авинесия ID...</div>
                   <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/People%20with%20professions/Man%20Police%20Officer%20Dark%20Skin%20Tone.png" alt="Man Police Officer Dark Skin Tone" />
                 </div>
                 {!started && <div className='animate-bounce w-full text-center font-bold bg-blue-500 hover:bg-blue-600 select-none cursor-pointer rounded-2xl p-4' onClick={() => runReg()}>Начать</div>}

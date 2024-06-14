@@ -662,6 +662,17 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                   }
+                  {!authData?.sponsor &&
+                    <div className='hidden md:flex fixed flex-col bottom-0 right-0 m-4 items-center p-4 rounded-2xl bg-dark2 border border-dark3 w-64 gap-2'>
+                      <div className='text-center'>Авинесия развивается только с помощью ваших донатов, вы можете поддержать нас, оформив подписку на Boosty</div>
+                      <div onClick={() => window.open("https://boosty.to/murbyte")} className='bg-green-500 hover:bg-green-600 cursor-pointer px-4 py-2 rounded-2xl font-bold select-none w-full text-center'>Поддержать</div>
+                    </div>
+                  }
+                  {userData?.sponsor &&
+                    <div className='flex justify-center items-center p-4 rounded-2xl bg-green-600'>
+                      <div className='font-bold text-2xl'>Спонсор Авинесии</div>
+                    </div>
+                  }
                   {userData?.discord != null ?
                     <div onClick={() => {
                       alert("Скопировано!")
