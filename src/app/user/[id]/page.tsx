@@ -131,6 +131,22 @@ export default function HomePage({ params }: { params: { id: string } }) {
       .update({ status: 5 })
       .eq("passid", userData?.passid);
     getPosts(userID)
+    setPage(1)
+  }
+
+  async function banUs2() {
+    if (!loaded) return;
+    const tempAuth = await AVauthC(session);
+    if (tempAuth?.deactive) {
+      alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
+      return;
+    }
+    const { data: subs } = await supabase
+      .from('users')
+      .update({ deactive: true })
+      .eq("passid", userData?.passid);
+    getPosts(userID)
+    setPage(1)
   }
 
   async function exxtend() {
@@ -305,7 +321,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       alert("Ваш аккаунт деактивирован, вы не можете выполнить это действие!")
       return;
     }
-    if (!tempAuth?.roles?.includes(1)) {
+    if (!tempAuth?.roles?.includes(1) || !tempAuth?.roles?.includes(2) || !tempAuth?.roles?.includes(7)) {
       return;
     }
     const { data: subs } = await supabase
@@ -417,7 +433,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
           <div className='text-lg'><span className='uppercase font-black'>Внимание!</span> Для безопасности и быстрого входа, привяжите свой Telegram, <span className='cursor-pointer'>инструкция</span></div>
         </section>
         {userData?.inoagent ?
-          <section className='select-none bg-gradient-to-br from-rose-400 to-red-600 rounded-2xl px-4 py-4 mx-4 mt-4 hidden sm:block'>
+          <section className='select-none bg-gradient-to-br from-red-500 to-red-600 rounded-2xl px-4 py-4 mx-4 mt-4 hidden sm:block'>
             <div className='text-lg'>ДАННЫЙ МАТЕРИАЛ СОЗДАН И РАСПРОСТРАНЕН ЛИЦОМ, ВКЛЮЧЕННЫМ В РЕЕСТР ИНОСТРАННЫХ СРЕДСТВ МАССОВОЙ ИНФОРМАЦИИ, ВЫПОЛНЯЮЩИХ ФУНКЦИИ ИНОСТРАННОГО АГЕНТА</div>
           </section>
           : null}
@@ -448,7 +464,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                       <div onClick={() => {
                         window.open("https://t.me/avinesiamedia")
-                      }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> ТГК с новостями Авинесии</div>
+                      }} className='bg-dark5 select-none hover:bg-dark4 flex items-center gap-2 cursor-pointer rounded-2xl p-4'><FaNewspaper /> Читать новости Авинесии</div>
                     </div>
                   }
                   {userData?.residenceregion == "HST" &&
@@ -486,6 +502,18 @@ export default function HomePage({ params }: { params: { id: string } }) {
                     <div className='text-2xl font-bold'>Подтвердите действие</div>
                     <div className='text-lg font-bold'>Запрет на въезд {userData?.nickname}</div>
                     <div onClick={() => banUs()} className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl'>Да</div>
+                    <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
+                  </div>
+                </div>
+              </div>
+            }
+            {page == 7 &&
+              <div className='col-span-3'>
+                <div className='flex justify-center items-center h-full'>
+                  <div className='md:w-1/3 flex flex-col text-center bg-dark2 rounded-2xl p-8 gap-4'>
+                    <div className='text-2xl font-bold'>Подтвердите действие</div>
+                    <div className='text-lg font-bold'>Деактивировать аккаунт {userData?.nickname}</div>
+                    <div onClick={() => banUs2()} className='bg-red-500 hover:bg-red-600 cursor-pointer select-none p-4 rounded-2xl'>Да</div>
                     <div className='bg-dark5 hover:bg-dark4 cursor-pointer select-none p-4 rounded-2xl' onClick={() => setPage(1)}>Нет</div>
                   </div>
                 </div>
@@ -569,6 +597,12 @@ export default function HomePage({ params }: { params: { id: string } }) {
             {page == 1 && loaded && (!userData?.deactive && !authData?.deactive) ?
               <div className='col-span-3'>
                 <div className="flex flex-col gap-4">
+                  {userData?.about?.length > 0 &&
+                    <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
+                      <div className="text-xl font-bold flex items-center gap-2">О себе 👋</div>
+                      <div>{userData?.about}</div>
+                    </div>
+                  }
                   {userData?.status == 1 &&
                     <div className="flex flex-col gap-4 px-6 py-4 bg-dark2 rounded-2xl">
                       <div className="text-xl font-bold flex items-center gap-2">Паспорт <FaPassport className="text-red-700" />
@@ -706,7 +740,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                   }
-                  {(authData?.roles?.includes(1) || authData?.roles?.includes(2)) &&
+                  {(authData?.roles?.includes(1) || authData?.roles?.includes(2) || authData?.roles?.includes(7)) &&
                     <div className="grid select-none md:grid-cols-4 gap-2">
                       <div onClick={() => setPage(3)} className="bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaBan />
@@ -727,6 +761,10 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       <div onClick={() => setPage(6)} className="md:col-span-2 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
                         <FaTruckMoving />
                         Изменить регион проживания
+                      </div>
+                      <div onClick={() => setPage(7)} className="md:col-span-4 bg-dark5 flex items-center justify-center gap-2 hover:bg-dark4 cursor-pointer p-4 rounded-2xl">
+                        <FaBan />
+                        Деактивировать аккаунт
                       </div>
                     </div>
                   }

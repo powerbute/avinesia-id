@@ -286,6 +286,14 @@ export default function HomePage({ params }: { params: { id: string } }) {
   }
 
   async function getUser(nickname: any) {
+    setInput1(null);
+    setInput2(null);
+    //setInput3(user?.dateofissue);
+    setInput4(null);
+    setInput5(null);
+    setInput6(null);
+    setInput7(null);
+    setInput8(null);
     setPage("member-" + nickname)
     let { data: user, error } = await supabase
       .from('users')
@@ -301,6 +309,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
       setInput5(user?.issuedby);
       setInput6(user?.validuntil);
       setInput7(user?.tg);
+      setInput8(user?.discord);
     } else {
       setUserData({ id: -1 });
     }
@@ -326,7 +335,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
     }
     const { error } = await supabase
       .from('users')
-      .update({ tg: input7 })
+      .update({ tg: input7, discord: input8 })
       .eq('id', userData?.id)
     alert("Изменения сохранены!");
     getUser(input1);
@@ -714,7 +723,7 @@ export default function HomePage({ params }: { params: { id: string } }) {
                       <div className='flex flex-col gap-2 w-full'>
                         <div className='flex flex-col'>
                           <div>Discord</div>
-                          <input className='bg-dark2 rounded-2xl border-dark4' />
+                          <input className='bg-dark2 rounded-2xl border-dark4' value={input8} onChange={((e: any) => { setInput8(e.target.value) })} />
                         </div>
                       </div>
                     </div>

@@ -28,6 +28,7 @@ import IDCard from '@/components/IDCard';
 import moment from 'moment';
 import 'moment/locale/ru'
 import SecurityAuth, { AVauth, AVauthC } from '@/components/SecurityAuth';
+import { FaCheck } from 'react-icons/fa';
 
 
 export default function HomePage() {
@@ -36,6 +37,7 @@ export default function HomePage() {
   const [session, setSession] = useLocalStorage("session", "");
   const [input1, setInput1] = React.useState<any>("");
   const [input2, setInput2] = React.useState<any>("");
+  const [cid, setCID] = React.useState<any>([]);
   const [invites, setInvites] = React.useState<any>([]);
   const [invited, setInvited] = React.useState<any>(0);
   let subsData = null;
@@ -49,12 +51,23 @@ export default function HomePage() {
 
   async function getUserData() {
     //getPassID(session);
+    const tempAuth = await AVauthC(session);
+    let { data: users, error } = await supabase
+      .from('cid')
+      .select('*')
+      .eq("userid", tempAuth?.id)
+      .order('id', { ascending: true })
+    setCID(users)
     setLoaded(true);
   }
 
   async function applyInput1() {
     if (!loaded) return;
     const tempAuth = await AVauthC(session);
+    if (input1?.length <= 3) {
+      alert("Слишком короткий псевдоним!")
+      return;
+    }
     let { error } = await supabase
       .from('users')
       .update({ surname: input1 })
@@ -167,9 +180,9 @@ export default function HomePage() {
           <div className='text-lg'><span className='uppercase font-black'>Внимание!</span> Для безопасности и быстрого входа, привяжите свой Telegram, <span className='cursor-pointer'>инструкция</span></div>
         </section>
         <section className='px-4 mt-4'>
-          <div className='flex gap-4 mt-4 flex-col md:flex-row'>
+          <div className='flex md:grid gap-4 mt-4 flex-col md:grid-cols-4'>
             <IDCard passport={{ userID: authData?.id, authData: authData, subsData: subsData, updatePage: getPosts }} />
-            <div className='w-full flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
+            <div className='w-full col-span-3 flex flex-col px-4 sm:px-8 py-4 sm:py-6 bg-dark2 rounded-2xl'>
               <div className='text-3xl font-bold flex items-center gap-2'>Настройки</div>
               {!authData?.deactive ?
                 <div className='flex flex-col gap-2 mt-4'>
@@ -181,7 +194,7 @@ export default function HomePage() {
                       }} />
                       <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
                         applyInput1();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                      }}><FaCheck color='black' size={28} /></div>
                     </div>
                   </div>
                   <div className='flex flex-col'>
@@ -192,7 +205,33 @@ export default function HomePage() {
                       }} />
                       <div className='w-10 h-10 bg-white rounded-2xl flex justify-center items-center hover:bg-gray-200 cursor-pointer' onClick={() => {
                         applyInput2();
-                      }}><IoMdCheckmarkCircleOutline color='black' size={28} /></div>
+                      }}><FaCheck color='black' size={28} /></div>
+                    </div>
+                  </div>
+                  <div className='flex flex-col mt-8'>
+                    <div className='text-2xl font-bold'>Теги</div>
+                    <div className='flex flex-col gap-2 text-white mt-2'>
+                      {cid?.map((e: any) => {
+                        async function visibleToggle() {
+                          let { error: a1 } = await supabase
+                            .from('cid')
+                            .update({ visible: !e?.visible })
+                            .eq('id', e?.id);
+                          let { data: users, error } = await supabase
+                            .from('cid')
+                            .select('*')
+                            .eq("userid", authData?.id)
+                            .order('id', { ascending: true })
+                          setCID(users)
+                        }
+                        return (
+                          <div className='flex items-center justify-between'>
+                            <div>@{e?.name}</div>
+                            <div onClick={() => visibleToggle()} className={"rounded-2xl w-4 h-4 cursor-pointer select-none " + (e?.visible ? "bg-green-500 hover:bg-green-600" : "bg-dark5 hover:bg-dark4")}></div>
+                          </div>
+                        )
+                      }
+                      )}
                     </div>
                   </div>
                   {invOpen &&

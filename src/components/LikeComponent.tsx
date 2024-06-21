@@ -2,6 +2,7 @@ import { AVauth, AVauthC } from "@/components/SecurityAuth";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa6";
 import useLocalStorage from "use-local-storage";
 
 export default function LikeCompoennt({ passport }: { passport: { authData: any, userData: any } }) {

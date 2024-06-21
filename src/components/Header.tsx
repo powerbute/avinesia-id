@@ -169,7 +169,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none bg-dark2 p-2 rounded-2xl'>
+              <div className='flex gap-4 justify-center w-full sm:w-fit sm:justify-start items-center select-none p-2 rounded-2xl'>
                 {((passport.authData?.roles?.includes(1) || passport.authData?.roles?.includes(2) || passport.authData?.roles?.includes(6)) && !passport?.authData?.deactive) ?
                   <Link href={"/admin"}>
                     <div className='bg-dark4 hover:bg-dark3 rounded-2xl w-10 h-10 flex justify-center items-center cursor-pointer'><MdOutlineAdminPanelSettings color='white' size={28} /></div>

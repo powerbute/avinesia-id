@@ -9,7 +9,7 @@ import { MdOutlinePolicy, MdOutlinePlayCircle, MdOutlinePauseCircle, MdWork, MdO
 import { CiHeart } from "react-icons/ci";
 import dynamic from 'next/dynamic'
 import { FaStar } from "react-icons/fa";
-import { FaAnglesDown, FaAnglesUp, FaArrowTurnUp, FaArrowUp, FaBan, FaFire, FaStarOfDavid, FaTicketSimple } from "react-icons/fa6";
+import { FaAnglesDown, FaAnglesUp, FaArrowTurnUp, FaArrowUp, FaBan, FaFire, FaMinus, FaPlus, FaStarOfDavid, FaTicketSimple } from "react-icons/fa6";
 import useLocalStorage from "use-local-storage";
 import { BiSolidCool } from "react-icons/bi";
 
@@ -26,23 +26,33 @@ export default function Passport({ passport }: { passport: { authData: any, user
 
   const [ratingOld, setRatingOld] = useLocalStorage<any>("ratingOld", 0);
 
+  function getDaysInAv() {
+    const currentDate = new Date();
+    const usrD = new Date(userData.dateofissue);
+    const timeDiff = Math.abs(currentDate.getTime() - usrD.getTime()); // Разница в миллисекундах
+    const daysPassed = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Преобразуем миллисекунды в дни
+    return daysPassed;
+  }
+
   function getColor() {
-    if (currentYear - userData?.dateofissue?.substring(0, 4) > 20) {
-      return "bg-lime-600"
+    const currentDate = new Date();
+    const usrD = new Date(userData.dateofissue);
+    const timeDiff = Math.abs(currentDate.getTime() - usrD.getTime()); // Разница в миллисекундах
+    const daysPassed = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Преобразуем миллисекунды в дни
+
+    if (daysPassed >= 7300) { // 7300 дней = 20 лет
+      return "bg-lime-600";
+    } else if (daysPassed >= 3650) { // 3650 дней = 10 лет
+      return "bg-indigo-600";
+    } else if (daysPassed >= 1825) { // 1825 дней = 5 лет
+      return "bg-amber-500";
+    } else if (daysPassed >= 1095) { // 1095 дней = 3 года
+      return "bg-teal-600";
+    } else if (daysPassed >= 365) { // 365 дней = 1 год
+      return "bg-cyan-600";
+    } else {
+      return "bg-dark4";
     }
-    if (currentYear - userData?.dateofissue?.substring(0, 4) > 10) {
-      return "bg-indigo-600"
-    }
-    if (currentYear - userData?.dateofissue?.substring(0, 4) > 5) {
-      return "bg-amber-500"
-    }
-    if (currentYear - userData?.dateofissue?.substring(0, 4) > 3) {
-      return "bg-teal-600"
-    }
-    if (currentYear - userData?.dateofissue?.substring(0, 4) > 1) {
-      return "bg-cyan-600"
-    }
-    return "bg-dark4"
   }
 
   async function getUser(id: any) {
@@ -375,7 +385,7 @@ export default function Passport({ passport }: { passport: { authData: any, user
               </div> : null
             }
 
-            <div className={"bg-dark5 rounded-t-2xl pb-4 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || userData?.id != passport.authData?.id ? "pt-6" : "pt-2")}>
+            <div className={"bg-dark5 rounded-t-2xl pb-2 flex justify-between flex-row px-4 " + (userData?.status != 5 || ratingData[0]?.new == ratingOld.new || userData?.id != passport.authData?.id ? "pt-4" : "")}>
               <div className={"relative w-fit rounded-2xl pt-2 " + getColor()}>
                 <NextImage onError={(e) => {
                   e.currentTarget.srcset = "/Steve.webp";
@@ -412,8 +422,11 @@ export default function Passport({ passport }: { passport: { authData: any, user
                 <div className='font-medium text-zinc-400'>{userData?.nickname}</div>
                 {cidData?.length > 0 &&
                   <div className="w-full flex gap-1">
-                    {cidData?.map((e: any, index: any) =>
-                      <div className="text-zinc-500 w-fit text-sm">@{e?.name}{index + 1 != cidData?.length ? "," : ""}</div>
+                    {cidData?.map((e: any, index: any) => {
+                      if (e?.visible) return (
+                        <div className="text-zinc-500 w-fit text-sm">@{e?.name}, </div>
+                      )
+                    }
                     )}
                   </div>
                 }
